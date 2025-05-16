@@ -30,3 +30,23 @@
 *.exe
 *.out
 *.app
+
+# Build artifacts
+compile_commands.json
+*.dSYM/
+
+# Language server stuff
+.cache/
+.lsp-session-*
+
+# Backup and autosave files from Emacs
+*~
+\#*\#
+.\#*
+
+# macOS filesystem noise
+.DS_Store
+
+# Sublime Text project files (if you're using Sublime too)
+*.sublime-project
+*.sublime-workspace
