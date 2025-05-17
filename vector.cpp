@@ -26,6 +26,7 @@ public:
     double dot_product(const Vector& v) const;
     double length() const { return std::sqrt(dot_product(*this)); }
     double difference(const Vector& v) const;
+    double angle(const Vector& v) const;
     
 private:
     std::vector<double> data_;
@@ -82,6 +83,12 @@ double Vector::dot_product(const Vector& v) const
 double Vector::difference(const Vector& v) const
 {
     return (*this - v).length();
+}
+
+
+double Vector::angle(const Vector& v) const
+{
+    return acos(dot_product(v) / (length() * v.length()));
 }
 
 
@@ -234,4 +241,21 @@ TEST_CASE("Difference different sizes throws")
     Vector u(2);
     Vector v(3);
     CHECK_THROWS_AS(u.difference(v), std::invalid_argument);
+}
+
+
+TEST_CASE("Angle happy path")
+{
+    Vector u{2, 1, -2};
+    Vector v{1, 1, 1};
+    double result = u.angle(v);
+    CHECK(result == doctest::Approx(1.377).epsilon(0.01));
+}
+
+
+TEST_CASE("Angle different sizes throws")
+{
+    Vector u(2);
+    Vector v(3);
+    CHECK_THROWS_AS(u.angle(v), std::invalid_argument);
 }
