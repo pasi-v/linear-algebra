@@ -2,6 +2,7 @@
 #include <initializer_list>
 #include <vector>
 #include <stdexcept>
+#include <ostream>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
@@ -20,13 +21,15 @@ public:
 
     int size() const { return data_.size(); }
     Vector operator+(const Vector& v) const;
-    Vector operator*(int c) const;
+    Vector operator*(double c) const;
     Vector operator-(const Vector& v) const;
 
     double dot_product(const Vector& v) const;
     double length() const { return std::sqrt(dot_product(*this)); }
     double difference(const Vector& v) const;
     double angle(const Vector& v) const;
+    // projection of v onto this vector
+    Vector proj(const Vector& v) const;
     
 private:
     std::vector<double> data_;
@@ -53,7 +56,7 @@ Vector Vector::operator+(const Vector& v) const
 }
 
 
-Vector Vector::operator*(int c) const
+Vector Vector::operator*(double c) const
 {
     Vector result(size());
     for (int i = 0; i < size(); i++) {
@@ -89,6 +92,24 @@ double Vector::difference(const Vector& v) const
 double Vector::angle(const Vector& v) const
 {
     return acos(dot_product(v) / (length() * v.length()));
+}
+
+
+Vector Vector::proj(const Vector& v) const
+{
+    return *this * (dot_product(v) / dot_product(*this));
+}
+
+
+std::ostream& operator<<(std::ostream& os, const Vector &v) {
+    os << "{ ";
+    for (int i = 0; i < v.size(); ++i) {
+        os << v[i];
+        if (i != v.size() - 1)
+            os << ", ";
+    }
+    os << " }";
+    return os;
 }
 
 
@@ -258,4 +279,22 @@ TEST_CASE("Angle different sizes throws")
     Vector u(2);
     Vector v(3);
     CHECK_THROWS_AS(u.angle(v), std::invalid_argument);
+}
+
+
+TEST_CASE("Projection happy path")
+{
+    Vector u{2, 1};
+    Vector v{-1, 3};
+    Vector result = u.proj(v);
+    Vector expected{2.0/5.0, 1.0/5.0};
+    CHECK(result == expected);
+}
+
+
+TEST_CASE("Projection different sizes throws")
+{
+    Vector u(2);
+    Vector v(3);
+    CHECK_THROWS_AS(u.proj(v), std::invalid_argument);
 }
