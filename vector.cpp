@@ -1,3 +1,4 @@
+#include <cmath>
 #include <initializer_list>
 #include <vector>
 #include <stdexcept>
@@ -23,6 +24,7 @@ public:
     Vector operator-(const Vector& v) const;
 
     double dot_product(const Vector& v) const;
+    double length() const { return std::sqrt(dot_product(*this)); }
     
 private:
     std::vector<double> data_;
@@ -202,4 +204,11 @@ TEST_CASE("Dot product different sizes throws")
     Vector u(2);
     Vector v(3);
     CHECK_THROWS_AS(u.dot_product(v), std::invalid_argument);
+}
+
+
+TEST_CASE("Vector length")
+{
+    Vector u{2, 3};
+    CHECK(u.length() == std::sqrt(13.0));
 }
