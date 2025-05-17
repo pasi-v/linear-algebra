@@ -25,6 +25,7 @@ public:
 
     double dot_product(const Vector& v) const;
     double length() const { return std::sqrt(dot_product(*this)); }
+    double difference(const Vector& v) const;
     
 private:
     std::vector<double> data_;
@@ -75,6 +76,12 @@ double Vector::dot_product(const Vector& v) const
         result += data_[i] * v[i];
 
     return result;
+}
+
+
+double Vector::difference(const Vector& v) const
+{
+    return (*this - v).length();
 }
 
 
@@ -211,4 +218,20 @@ TEST_CASE("Vector length")
 {
     Vector u{2, 3};
     CHECK(u.length() == std::sqrt(13.0));
+}
+
+
+TEST_CASE("Vector difference happy path")
+{
+    Vector u{std::sqrt(2), 1, -1};
+    Vector v{0, 2, -2};
+    CHECK(u.difference(v) == 2.0);
+}
+
+
+TEST_CASE("Difference different sizes throws")
+{
+    Vector u(2);
+    Vector v(3);
+    CHECK_THROWS_AS(u.difference(v), std::invalid_argument);
 }
