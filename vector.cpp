@@ -21,6 +21,8 @@ public:
     Vector operator+(const Vector& v) const;
     Vector operator*(int c) const;
     Vector operator-(const Vector& v) const;
+
+    double dot_product(const Vector& v) const;
     
 private:
     std::vector<double> data_;
@@ -57,9 +59,20 @@ Vector Vector::operator*(int c) const
 }
 
 
-Vector Vector::operator-(const Vector& v) const
+Vector Vector::operator-(const Vector &v) const { return *this + (v * -1); }
+
+
+double Vector::dot_product(const Vector& v) const
 {
-    return *this + (v * -1);
+    if (size() != v.size())
+        throw std::invalid_argument("Vector sizes must match for dot product");
+
+    double result = 0.0;
+
+    for (int i = 0; i < size(); i++)
+        result += data_[i] * v[i];
+
+    return result;
 }
 
 
@@ -164,4 +177,29 @@ TEST_CASE("Vector subtraction happy path")
     Vector diff = u - v;
     Vector expected = {-1, 0};
     CHECK(diff == expected);
+}
+
+
+TEST_CASE("Vector subtraction different sizes throws")
+{
+    Vector u(2);
+    Vector v(3);
+    CHECK_THROWS_AS(u + v, std::invalid_argument);
+}
+
+
+TEST_CASE("Dot product happy case")
+{
+    Vector u{1, 2, -3};
+    Vector v{-3, 5, 2};
+    double result = u.dot_product(v);
+    CHECK(result == 1.0);
+}
+
+
+TEST_CASE("Dot product different sizes throws")
+{
+    Vector u(2);
+    Vector v(3);
+    CHECK_THROWS_AS(u.dot_product(v), std::invalid_argument);
 }
