@@ -1,3 +1,4 @@
+#include <vector>
 #include <stdexcept>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
@@ -6,50 +7,43 @@ class Vector
 {
 public:
     Vector(int s);
-    double& operator[](int i);
-    int size() { return sz; }
-    Vector operator+(Vector v);
-    Vector operator*(int c);
+    // std::vector [] does no range checking
+    double& operator[](int i) { return elem.at(i); }
+    double operator[](int i) const { return elem.at(i); }
+
+    int size() const { return elem.size(); }
+    Vector operator+(const Vector& v) const;
+    Vector operator*(int c) const;
     
 private:
-    double*  elem;    // pointer to elements
-    int sz;           // number of elements
+    std::vector<double> elem;
 };
 
 
 Vector::Vector(int s)
+    : elem(s)    // construct the vector with s default-initialised elements
 {
     if (s < 0)
         throw std::length_error{"Vector size can't be negative"};
-    elem = new double[s];
-    sz = s;
 }
 
 
-double& Vector::operator[](int i)
+Vector Vector::operator+(const Vector& v) const
 {
-    if (i < 0 || i >= size())
-        throw std::out_of_range{"Vector::operator[]"};
-    return elem[i];
-}
-
-
-Vector Vector::operator+(Vector v)
-{
-    if (sz != v.size())
+    if (size() != v.size())
         throw std::invalid_argument("Vector sizes must match for addition");
-    Vector sum(sz);
-    for (int i = 0; i < sz; i++) {
-        sum[i] = elem[i] + v[i];
+    Vector result(size());
+    for (int i = 0; i < size(); i++) {
+        result[i] = elem[i] + v[i];
     }
-    return sum;
+    return result;
 }
 
 
-Vector Vector::operator*(int c)
+Vector Vector::operator*(int c) const
 {
-    Vector result(sz);
-    for (int i = 0; i < sz; i++) {
+    Vector result(size());
+    for (int i = 0; i < size(); i++) {
         result[i] = elem[i] * c;
     }
     return result;
