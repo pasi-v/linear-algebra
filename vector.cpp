@@ -20,6 +20,7 @@ public:
     int size() const { return data_.size(); }
     Vector operator+(const Vector& v) const;
     Vector operator*(int c) const;
+    Vector operator-(const Vector& v) const;
     
 private:
     std::vector<double> data_;
@@ -53,6 +54,12 @@ Vector Vector::operator*(int c) const
         result[i] = data_[i] * c;
     }
     return result;
+}
+
+
+Vector Vector::operator-(const Vector& v) const
+{
+    return *this + (v * -1);
 }
 
 
@@ -147,4 +154,14 @@ TEST_CASE("Vector scalar multiplication happy path")
     Vector cv = v * c;
     Vector expected = {-4, 8};
     CHECK(cv == expected);
+}
+
+
+TEST_CASE("Vector subtraction happy path")
+{
+    Vector u{1, 2};
+    Vector v{2, 2};
+    Vector diff = u - v;
+    Vector expected = {-1, 0};
+    CHECK(diff == expected);
 }
