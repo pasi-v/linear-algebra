@@ -1,3 +1,4 @@
+#include <initializer_list>
 #include <vector>
 #include <stdexcept>
 #define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
@@ -6,22 +7,27 @@
 class Vector
 {
 public:
+    Vector(std::initializer_list<double> data) : data_(std::move(data)) {}
     Vector(int s);
     // std::vector [] does no range checking
-    double& operator[](int i) { return elem.at(i); }
-    double operator[](int i) const { return elem.at(i); }
+    double& operator[](int i) { return data_.at(i); }
+    double operator[](int i) const { return data_.at(i); }
 
-    int size() const { return elem.size(); }
+    friend bool operator==(const Vector& a, const Vector& b) {
+        return a.data_ == b.data_;
+    }
+
+    int size() const { return data_.size(); }
     Vector operator+(const Vector& v) const;
     Vector operator*(int c) const;
     
 private:
-    std::vector<double> elem;
+    std::vector<double> data_;
 };
 
 
 Vector::Vector(int s)
-    : elem(s)    // construct the vector with s default-initialised elements
+    : data_(s)    // construct the vector with s default-initialised elements
 {
     if (s < 0)
         throw std::length_error{"Vector size can't be negative"};
@@ -34,7 +40,7 @@ Vector Vector::operator+(const Vector& v) const
         throw std::invalid_argument("Vector sizes must match for addition");
     Vector result(size());
     for (int i = 0; i < size(); i++) {
-        result[i] = elem[i] + v[i];
+        result[i] = data_[i] + v[i];
     }
     return result;
 }
@@ -44,7 +50,7 @@ Vector Vector::operator*(int c) const
 {
     Vector result(size());
     for (int i = 0; i < size(); i++) {
-        result[i] = elem[i] * c;
+        result[i] = data_[i] * c;
     }
     return result;
 }
@@ -105,19 +111,24 @@ TEST_CASE("Subscript operator larger than size throws")
 }
 
 
+TEST_CASE("Vector comparison")
+{
+    Vector u{1.0, 2.0};
+    Vector v{1.0, 2.0};
+    Vector w{1.0, 3.0};
+
+    CHECK(u == v);
+    CHECK_FALSE(u == w);
+}
+
+
 TEST_CASE("Vector addition happy path")
 {
-    int size = 2;
-    Vector u(size);
-    u[0] = 1;
-    u[1] = 2;
-    Vector v(size);
-    v[0] = 2;
-    v[1] = 2;
+    Vector u{1, 2};
+    Vector v{2, 2};
     Vector sum = u + v;
-    CHECK(sum.size() == size);
-    CHECK(sum[0] == 3);
-    CHECK(sum[1] == 4);
+    Vector expected = {3, 4};
+    CHECK(sum == expected);
 }
 
 
@@ -132,10 +143,8 @@ TEST_CASE("Vector addition different sizes throws")
 TEST_CASE("Vector scalar multiplication happy path")
 {
     int c = 2;
-    Vector v(2);
-    v[0] = -2;
-    v[1] = 4;
+    Vector v{-2, 4};
     Vector cv = v * c;
-    CHECK(cv[0] == -4);
-    CHECK(cv[1] == 8);
+    Vector expected = {-4, 8};
+    CHECK(cv == expected);
 }
