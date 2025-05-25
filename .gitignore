@@ -30,7 +30,7 @@
 *.exe
 *.out
 *.app
-vector_test
+tests
 
 # Build artifacts
 compile_commands.json
