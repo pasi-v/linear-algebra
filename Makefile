@@ -12,9 +12,16 @@ all: $(TARGET)
 $(TARGET): $(SRC)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
 
+# Run tests
+test: $(TARGET)
+	./$(TARGET)
+
+# Reformat source files
+format:
+	clang-format -i *.cpp *.hpp
+
 # Clean build artifacts
 clean:
 	rm -f $(TARGET)
 
-.PHONY: all clean
-
+.PHONY: all clean format test
