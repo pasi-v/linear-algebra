@@ -31,6 +31,23 @@ private:
 };
 
 
+struct Point2D { double x, y; };
+
+struct DirectedVector2D {
+    Point2D start;
+    Point2D end;
+
+    Vector2D direction() const {
+        return Vector2D{end.x - start.x, end.y - start.y};
+    }
+
+    double length() const {
+        auto d = direction();
+        return std::sqrt(d.x() * d.x() + d.y() * d.y());
+    }
+};
+
+
 TEST_CASE("Construct vector")
 {
     Vector2D v = {1, 2};
@@ -69,3 +86,11 @@ TEST_CASE("Operator -") {
     CHECK_EQ(a - b, expected);
 }
 
+
+TEST_CASE("DirectedVector direction and length") {
+    DirectedVector2D dv = {{2, 3}, {5, -1}};
+    Vector2D direction = dv.direction();
+    Vector2D expected = {3, -4};
+    CHECK_EQ(direction, expected);
+    CHECK_EQ(dv.length(), 5);
+}
