@@ -19,6 +19,10 @@ public:
         return Vector2D(x_ + v.x(), y_ + v.y());
     }
 
+    Vector2D operator-(const Vector2D v) const {
+        return Vector2D(x_ - v.x(), y_ - v.y());
+    }
+
     double length() const { return std::sqrt(x_ * x_ + y_ * y_); }
 
 private:
@@ -55,5 +59,13 @@ TEST_CASE("Operator +") {
     Vector2D b = {5, -1};
     Vector2D expected = {7, 2};
     CHECK_EQ(a + b, expected);
+}
+
+
+TEST_CASE("Operator -") {
+    Vector2D a = {2, 3};
+    Vector2D b = {5, -1};
+    Vector2D expected = {-3, 4};
+    CHECK_EQ(a - b, expected);
 }
 
