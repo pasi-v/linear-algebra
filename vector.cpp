@@ -3,7 +3,6 @@
 #include <vector>
 #include <stdexcept>
 #include <ostream>
-#define DOCTEST_CONFIG_IMPLEMENT_WITH_MAIN
 #include "doctest.h"
 
 class Vector
