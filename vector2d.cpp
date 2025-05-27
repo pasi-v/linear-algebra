@@ -5,7 +5,19 @@
 class Vector2D {
   public:
     Vector2D(const double x, const double y) : x_(x), y_(y) {}
-    // TODO: Vector2D from magnitude and direction
+
+    /**
+     * @brief construct a vector from polar coordinates
+     * @param angleRadians the angle in [-pi, pi]
+     * @param magnitude the length of the vector
+     * @return a vector
+     */
+    static Vector2D fromPolar(double angleRadians, double magnitude) {
+        double x = magnitude * std::cos(angleRadians);
+        double y = magnitude * std::sin(angleRadians);
+        return Vector2D(x, y);
+    }
+
     double x() const { return x_; }
     double y() const { return y_; }
 
@@ -111,6 +123,17 @@ TEST_CASE("direction in degrees") {
 TEST_CASE("direction in degrees in quadrant 4") {
     Vector2D v = {3, -4};
     CHECK(v.directionDeg0To360() == doctest::Approx(307.0).epsilon(0.01));
+}
+
+TEST_CASE("fromPolar along x axis") {
+    Vector2D v = Vector2D::fromPolar(0.0, 1.0);
+    CHECK(v == Vector2D(1, 0));
+}
+
+TEST_CASE("fromPolar in quadrant 2") {
+    Vector2D v = Vector2D::fromPolar(math_utils::toRadians(120), 2);
+    CHECK(v.x() == doctest::Approx(-1.0).epsilon(0.01));
+    CHECK(v.y() == doctest::Approx(1.73).epsilon(0.01));
 }
 
 TEST_CASE("DirectedVector direction and length") {
