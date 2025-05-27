@@ -1,4 +1,5 @@
 #include "doctest.h"
+#include "math_utils.h"
 #include <cmath>
 
 class Vector2D {
@@ -27,10 +28,10 @@ class Vector2D {
     double directionRad0To2Pi() const;
 
     /** @return the direction of the vector in degrees in [-180, 180] */
-    double directionDeg() const { return directionRad() * (180.0 / M_PI); }
+    double directionDeg() const { return math_utils::toDegrees(directionRad()); }
 
     /** @return the direction of the vector in degrees in [0, 360] */
-    double directionDeg0To360() const { return directionRad0To2Pi() * (180.0 / M_PI); }
+    double directionDeg0To360() const { return math_utils::toDegrees(directionRad0To2Pi()); }
 
   private:
     double x_;

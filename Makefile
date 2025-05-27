@@ -3,7 +3,8 @@ CXX      := clang++
 CXXFLAGS := -std=c++11 -Wall -Wextra -g
 
 # Source and target
-SRC      := test_main.cpp vector.cpp vector2d.cpp
+SRC      := test_main.cpp vector.cpp vector2d.cpp test_math_utils.cpp
+HEADERS  := math_utils.h
 TARGET   := tests
 
 # Default build rule
@@ -18,7 +19,7 @@ test: $(TARGET)
 
 # Reformat source files
 format:
-	clang-format -i *.cpp *.hpp
+	clang-format -i $(SRC) $(HEADERS)
 
 # Clean build artifacts
 clean:
