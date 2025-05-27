@@ -20,13 +20,27 @@ class Vector2D {
 
     double length() const { return std::sqrt(x_ * x_ + y_ * y_); }
 
-    /** @return the direction of the vector in radians */
-    double direction() const { return atan2(y_, x_); }
-    
+    /** @return the direction of the vector in radians in [-pi, pi] */
+    double directionRad() const { return atan2(y_, x_); }
+
+    /** @return the direction of the vector in radians in [0, 2pi] */
+    double directionRad0To2Pi() const;
+
+    /** @return the direction of the vector in degrees in [-180, 180] */
+    double directionDeg() const { return directionRad() * (180.0 / M_PI); }
+
+    /** @return the direction of the vector in degrees in [0, 360] */
+    double directionDeg0To360() const { return directionRad0To2Pi() * (180.0 / M_PI); }
+
   private:
     double x_;
     double y_;
 };
+
+double Vector2D::directionRad0To2Pi() const {
+    double angle = directionRad();
+    return angle < 0 ? angle + 2.0 * M_PI : angle;
+}
 
 struct Point2D {
     double x, y;
@@ -77,7 +91,25 @@ TEST_CASE("Operator -") {
 
 TEST_CASE("direction") {
     Vector2D v = {3, 4};
-    REQUIRE(v.direction() == doctest::Approx(0.93).epsilon(0.01)); 
+    CHECK(v.directionRad() == doctest::Approx(0.93).epsilon(0.01));
+    CHECK(v.directionRad0To2Pi() == doctest::Approx(0.93).epsilon(0.01));
+}
+
+TEST_CASE("direction in quadrant 4") {
+    Vector2D v = {3, -4};
+    CHECK(v.directionRad() == doctest::Approx(-0.93).epsilon(0.01));
+    CHECK(v.directionRad0To2Pi() == doctest::Approx(5.36).epsilon(0.01));
+}
+
+TEST_CASE("direction in degrees") {
+    Vector2D v = {3, 4};
+    CHECK(v.directionDeg() == doctest::Approx(53.0).epsilon(0.01));
+    CHECK(v.directionDeg0To360() == doctest::Approx(53.0).epsilon(0.01));
+}
+
+TEST_CASE("direction in degrees in quadrant 4") {
+    Vector2D v = {3, -4};
+    CHECK(v.directionDeg0To360() == doctest::Approx(307.0).epsilon(0.01));
 }
 
 TEST_CASE("DirectedVector direction and length") {
