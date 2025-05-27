@@ -2,8 +2,12 @@
 #include "math_utils.h"
 #include <cmath>
 
+/**
+ * A class for representing a vector in geometric plane (R2).
+ */
 class Vector2D {
   public:
+    /** @return a vector from x and y components */
     Vector2D(const double x, const double y) : x_(x), y_(y) {}
 
     /**
@@ -18,19 +22,27 @@ class Vector2D {
         return Vector2D(x, y);
     }
 
+    /** @return the x component */
     double x() const { return x_; }
+
+    /** @return the y component */
     double y() const { return y_; }
 
+    /** @return true if the x and y components are equal */
     friend bool operator==(const Vector2D a, const Vector2D b) {
         return a.x() == b.x() && a.y() == b.y();
     }
 
+    /** @return the vector multiplied by scalar c */
     Vector2D operator*(double c) const { return Vector2D(x_ * c, y_ * c); }
 
+    /** @return the sum of vectors */
     Vector2D operator+(const Vector2D v) const { return Vector2D(x_ + v.x(), y_ + v.y()); }
 
+    /** @return the difference of vectors */
     Vector2D operator-(const Vector2D v) const { return Vector2D(x_ - v.x(), y_ - v.y()); }
 
+    /** @return the length (magnitude) of the vector */
     double length() const { return std::sqrt(x_ * x_ + y_ * y_); }
 
     /** @return the direction of the vector in radians in [-pi, pi] */
@@ -55,16 +67,24 @@ double Vector2D::directionRad0To2Pi() const {
     return angle < 0 ? angle + 2.0 * M_PI : angle;
 }
 
+/**
+ * Struct for representing a point in 2D geometric plane
+ */
 struct Point2D {
     double x, y;
 };
 
+/**
+ * Struct for representing a directed vector from start point to end point in 2D plane
+ */
 struct DirectedVector2D {
     Point2D start;
     Point2D end;
 
+    /** @return a Vector2D direction vector from this struct */
     Vector2D direction() const { return Vector2D{end.x - start.x, end.y - start.y}; }
 
+    /** @return the distance between start and end points */
     double length() const {
         auto d = direction();
         return std::sqrt(d.x() * d.x() + d.y() * d.y());
