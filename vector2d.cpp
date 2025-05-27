@@ -1,8 +1,10 @@
 #include "doctest.h"
+#include <cmath>
 
 class Vector2D {
   public:
     Vector2D(const double x, const double y) : x_(x), y_(y) {}
+    // TODO: Vector2D from magnitude and direction
     double x() const { return x_; }
     double y() const { return y_; }
 
@@ -18,6 +20,9 @@ class Vector2D {
 
     double length() const { return std::sqrt(x_ * x_ + y_ * y_); }
 
+    /** @return the direction of the vector in radians */
+    double direction() const { return atan2(y_, x_); }
+    
   private:
     double x_;
     double y_;
@@ -68,6 +73,11 @@ TEST_CASE("Operator -") {
     Vector2D b = {5, -1};
     Vector2D expected = {-3, 4};
     CHECK_EQ(a - b, expected);
+}
+
+TEST_CASE("direction") {
+    Vector2D v = {3, 4};
+    REQUIRE(v.direction() == doctest::Approx(0.93).epsilon(0.01)); 
 }
 
 TEST_CASE("DirectedVector direction and length") {
