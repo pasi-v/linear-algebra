@@ -156,6 +156,15 @@ TEST_CASE("fromPolar in quadrant 2") {
     CHECK(v.y() == doctest::Approx(1.73).epsilon(0.01));
 }
 
+TEST_CASE("sum from magnitudes and angles in quadrant 4") {
+    // This is the way these are often presented in maths problems:
+    Vector2D v = Vector2D::fromPolar(math_utils::toRadians(20), 8);
+    Vector2D w = Vector2D::fromPolar(math_utils::toRadians(240), 5);
+    Vector2D sum = v + w;
+    CHECK(sum.directionDeg0To360() == doctest::Approx(342.4).epsilon(0.1));
+    CHECK(sum.length() == doctest::Approx(4.8).epsilon(0.1));
+}
+
 TEST_CASE("DirectedVector direction and length") {
     DirectedVector2D dv = {{2, 3}, {5, -1}};
     Vector2D direction = dv.direction();
