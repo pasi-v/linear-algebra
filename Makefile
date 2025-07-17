@@ -3,7 +3,7 @@ CXX      := clang++
 CXXFLAGS := -std=c++11 -Wall -Wextra -g
 
 # Source and target
-SRC      := test_main.cpp vector.cpp vector2d.cpp vector3d.cpp test_math_utils.cpp
+SRC      := test_main.cpp vector.cpp vector2d.cpp vector3d.cpp test_math_utils.cpp matrix.cpp
 HEADERS  := math_utils.h
 TARGET   := tests
 
