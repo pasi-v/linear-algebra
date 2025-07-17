@@ -51,3 +51,6 @@ compile_commands.json
 # Sublime Text project files (if you're using Sublime too)
 *.sublime-project
 *.sublime-workspace
+
+# Geany project files
+*.geany
