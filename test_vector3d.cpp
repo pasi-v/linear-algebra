@@ -8,3 +8,11 @@ TEST_CASE("Cross product") {
     Vector3D n = u.crossProduct(v);
     CHECK_EQ(n, expected);
 }
+
+TEST_CASE("Dot product") {
+    Vector3D u = {1, 2, -3};
+    Vector3D v = {-3, 5, 2};
+    double expected = 1.0;
+
+    CHECK_EQ(u.dotProduct(v), expected);
+}

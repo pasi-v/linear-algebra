@@ -15,6 +15,8 @@ class Vector3D {
                         x() * v.y() - y() * v.x());
     }
 
+    double dotProduct(const Vector3D v) const { return x_ * v.x() + y_ * v.y() + z_ * v.z(); }
+
   private:
     double x_;
     double y_;
