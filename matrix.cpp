@@ -1,4 +1,5 @@
 #include "doctest.h"
+#include <initializer_list>
 #include <stdexcept>
 #include <vector>
 
@@ -9,6 +10,9 @@ class Matrix {
   public:
     /** @return Matrix with size m x n, or rows x cols, initialised to value */
     Matrix(size_t rows, size_t cols, double value = 0.0);
+
+    /** @return Matrix with size rows x cols from initializer list data */
+    Matrix(size_t rows, size_t cols, std::initializer_list<double> data);
 
     /** @return the element at i,j without range check */
     double operator()(size_t i, size_t j) const { return data_.at(i * cols_ + j); }
@@ -30,6 +34,14 @@ Matrix::Matrix(size_t rows, size_t cols, double value)
     : rows_(rows), cols_(cols), data_(rows * cols, value) {
     if (rows < 0 || cols < 0)
         throw std::length_error{"Matrix size can't be negative"};
+}
+
+Matrix::Matrix(size_t rows, size_t cols, std::initializer_list<double> data)
+    : rows_(rows), cols_(cols) {
+    if (rows < 0 || cols < 0 || rows * cols != data.size()) {
+        throw std::length_error{"Matrix dimensions did not match with elements in data"};
+    }
+    data_ = data; // Initialize data only after the check
 }
 
 TEST_CASE("m x n Zero Matrix()") {
@@ -72,4 +84,19 @@ TEST_CASE("Construct matrix of size 0 does not throw") {
     Matrix m(0, 0);
     CHECK(m.rows() == 0);
     CHECK(m.cols() == 0);
+}
+
+TEST_CASE("Construct Matrix with initializer, happy case") {
+    Matrix m(2, 2, {0, 1, 2, 3});
+    CHECK(m.rows() == 2);
+    CHECK(m.cols() == 2);
+    CHECK(m(0, 0) == 0);
+    CHECK(m(0, 1) == 1);
+    CHECK(m(1, 0) == 2);
+    CHECK(m(1, 1) == 3);
+}
+
+TEST_CASE("Construct Matrix with initializer, wrong size") {
+    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2}), std::length_error);
+    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2, 3, 4}), std::length_error);
 }
