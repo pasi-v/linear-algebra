@@ -43,6 +43,12 @@ class Plane3D {
      */
     Plane3D(const Vector3D p, const Vector3D u, const Vector3D v) : p_(p), u_(u), v_(v) {}
 
+    static Plane3D from_points(const Vector3D p, const Vector3D q, const Vector3D r) {
+        Vector3D u = q - p;
+        Vector3D v = r - p;
+        return Plane3D(p, u, v);
+    }
+
     PlaneEquation to_standard_form() const;
 
   private:
@@ -66,5 +72,15 @@ TEST_CASE("Plane equation") {
     PlaneEquation actual = plane.to_standard_form();
     // We don't do simplification by gcd or normalization yet.
     PlaneEquation expected = {3, 3, -3, 9};
+    CHECK(actual == expected);
+}
+
+TEST_CASE("Plane equation from points") {
+    Vector3D p = {0, -1, 1};
+    Vector3D q = {2, 0, 2};
+    Vector3D r = {1, 2, -1};
+    Plane3D plane = Plane3D::from_points(p, q, r);
+    PlaneEquation actual = plane.to_standard_form();
+    PlaneEquation expected = {-5, 5, 5, 0};
     CHECK(actual == expected);
 }
