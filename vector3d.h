@@ -10,6 +10,10 @@ class Vector3D {
         return a.x() == b.x() && a.y() == b.y() && a.z() == b.z();
     }
 
+    Vector3D operator-(const Vector3D v) const {
+        return Vector3D(x() - v.x(), y() - v.y(), z() - v.z());
+    }
+
     Vector3D crossProduct(Vector3D v) const {
         return Vector3D(y() * v.z() - z() * v.y(), z() * v.x() - x() * v.z(),
                         x() * v.y() - y() * v.x());

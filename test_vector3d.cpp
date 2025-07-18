@@ -1,6 +1,13 @@
 #include "doctest.h"
 #include "vector3d.h"
 
+TEST_CASE("Operator -") {
+    Vector3D u = {2, 0, 2};
+    Vector3D v = {0, -1, 1};
+    Vector3D expected = {2, 1, 1};
+    CHECK_EQ(u - v, expected);
+}
+
 TEST_CASE("Cross product") {
     Vector3D u = {0, 1, 1};
     Vector3D v = {3, -1, 2};
