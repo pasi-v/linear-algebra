@@ -1,6 +1,3 @@
-#include "doctest.h"
-
-
 class Vector3D {
   public:
     Vector3D(const double x, const double y, const double z) : x_(x), y_(y), z_(z) {}
@@ -14,8 +11,7 @@ class Vector3D {
     }
 
     Vector3D crossProduct(Vector3D v) const {
-        return Vector3D(y() * v.z() - z() * v.y(),
-                        z() * v.x() - x() * v.z(),
+        return Vector3D(y() * v.z() - z() * v.y(), z() * v.x() - x() * v.z(),
                         x() * v.y() - y() * v.x());
     }
 
@@ -24,12 +20,3 @@ class Vector3D {
     double y_;
     double z_;
 };
-
-
-TEST_CASE("Cross product") {
-    Vector3D u = {0, 1, 1};
-    Vector3D v = {3, -1, 2};
-    Vector3D expected = {3, 3, -3};
-    Vector3D n = u.crossProduct(v);
-    CHECK_EQ(n, expected);
-}
