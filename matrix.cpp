@@ -17,6 +17,11 @@ class Matrix {
     /** @return the element at i,j without range check */
     double operator()(size_t i, size_t j) const { return data_.at(i * cols_ + j); }
 
+    /** @return true if the matrices have same dimensions and elements */
+    friend bool operator==(const Matrix &a, const Matrix &b) {
+        return a.rows_ == b.rows_ && a.cols_ == b.cols_ && a.data_ == b.data_;
+    }
+
     /** @return rows */
     size_t rows() const { return rows_; }
 
@@ -99,4 +104,22 @@ TEST_CASE("Construct Matrix with initializer, happy case") {
 TEST_CASE("Construct Matrix with initializer, wrong size") {
     CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2}), std::length_error);
     CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2, 3, 4}), std::length_error);
+}
+
+TEST_CASE("Matrices with same dimensions and elements are equal") {
+	Matrix a(2, 2, {1, 2, 3, 4});
+	Matrix b(2, 2, {1, 2, 3, 4});
+	CHECK_EQ(a, b);
+}
+
+TEST_CASE("Matrices with different dimensions and same elements are not equal") {
+	Matrix a(2, 2, {1, 2, 3, 4});
+	Matrix b(1, 4, {1, 2, 3, 4});
+	CHECK(!(a == b));
+}
+
+TEST_CASE("Matrices with same dimensions and different elements are not equal") {
+	Matrix a(2, 2, {1, 2, 3, 4});
+	Matrix b(2, 2, {1, 2, 3, 100});
+	CHECK(!(a == b));
 }
