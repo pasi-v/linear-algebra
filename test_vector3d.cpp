@@ -23,3 +23,12 @@ TEST_CASE("Dot product") {
 
     CHECK_EQ(u.dotProduct(v), expected);
 }
+
+TEST_CASE("Cross product and dot product is zero") {
+    Vector3D u = {0, 1, 1};
+    Vector3D v = {3, -1, 2};
+    Vector3D uxv = u.crossProduct(v);
+    
+    CHECK_EQ(uxv.dotProduct(u), 0);
+    CHECK_EQ(uxv.dotProduct(v), 0);
+}
