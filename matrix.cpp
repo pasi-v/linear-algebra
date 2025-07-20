@@ -42,6 +42,25 @@ class Matrix {
         return v;
     }
 
+    /**
+     * Get column i from the matrix as Vector.
+     *
+     * @param i the zero-based column index.
+     * @return the ith column as Vector.
+     * @throws std::length_error if i < 0 or i >= number of columns in matrix.
+     */
+    Vector column(size_t i) const {
+        if (i < 0 || i >= cols_) {
+            throw std::length_error{"Column index does not match matrix dimensions"};
+        }
+
+        Vector v(rows_);
+        for (size_t j = 0; j < rows_; j++) {
+            v[j] = (*this)(j, i);
+        }
+        return v;
+    }
+
     /** @return rows */
     size_t rows() const { return rows_; }
 
@@ -159,4 +178,21 @@ TEST_CASE("Get Matrix row, negative index") {
 TEST_CASE("Get Matrix row, index larger than last row index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
     CHECK_THROWS_AS(m.row(3), std::length_error);
+}
+
+TEST_CASE("Get Matrix column, happy case") {
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    Vector v = m.column(1);
+    Vector expected{2, 5, 8};
+    CHECK_EQ(v, expected);
+}
+
+TEST_CASE("Get Matrix column, negative index") {
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    CHECK_THROWS_AS(m.column(-1), std::length_error);
+}
+
+TEST_CASE("Get Matrix column, index larger than last row index") {
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    CHECK_THROWS_AS(m.column(3), std::length_error);
 }
