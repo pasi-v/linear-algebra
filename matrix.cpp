@@ -1,8 +1,8 @@
 #include "doctest.h"
+#include "vector.h"
 #include <initializer_list>
 #include <stdexcept>
 #include <vector>
-#include "vector.h"
 
 /**
  * A class for representing an m x n matrix.
@@ -22,15 +22,25 @@ class Matrix {
     friend bool operator==(const Matrix &a, const Matrix &b) {
         return a.rows_ == b.rows_ && a.cols_ == b.cols_ && a.data_ == b.data_;
     }
-    
-    /** @return row */
+
+    /**
+     * Get row i from the matrix as Vector.
+     *
+     * @param i the zero-based row index.
+     * @return the ith row as Vector.
+     * @throws std::length_error if i < 0 or i >= number of rows in matrix
+     */
     Vector row(size_t i) const {
-		Vector v(cols_);
-		for (size_t j = 0; j < cols_; j++) {
-			v[j] = (*this)(i, j);
-		}
-		return v;
-	}
+        if (i < 0 || i >= rows_) {
+            throw std::length_error{"Row index does not match matrix dimensions"};
+        }
+
+        Vector v(cols_);
+        for (size_t j = 0; j < cols_; j++) {
+            v[j] = (*this)(i, j);
+        }
+        return v;
+    }
 
     /** @return rows */
     size_t rows() const { return rows_; }
@@ -117,26 +127,36 @@ TEST_CASE("Construct Matrix with initializer, wrong size") {
 }
 
 TEST_CASE("Matrices with same dimensions and elements are equal") {
-	Matrix a(2, 2, {1, 2, 3, 4});
-	Matrix b(2, 2, {1, 2, 3, 4});
-	CHECK_EQ(a, b);
+    Matrix a(2, 2, {1, 2, 3, 4});
+    Matrix b(2, 2, {1, 2, 3, 4});
+    CHECK_EQ(a, b);
 }
 
 TEST_CASE("Matrices with different dimensions and same elements are not equal") {
-	Matrix a(2, 2, {1, 2, 3, 4});
-	Matrix b(1, 4, {1, 2, 3, 4});
-	CHECK(!(a == b));
+    Matrix a(2, 2, {1, 2, 3, 4});
+    Matrix b(1, 4, {1, 2, 3, 4});
+    CHECK(!(a == b));
 }
 
 TEST_CASE("Matrices with same dimensions and different elements are not equal") {
-	Matrix a(2, 2, {1, 2, 3, 4});
-	Matrix b(2, 2, {1, 2, 3, 100});
-	CHECK(!(a == b));
+    Matrix a(2, 2, {1, 2, 3, 4});
+    Matrix b(2, 2, {1, 2, 3, 100});
+    CHECK(!(a == b));
 }
 
 TEST_CASE("Get Matrix row, happy case") {
-	Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-	Vector v = m.row(1);
-	Vector expected{4, 5, 6};
-	CHECK_EQ(v, expected);
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    Vector v = m.row(1);
+    Vector expected{4, 5, 6};
+    CHECK_EQ(v, expected);
+}
+
+TEST_CASE("Get Matrix row, negative index") {
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    CHECK_THROWS_AS(m.row(-1), std::length_error);
+}
+
+TEST_CASE("Get Matrix row, index larger than last row index") {
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    CHECK_THROWS_AS(m.row(3), std::length_error);
 }
