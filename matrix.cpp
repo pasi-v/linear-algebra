@@ -24,6 +24,16 @@ class Matrix {
     }
 
     /**
+     * Determine do the matrices have same dimensions.
+     *
+     * @param m the other matrix.
+     * @return true if the matrices have same number of rows and columns, false otherwise.
+     */
+    bool has_same_dimensions(const Matrix m) const {
+        return rows_ == m.rows() && cols_ == m.cols();
+    }
+
+    /**
      * Get row i from the matrix as Vector.
      *
      * @param i the zero-based row index.
@@ -195,4 +205,25 @@ TEST_CASE("Get Matrix column, negative index") {
 TEST_CASE("Get Matrix column, index larger than last row index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
     CHECK_THROWS_AS(m.column(3), std::length_error);
+}
+
+TEST_CASE("Same dimensions") {
+    Matrix a(2, 2);
+    Matrix b(2, 2);
+    CHECK(a.has_same_dimensions(b));
+    CHECK(b.has_same_dimensions(a));
+}
+
+TEST_CASE("Has same dimensions, different rows") {
+    Matrix a(2, 2);
+    Matrix b(3, 2);
+    CHECK(!(a.has_same_dimensions(b)));
+    CHECK(!(b.has_same_dimensions(a)));
+}
+
+TEST_CASE("Has same dimensions, different columns") {
+    Matrix a(2, 2);
+    Matrix b(2, 3);
+    CHECK(!(a.has_same_dimensions(b)));
+    CHECK(!(b.has_same_dimensions(a)));
 }
