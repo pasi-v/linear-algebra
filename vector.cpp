@@ -6,11 +6,10 @@
 #include <stdexcept>
 #include <vector>
 
-Vector::Vector(int s)
-    : data_(s) // construct the vector with s default-initialised elements
-{
+Vector::Vector(int s) {
     if (s < 0)
-        throw std::length_error{"Vector size can't be negative"};
+        throw std::out_of_range{"Vector size can't be negative"};
+    data_ = std::vector<double>(s);
 }
 
 Vector Vector::operator+(const Vector &v) const {
@@ -71,7 +70,7 @@ TEST_CASE("Vector()") {
 }
 
 TEST_CASE("Construct vector with negative size throws") {
-    CHECK_THROWS_AS(Vector(-1), std::length_error);
+    CHECK_THROWS_AS(Vector(-1), std::out_of_range);
 }
 
 TEST_CASE("Construct vector of size 0 does not throw") {

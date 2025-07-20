@@ -10,13 +10,13 @@
 class Matrix {
   public:
     /** @return Matrix with size m x n, or rows x cols, initialised to value */
-    Matrix(size_t rows, size_t cols, double value = 0.0);
+    Matrix(int rows, int cols, double value = 0.0);
 
     /** @return Matrix with size rows x cols from initializer list data */
-    Matrix(size_t rows, size_t cols, std::initializer_list<double> data);
+    Matrix(int rows, int cols, std::initializer_list<double> data);
 
     /** @return the element at i,j without range check */
-    double operator()(size_t i, size_t j) const { return data_.at(i * cols_ + j); }
+    double operator()(int i, int j) const { return data_.at(i * cols_ + j); }
 
     /** @return true if the matrices have same dimensions and elements */
     friend bool operator==(const Matrix &a, const Matrix &b) {
@@ -38,18 +38,18 @@ class Matrix {
      *
      * @param i the zero-based row index.
      * @return the ith row as Vector.
-     * @throws std::length_error if i < 0 or i >= number of rows in matrix
+     * @throws std::out_of_range if i < 0 or i >= number of rows in matrix
      */
-    Vector row(size_t i) const;
+    Vector row(int i) const;
 
     /**
      * Get column i from the matrix as Vector.
      *
      * @param i the zero-based column index.
      * @return the ith column as Vector.
-     * @throws std::length_error if i < 0 or i >= number of columns in matrix.
+     * @throws std::out_of_range if i < 0 or i >= number of columns in matrix.
      */
-    Vector column(size_t i) const;
+    Vector column(int i) const;
 
     /** @return rows */
     size_t rows() const { return rows_; }
@@ -63,24 +63,24 @@ class Matrix {
     std::vector<double> data_;
 };
 
-Matrix::Matrix(size_t rows, size_t cols, double value)
-    // construct the matrix with rows x cols default-initialised elements
-    : rows_(rows), cols_(cols), data_(rows * cols, value) {
+Matrix::Matrix(int rows, int cols, double value) {
     if (rows < 0 || cols < 0)
-        throw std::length_error{"Matrix size can't be negative"};
+        throw std::out_of_range{"Matrix size can't be negative"};
+    rows_ = rows;
+    cols_ = cols;
+    data_ = std::vector<double>(rows * cols, value);
 }
 
-Matrix::Matrix(size_t rows, size_t cols, std::initializer_list<double> data)
-    : rows_(rows), cols_(cols) {
-    if (rows < 0 || cols < 0 || rows * cols != data.size()) {
-        throw std::length_error{"Matrix dimensions did not match with elements in data"};
+Matrix::Matrix(int rows, int cols, std::initializer_list<double> data) : rows_(rows), cols_(cols) {
+    if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
+        throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
 }
 
-Vector Matrix::row(size_t i) const {
-    if (i < 0 || i >= rows_) {
-        throw std::length_error{"Row index does not match matrix dimensions"};
+Vector Matrix::row(int i) const {
+    if (i < 0 || static_cast<size_t>(i) >= rows_) {
+        throw std::out_of_range{"Row index does not match matrix dimensions"};
     }
 
     Vector v(cols_);
@@ -90,9 +90,9 @@ Vector Matrix::row(size_t i) const {
     return v;
 }
 
-Vector Matrix::column(size_t i) const {
-    if (i < 0 || i >= cols_) {
-        throw std::length_error{"Column index does not match matrix dimensions"};
+Vector Matrix::column(int i) const {
+    if (i < 0 || static_cast<size_t>(i) >= cols_) {
+        throw std::out_of_range{"Column index does not match matrix dimensions"};
     }
 
     Vector v(rows_);
@@ -134,8 +134,8 @@ TEST_CASE("m x n initialised Matrix()") {
 }
 
 TEST_CASE("Construct matrix with negative rows or columns throws") {
-    CHECK_THROWS_AS(Matrix(-1, 1), std::length_error);
-    CHECK_THROWS_AS(Matrix(1, -1), std::length_error);
+    CHECK_THROWS_AS(Matrix(-1, 1), std::out_of_range);
+    CHECK_THROWS_AS(Matrix(1, -1), std::out_of_range);
 }
 
 TEST_CASE("Construct matrix of size 0 does not throw") {
@@ -155,8 +155,8 @@ TEST_CASE("Construct Matrix with initializer, happy case") {
 }
 
 TEST_CASE("Construct Matrix with initializer, wrong size") {
-    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2}), std::length_error);
-    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2, 3, 4}), std::length_error);
+    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2}), std::out_of_range);
+    CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2, 3, 4}), std::out_of_range);
 }
 
 TEST_CASE("Matrices with same dimensions and elements are equal") {
@@ -186,12 +186,12 @@ TEST_CASE("Get Matrix row, happy case") {
 
 TEST_CASE("Get Matrix row, negative index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-    CHECK_THROWS_AS(m.row(-1), std::length_error);
+    CHECK_THROWS_AS(m.row(-1), std::out_of_range);
 }
 
 TEST_CASE("Get Matrix row, index larger than last row index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-    CHECK_THROWS_AS(m.row(3), std::length_error);
+    CHECK_THROWS_AS(m.row(3), std::out_of_range);
 }
 
 TEST_CASE("Get Matrix column, happy case") {
@@ -203,12 +203,12 @@ TEST_CASE("Get Matrix column, happy case") {
 
 TEST_CASE("Get Matrix column, negative index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-    CHECK_THROWS_AS(m.column(-1), std::length_error);
+    CHECK_THROWS_AS(m.column(-1), std::out_of_range);
 }
 
 TEST_CASE("Get Matrix column, index larger than last row index") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
-    CHECK_THROWS_AS(m.column(3), std::length_error);
+    CHECK_THROWS_AS(m.column(3), std::out_of_range);
 }
 
 TEST_CASE("Same dimensions") {
