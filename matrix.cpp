@@ -20,7 +20,7 @@ class Matrix {
 
     /** @return true if the matrices have same dimensions and elements */
     friend bool operator==(const Matrix &a, const Matrix &b) {
-        return a.rows_ == b.rows_ && a.cols_ == b.cols_ && a.data_ == b.data_;
+        return a.has_same_dimensions(b) && a.data_ == b.data_;
     }
 
     /**
