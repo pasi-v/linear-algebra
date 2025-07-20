@@ -40,17 +40,7 @@ class Matrix {
      * @return the ith row as Vector.
      * @throws std::length_error if i < 0 or i >= number of rows in matrix
      */
-    Vector row(size_t i) const {
-        if (i < 0 || i >= rows_) {
-            throw std::length_error{"Row index does not match matrix dimensions"};
-        }
-
-        Vector v(cols_);
-        for (size_t j = 0; j < cols_; j++) {
-            v[j] = (*this)(i, j);
-        }
-        return v;
-    }
+    Vector row(size_t i) const;
 
     /**
      * Get column i from the matrix as Vector.
@@ -59,17 +49,7 @@ class Matrix {
      * @return the ith column as Vector.
      * @throws std::length_error if i < 0 or i >= number of columns in matrix.
      */
-    Vector column(size_t i) const {
-        if (i < 0 || i >= cols_) {
-            throw std::length_error{"Column index does not match matrix dimensions"};
-        }
-
-        Vector v(rows_);
-        for (size_t j = 0; j < rows_; j++) {
-            v[j] = (*this)(j, i);
-        }
-        return v;
-    }
+    Vector column(size_t i) const;
 
     /** @return rows */
     size_t rows() const { return rows_; }
@@ -96,6 +76,30 @@ Matrix::Matrix(size_t rows, size_t cols, std::initializer_list<double> data)
         throw std::length_error{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
+}
+
+Vector Matrix::row(size_t i) const {
+    if (i < 0 || i >= rows_) {
+        throw std::length_error{"Row index does not match matrix dimensions"};
+    }
+
+    Vector v(cols_);
+    for (size_t j = 0; j < cols_; j++) {
+        v[j] = (*this)(i, j);
+    }
+    return v;
+}
+
+Vector Matrix::column(size_t i) const {
+    if (i < 0 || i >= cols_) {
+        throw std::length_error{"Column index does not match matrix dimensions"};
+    }
+
+    Vector v(rows_);
+    for (size_t j = 0; j < rows_; j++) {
+        v[j] = (*this)(j, i);
+    }
+    return v;
 }
 
 TEST_CASE("m x n Zero Matrix()") {
