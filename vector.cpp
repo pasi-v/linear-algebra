@@ -1,10 +1,10 @@
+#include "vector.h"
 #include "doctest.h"
 #include <cmath>
 #include <initializer_list>
 #include <ostream>
 #include <stdexcept>
 #include <vector>
-#include "vector.h"
 
 Vector::Vector(int s)
     : data_(s) // construct the vector with s default-initialised elements
