@@ -16,12 +16,24 @@ class Matrix {
     Matrix(int rows, int cols, std::initializer_list<double> data);
 
     /** @return the element at i,j without range check */
-    double operator()(int i, int j) const { return data_.at(i * cols_ + j); }
+    double operator()(int i, int j) const { return data_[i * cols_ + j]; }
+
+    /** @return the element at i,j, writeable and without range check */
+    double &operator()(int i, int j) { return data_[i * cols_ + j]; }
 
     /** @return true if the matrices have same dimensions and elements */
     friend bool operator==(const Matrix &a, const Matrix &b) {
         return a.has_same_dimensions(b) && a.data_ == b.data_;
     }
+
+    /**
+     * Matrix addition operator.
+     *
+     * @param m matrix to add to this one.
+     * @return the sum of the matrices.
+     * @throws std::invalid_argument if the matrix dimensions do not match
+     */
+    Matrix operator+(const Matrix &m) const;
 
     /**
      * Determine do the matrices have same dimensions.
@@ -76,6 +88,22 @@ Matrix::Matrix(int rows, int cols, std::initializer_list<double> data) : rows_(r
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
+}
+
+Matrix Matrix::operator+(const Matrix &m) const {
+    if (!has_same_dimensions(m)) {
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+    }
+
+    Matrix result(rows_, cols_);
+
+    for (size_t i = 0; i < rows_; i++) {
+        for (size_t j = 0; j < cols_; j++) {
+            result(i, j) = (*this)(i, j) + m(i, j);
+        }
+    }
+
+    return result;
 }
 
 Vector Matrix::row(int i) const {
@@ -230,4 +258,17 @@ TEST_CASE("Has same dimensions, different columns") {
     Matrix b(2, 3);
     CHECK(!(a.has_same_dimensions(b)));
     CHECK(!(b.has_same_dimensions(a)));
+}
+
+TEST_CASE("Operator +, happy case") {
+    Matrix a(2, 2, {1, 2, 3, 4});
+    Matrix b(2, 2, {8, 6, 5, 4});
+    Matrix expected(2, 2, {9, 8, 8, 8});
+    CHECK_EQ(a + b, expected);
+}
+
+TEST_CASE("Operator +, different dimensions") {
+    Matrix a(2, 2);
+    Matrix b(2, 3);
+    CHECK_THROWS_AS(a + b, std::invalid_argument);
 }
