@@ -6,6 +6,12 @@
 #include <stdexcept>
 #include <vector>
 
+Vector Vector::from_values(std::initializer_list<double> data) {
+    Vector v(static_cast<int>(data.size()));
+    std::copy(data.begin(), data.end(), v.data_.begin());
+    return v;
+}
+
 Vector::Vector(int s) {
     if (s < 0)
         throw std::out_of_range{"Vector size can't be negative"};
@@ -105,19 +111,19 @@ TEST_CASE("Subscript operator larger than size throws") {
 }
 
 TEST_CASE("Vector comparison") {
-    Vector u{1.0, 2.0};
-    Vector v{1.0, 2.0};
-    Vector w{1.0, 3.0};
+    Vector u = Vector::from_values({1.0, 2.0});
+    Vector v = Vector::from_values({1.0, 2.0});
+    Vector w = Vector::from_values({1.0, 3.0});
 
     CHECK(u == v);
     CHECK_FALSE(u == w);
 }
 
 TEST_CASE("Vector addition happy path") {
-    Vector u{1, 2};
-    Vector v{2, 2};
+    Vector u = Vector::from_values({1, 2});
+    Vector v = Vector::from_values({2, 2});
     Vector sum = u + v;
-    Vector expected = {3, 4};
+    Vector expected = Vector::from_values({3, 4});
     CHECK(sum == expected);
 }
 
@@ -129,17 +135,17 @@ TEST_CASE("Vector addition different sizes throws") {
 
 TEST_CASE("Vector scalar multiplication happy path") {
     int c = 2;
-    Vector v{-2, 4};
+    Vector v = Vector::from_values({-2, 4});
     Vector cv = v * c;
-    Vector expected = {-4, 8};
+    Vector expected = Vector::from_values({-4, 8});
     CHECK(cv == expected);
 }
 
 TEST_CASE("Vector subtraction happy path") {
-    Vector u{1, 2};
-    Vector v{2, 2};
+    Vector u = Vector::from_values({1, 2});
+    Vector v = Vector::from_values({2, 2});
     Vector diff = u - v;
-    Vector expected = {-1, 0};
+    Vector expected = Vector::from_values({-1, 0});
     CHECK(diff == expected);
 }
 
@@ -150,8 +156,8 @@ TEST_CASE("Vector subtraction different sizes throws") {
 }
 
 TEST_CASE("Dot product happy case") {
-    Vector u{1, 2, -3};
-    Vector v{-3, 5, 2};
+    Vector u = Vector::from_values({1, 2, -3});
+    Vector v = Vector::from_values({-3, 5, 2});
     double result = u.dot_product(v);
     CHECK(result == 1.0);
 }
@@ -163,13 +169,13 @@ TEST_CASE("Dot product different sizes throws") {
 }
 
 TEST_CASE("Vector length") {
-    Vector u{2, 3};
+    Vector u = Vector::from_values({2, 3});
     CHECK(u.length() == std::sqrt(13.0));
 }
 
 TEST_CASE("Vector difference happy path") {
-    Vector u{std::sqrt(2), 1, -1};
-    Vector v{0, 2, -2};
+    Vector u = Vector::from_values({std::sqrt(2), 1, -1});
+    Vector v = Vector::from_values({0, 2, -2});
     CHECK(u.difference(v) == 2.0);
 }
 
@@ -180,8 +186,8 @@ TEST_CASE("Difference different sizes throws") {
 }
 
 TEST_CASE("Angle happy path") {
-    Vector u{2, 1, -2};
-    Vector v{1, 1, 1};
+    Vector u = Vector::from_values({2, 1, -2});
+    Vector v = Vector::from_values({1, 1, 1});
     double result = u.angle(v);
     CHECK(result == doctest::Approx(1.377).epsilon(0.01));
 }
@@ -193,10 +199,10 @@ TEST_CASE("Angle different sizes throws") {
 }
 
 TEST_CASE("Projection happy path") {
-    Vector u{2, 1};
-    Vector v{-1, 3};
+    Vector u = Vector::from_values({2, 1});
+    Vector v = Vector::from_values({-1, 3});
     Vector result = u.proj(v);
-    Vector expected{2.0 / 5.0, 1.0 / 5.0};
+    Vector expected = Vector::from_values({2.0 / 5.0, 1.0 / 5.0});
     CHECK(result == expected);
 }
 

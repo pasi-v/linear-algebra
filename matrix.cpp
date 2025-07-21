@@ -208,7 +208,7 @@ TEST_CASE("Matrices with same dimensions and different elements are not equal") 
 TEST_CASE("Get Matrix row, happy case") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
     Vector v = m.row(1);
-    Vector expected{4, 5, 6};
+    Vector expected = Vector::from_values({4, 5, 6});
     CHECK_EQ(v, expected);
 }
 
@@ -225,7 +225,7 @@ TEST_CASE("Get Matrix row, index larger than last row index") {
 TEST_CASE("Get Matrix column, happy case") {
     Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
     Vector v = m.column(1);
-    Vector expected{2, 5, 8};
+    Vector expected = Vector::from_values({2, 5, 8});
     CHECK_EQ(v, expected);
 }
 

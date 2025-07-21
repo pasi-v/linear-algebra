@@ -7,10 +7,10 @@
 class Vector {
   public:
     /** @return a Vector from the initializer list data */
-    Vector(std::initializer_list<double> data) : data_(std::move(data)) {}
+    static Vector from_values(std::initializer_list<double> data);
 
     /** @return a Zero Vector with size s */
-    Vector(int s);
+    explicit Vector(int s);
 
     /** @return the element at i with range check */
     double &operator[](int i) { return data_.at(i); }
