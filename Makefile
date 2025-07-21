@@ -4,13 +4,13 @@ CXXFLAGS := -std=c++11 -Wall -Wextra -Wtype-limits -g
 
 # Source and target
 SRC      := test_main.cpp vector.cpp vector2d.cpp plane3d.cpp test_vector3d.cpp test_math_utils.cpp matrix.cpp
-HEADERS  := math_utils.h vector3d.h
+HEADERS  := math_utils.h vector.h vector3d.h
 TARGET   := tests
 
 # Default build rule
 all: $(TARGET)
 
-$(TARGET): $(SRC)
+$(TARGET): $(SRC) $(HEADERS)
 	$(CXX) $(CXXFLAGS) -o $(TARGET) $(SRC)
 
 # Run tests
