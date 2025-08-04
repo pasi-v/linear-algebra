@@ -45,6 +45,14 @@ class Matrix {
     Matrix operator-(const Matrix &m) const;
 
     /**
+     * Matrix scalar multiplication.
+     *
+     * @param c scalar with which to multiply this matrix.
+     * @return the matrix multiplied with the scalar.
+     */
+    Matrix operator*(double c) const;
+
+    /**
      * Determine do the matrices have same dimensions.
      *
      * @param m the other matrix.
@@ -125,6 +133,18 @@ Matrix Matrix::operator-(const Matrix &m) const {
     for (size_t i = 0; i < rows_; i++) {
         for (size_t j = 0; j < cols_; j++) {
             result(i, j) = (*this)(i, j) - m(i, j);
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::operator*(double c) const {
+    Matrix result(rows_, cols_);
+
+    for (size_t i = 0; i < rows_; i++) {
+        for (size_t j = 0; j < cols_; j++) {
+            result(i, j) = (*this)(i, j) * c;
         }
     }
 
@@ -309,4 +329,10 @@ TEST_CASE("Operator -, different dimensions") {
     Matrix a(2, 2);
     Matrix b(2, 3);
     CHECK_THROWS_AS(a + b, std::invalid_argument);
+}
+
+TEST_CASE("Matrix * scalar") {
+    Matrix m(2, 2, {1, 2, 3, 4});
+    Matrix expected(2, 2, {2, 4, 6, 8});
+    CHECK_EQ(m * 2, expected);
 }
