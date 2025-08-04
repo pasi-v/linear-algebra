@@ -36,6 +36,15 @@ class Matrix {
     Matrix operator+(const Matrix &m) const;
 
     /**
+     * Matrix subtraction operator.
+     *
+     * @param m matrix to subtract from this one.
+     * @return the difference of the matrices.
+     * @throws std::invalid_argument if the matrix dimensions do not match
+     */
+    Matrix operator-(const Matrix &m) const;
+
+    /**
      * Determine do the matrices have same dimensions.
      *
      * @param m the other matrix.
@@ -100,6 +109,22 @@ Matrix Matrix::operator+(const Matrix &m) const {
     for (size_t i = 0; i < rows_; i++) {
         for (size_t j = 0; j < cols_; j++) {
             result(i, j) = (*this)(i, j) + m(i, j);
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::operator-(const Matrix &m) const {
+    if (!has_same_dimensions(m)) {
+        throw std::invalid_argument("Matrix dimensions must match for addition");
+    }
+
+    Matrix result(rows_, cols_);
+
+    for (size_t i = 0; i < rows_; i++) {
+        for (size_t j = 0; j < cols_; j++) {
+            result(i, j) = (*this)(i, j) - m(i, j);
         }
     }
 
@@ -268,6 +293,19 @@ TEST_CASE("Operator +, happy case") {
 }
 
 TEST_CASE("Operator +, different dimensions") {
+    Matrix a(2, 2);
+    Matrix b(2, 3);
+    CHECK_THROWS_AS(a + b, std::invalid_argument);
+}
+
+TEST_CASE("Operator -, happy case") {
+    Matrix a(2, 2, {1, 2, 3, 4});
+    Matrix b(2, 2, {8, 6, 5, 4});
+    Matrix expected(2, 2, {-7, -4, -2, 0});
+    CHECK_EQ(a - b, expected);
+}
+
+TEST_CASE("Operator -, different dimensions") {
     Matrix a(2, 2);
     Matrix b(2, 3);
     CHECK_THROWS_AS(a + b, std::invalid_argument);
