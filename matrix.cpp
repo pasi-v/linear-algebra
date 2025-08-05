@@ -53,6 +53,16 @@ class Matrix {
     Matrix operator*(double c) const;
 
     /**
+     * Matrix matrix multiplication.
+     *
+     * @param m the other matrix.
+     * @return the result of the multiplication.
+     * @throws std::invalid_argument if the number of columns in this
+     * matrix does not match the number of rows in m.
+     */
+    Matrix operator*(const Matrix &m) const;
+
+    /**
      * Determine do the matrices have same dimensions.
      *
      * @param m the other matrix.
@@ -145,6 +155,25 @@ Matrix Matrix::operator*(double c) const {
     for (size_t i = 0; i < rows_; i++) {
         for (size_t j = 0; j < cols_; j++) {
             result(i, j) = (*this)(i, j) * c;
+        }
+    }
+
+    return result;
+}
+
+Matrix Matrix::operator*(const Matrix &m) const {
+    if (cols_ != m.rows()) {
+        throw std::invalid_argument("Left matrix columns must match right matrix rows");
+    }
+
+    Matrix result(rows_, m.cols());
+
+    for (size_t i = 0; i < rows_; i++) {
+        Vector r = row(i);
+
+        for (size_t j = 0; j < m.cols(); j++) {
+            Vector col = m.column(j);
+            result(i, j) = r.dot_product(col);
         }
     }
 
@@ -335,4 +364,17 @@ TEST_CASE("Matrix * scalar") {
     Matrix m(2, 2, {1, 2, 3, 4});
     Matrix expected(2, 2, {2, 4, 6, 8});
     CHECK_EQ(m * 2, expected);
+}
+
+TEST_CASE("Matrix * matrix happy case") {
+    Matrix a(2, 3, {1, 3, -1, -2, -1, 1});
+    Matrix b(3, 4, {-4, 0, 3, -1, 5, -2, -1, 1, -1, 2, 0, 6});
+    Matrix expected(2, 4, {12, -8, 0, -4, 2, 4, -5, 7});
+    CHECK_EQ(a * b, expected);
+}
+
+TEST_CASE("Matrix * matrix with wrong dimensions") {
+    Matrix a(3, 2);
+    Matrix b(4, 3); // Should be 2 to be able to multiply
+    CHECK_THROWS_AS(a * b, std::invalid_argument);
 }
