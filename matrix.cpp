@@ -3,6 +3,7 @@
 #include <initializer_list>
 #include <stdexcept>
 #include <vector>
+#include <iostream>
 
 /**
  * A class for representing an m x n matrix.
@@ -14,6 +15,9 @@ class Matrix {
 
     /** @return Matrix with size rows x cols from initializer list data */
     Matrix(int rows, int cols, std::initializer_list<double> data);
+
+    /** @return Matrix with size rows x cols from vector data */
+    Matrix(int rows, int cols, const std::vector<double>& data);
 
     /** @return the element at i,j without range check */
     double operator()(int i, int j) const { return data_[i * cols_ + j]; }
@@ -61,6 +65,16 @@ class Matrix {
      * matrix does not match the number of rows in m.
      */
     Matrix operator*(const Matrix &m) const;
+
+    /**
+     * Matrix vector multiplication.
+     *
+     * @param v the vector to multiply with
+     * @return the result of the multiplication
+     * @throws std::invalid_argument if the vector length does not
+     * match the number of rows in the matrix.
+     */
+    Vector operator*(const Vector &v) const;
 
     /**
      * Determine do the matrices have same dimensions.
@@ -111,6 +125,17 @@ Matrix::Matrix(int rows, int cols, double value) {
 }
 
 Matrix::Matrix(int rows, int cols, std::initializer_list<double> data) : rows_(rows), cols_(cols) {
+    if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
+        throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
+    }
+    data_ = data; // Initialize data only after the check
+}
+
+Matrix::Matrix(int rows, int cols, const std::vector<double>& data) : rows_(rows), cols_(cols) {
+    std::cout << "rows=" << rows << " cols=" << cols
+          << " data.size()=" << data.size()
+          << " rows*cols=" << rows*cols << "\n";
+
     if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
@@ -178,6 +203,13 @@ Matrix Matrix::operator*(const Matrix &m) const {
     }
 
     return result;
+}
+
+Vector Matrix::operator*(const Vector &v) const {
+	std::vector<double> data = v.data();
+	Matrix col_matrix = Matrix(data.size(), 1, data);
+	Matrix result = ((*this) * col_matrix);
+	return result.column(0);
 }
 
 Vector Matrix::row(int i) const {
@@ -377,4 +409,17 @@ TEST_CASE("Matrix * matrix with wrong dimensions") {
     Matrix a(3, 2);
     Matrix b(4, 3); // Should be 2 to be able to multiply
     CHECK_THROWS_AS(a * b, std::invalid_argument);
+}
+
+TEST_CASE("Matrix *  vector happy case") {
+    Matrix m(2, 3, {1, 2, 3, 4, 5, 6});
+	Vector v = Vector::from_values({7, 8, 9});
+	Vector expected = Vector::from_values({50, 122});
+	CHECK_EQ(m * v, expected);
+}
+
+TEST_CASE("Matrix *  vector wrong dimensions") {
+    Matrix m(2, 2, {1, 2, 3, 4});  // need 3 columns to multiply
+	Vector v = Vector::from_values({7, 8, 9});
+	CHECK_THROWS_AS(m * v, std::invalid_argument);
 }
