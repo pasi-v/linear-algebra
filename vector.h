@@ -25,7 +25,7 @@ class Vector {
     int size() const { return data_.size(); }
 
     /** @return the data of the vector */
-    const std::vector<double>& data() const { return data_; }
+    const std::vector<double> &data() const { return data_; }
 
     /** @return the sum of this and the other vector */
     Vector operator+(const Vector &v) const;
