@@ -132,8 +132,8 @@ Matrix::Matrix(int rows, int cols, std::initializer_list<double> data) : rows_(r
 }
 
 Matrix::Matrix(int rows, int cols, const std::vector<double> &data) : rows_(rows), cols_(cols) {
-    std::cout << "rows=" << rows << " cols=" << cols << " data.size()=" << data.size()
-              << " rows*cols=" << rows * cols << "\n";
+    // std::cout << "rows=" << rows << " cols=" << cols << " data.size()=" << data.size()
+    //<< " rows*cols=" << rows * cols << "\n";
 
     if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
