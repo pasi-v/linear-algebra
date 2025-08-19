@@ -1,5 +1,8 @@
 #include "doctest.h"
 #include <bitset>
+#include <iterator>
+#include <numeric>
+#include <type_traits>
 
 /**
  * Determine whether bitset has a parity error.  A parity error is to
@@ -22,6 +25,30 @@ template <std::size_t N> bool has_parity_error(const std::bitset<N> &bits) {
  */
 template <std::size_t N> bool parity_bit(const std::bitset<N> &bits) {
     return (bits.count() % 2) != 0;
+}
+
+/**
+ * @brief Computes the check digit that makes the sum ≡ 0 (mod m).
+ * @tparam It Input iterator type whose value_type must be an integral type.
+ * @tparam T Integral type used for accumulation and return value.
+ * @param first Beginning of the input range.
+ * @param last End of the input range.
+ * @param m the modulus (m > 0)
+ * @return the check digit in the range [0, m-1]
+ * @throws std::invalid_argument if m <= 0
+ */
+template <typename It, typename T = typename std::iterator_traits<It>::value_type>
+T check_digit(It first, It last, T m) {
+    static_assert(std::is_integral<T>::value, "check_digit requires an integral type");
+    if (m <= 0) {
+        throw std::invalid_argument("m must be positive");
+    }
+
+    if (m == 1)
+        return 0;
+
+    T s = std::accumulate(first, last, T{0});
+    return (m - (s % m)) % m;
 }
 
 TEST_CASE("1010") {
@@ -52,4 +79,44 @@ TEST_CASE("Parity bit for 1011") {
 TEST_CASE("Parity bit for 11011") {
     std::bitset<5> bits("11011");
     CHECK(parity_bit(bits) == false);
+}
+
+TEST_CASE("Check digit for [1,2,2,2] in Z3 is 2") {
+    std::vector<long> v{1, 2, 2, 2};
+    CHECK_EQ(2L, check_digit(v.begin(), v.end(), 3L));
+}
+
+TEST_CASE("Check digit for [3,4,2,3] in Z5 is 3") {
+    std::vector<int> v{3, 4, 2, 3};
+    CHECK_EQ(3, check_digit(v.begin(), v.end(), 5));
+}
+
+TEST_CASE("Check digit for [1,5,6,4,5] in Z7 is 0") {
+    std::vector<int> v{1, 5, 6, 4, 5};
+    CHECK_EQ(0, check_digit(v.begin(), v.end(), 7));
+}
+
+TEST_CASE("Check digit for [3,0,7,5,6,8] in Z9 is 7") {
+    std::vector<int> v{3, 0, 7, 5, 6, 8};
+    CHECK_EQ(7, check_digit(v.begin(), v.end(), 9));
+}
+
+TEST_CASE("Check digit with 0 modulo throws") {
+    std::vector<int> v{1, 2};
+    CHECK_THROWS_AS(check_digit(v.begin(), v.end(), 0), std::invalid_argument);
+}
+
+TEST_CASE("Check digit with negative modulo throws") {
+    std::vector<int> v{1, 2};
+    CHECK_THROWS_AS(check_digit(v.begin(), v.end(), -1), std::invalid_argument);
+}
+
+TEST_CASE("Check digit for modulo 1 is 0") {
+    std::vector<int> v{1, 5, 6, 4, 5};
+    CHECK_EQ(0, check_digit(v.begin(), v.end(), 1));
+}
+
+TEST_CASE("Check digit works with array type") {
+    int arr[] = {3, 0, 7, 5, 6, 8};
+    CHECK_EQ(7, check_digit(std::begin(arr), std::end(arr), 9));
 }
