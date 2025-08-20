@@ -51,6 +51,24 @@ T check_digit(It first, It last, T m) {
     return (m - (s % m)) % m;
 }
 
+/**
+ * @brief Computes the check digit for UPC code vector.
+ * @param v the UPC vector without check digit, each element in range [0, 9].
+ * If the digits are not within the range, the check digit will be meaningless.
+ * @return the check digit in the range [0, 9]
+ * @throws std::invalid argument if size of v != 11
+ */
+int upc_check_digit(std::vector<int> v) {
+    if (v.size() != 11) {
+        throw std::invalid_argument("UPC digits vector must be length 11");
+    }
+    int s = 0;
+    for (size_t i = 0; i < v.size(); ++i)
+        s += (i % 2 == 0 ? 3 : 1) * v[i];
+
+    return (10 - (s % 10)) % 10;
+}
+
 TEST_CASE("1010") {
     std::bitset<4> bits("1010");
     CHECK(!has_parity_error(bits));
@@ -119,4 +137,24 @@ TEST_CASE("Check digit for modulo 1 is 0") {
 TEST_CASE("Check digit works with array type") {
     int arr[] = {3, 0, 7, 5, 6, 8};
     CHECK_EQ(7, check_digit(std::begin(arr), std::end(arr), 9));
+}
+
+TEST_CASE("UPC check digit happy path") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 7};
+    CHECK_EQ(8, upc_check_digit(v));
+}
+
+TEST_CASE("UPC check digit 0") {
+    std::vector<int> v{0, 1, 4, 0, 1, 4, 1, 8, 4, 1, 2};
+    CHECK_EQ(0, upc_check_digit(v));
+}
+
+TEST_CASE("UPC check digit too few digits throws") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2};
+    CHECK_THROWS_AS(upc_check_digit(v), std::invalid_argument);
+}
+
+TEST_CASE("UPC check digit too many digits throws") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 1, 1};
+    CHECK_THROWS_AS(upc_check_digit(v), std::invalid_argument);
 }
