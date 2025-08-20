@@ -4,6 +4,16 @@
 #include <numeric>
 #include <type_traits>
 
+// This unnamed namespace is internal to the compilation unit, i.e. this file.
+namespace {
+int upc_weighted_sum(const std::vector<int> &digits) {
+    int s = 0;
+    for (size_t i = 0; i < digits.size(); ++i)
+        s += (i % 2 == 0 ? 3 : 1) * digits[i];
+    return s;
+}
+} // namespace
+
 /**
  * Determine whether bitset has a parity error.  A parity error is to
  * have an odd number of bits.
@@ -62,11 +72,23 @@ int upc_check_digit(std::vector<int> v) {
     if (v.size() != 11) {
         throw std::invalid_argument("UPC digits vector must be length 11");
     }
-    int s = 0;
-    for (size_t i = 0; i < v.size(); ++i)
-        s += (i % 2 == 0 ? 3 : 1) * v[i];
-
+    int s = upc_weighted_sum(v);
     return (10 - (s % 10)) % 10;
+}
+
+/**
+ * @brief Checks whether the UPC code has an error.
+ * @param v the UPC vector with check digit, each element in range [0, 9].
+ * If the digits are not within the range, the check digit will be meaningless.
+ * @return true if the code has an error, false if not.
+ * @throws std::invalid argument if size of v != 12
+ */
+bool upc_has_error(std::vector<int> v) {
+    if (v.size() != 12) {
+        throw std::invalid_argument("UPC digits vector must be length 12");
+    }
+    int s = upc_weighted_sum(v);
+    return !(s % 10 == 0);
 }
 
 TEST_CASE("1010") {
@@ -157,4 +179,29 @@ TEST_CASE("UPC check digit too few digits throws") {
 TEST_CASE("UPC check digit too many digits throws") {
     std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 1, 1};
     CHECK_THROWS_AS(upc_check_digit(v), std::invalid_argument);
+}
+
+TEST_CASE("upc_has_error without error") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 7, 8};
+    CHECK(!upc_has_error(v));
+}
+
+TEST_CASE("upc_has_error without error with 0 check digit") {
+    std::vector<int> v{0, 1, 4, 0, 1, 4, 1, 8, 4, 1, 2, 0};
+    CHECK(!upc_has_error(v));
+}
+
+TEST_CASE("upc_has_error with error") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 7, 2}; // check should be 8
+    CHECK(upc_has_error(v));
+}
+
+TEST_CASE("upc_has_error too few digits throws") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 8};
+    CHECK_THROWS_AS(upc_has_error(v), std::invalid_argument);
+}
+
+TEST_CASE("upc_has_error too many digits throws") {
+    std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 1, 1, 8};
+    CHECK_THROWS_AS(upc_has_error(v), std::invalid_argument);
 }
