@@ -12,6 +12,18 @@ int upc_weighted_sum(const std::vector<int> &digits) {
         s += (i % 2 == 0 ? 3 : 1) * digits[i];
     return s;
 }
+
+int isbn10_weighted_sum(const std::vector<int> &digits) {
+    int s = 0;
+    for (size_t i = 0; i < digits.size(); ++i)
+        s += ((10 - i) * digits[i]);
+    return s;
+}
+
+int modular_additive_inverse(int sum, int mod) {
+    return (mod - (sum % mod)) % mod;
+}
+
 } // namespace
 
 /**
@@ -58,7 +70,7 @@ T check_digit(It first, It last, T m) {
         return 0;
 
     T s = std::accumulate(first, last, T{0});
-    return (m - (s % m)) % m;
+    return modular_additive_inverse(s, m);
 }
 
 /**
@@ -73,7 +85,7 @@ int upc_check_digit(std::vector<int> v) {
         throw std::invalid_argument("UPC digits vector must be length 11");
     }
     int s = upc_weighted_sum(v);
-    return (10 - (s % 10)) % 10;
+    return modular_additive_inverse(s, 10);
 }
 
 /**
@@ -96,15 +108,14 @@ bool upc_has_error(std::vector<int> v) {
  * @param v the ISBN vector without check digit, each element in range [0, 9].
  * If the digits are not within the range, the check digit will be meaningless.
  * @return the check digit in the range [0, 9]
- * @throws std::invalid argument if size of v != 10
+ * @throws std::invalid argument if size of v != 9
  */
 int isbn10_check_digit(std::vector<int> v) {
-    if (v.size() != 10) {
-        throw std::invalid_argument("ISBN digits vector must be length 10");
+    if (v.size() != 9) {
+        throw std::invalid_argument("ISBN digits vector must be length 9");
     }
-    // int s = isbn_weighted_sum(v);
-    int s = 0; // TODO
-    return (11 - (s % 11)) % 11;
+    int s = isbn10_weighted_sum(v);
+    return modular_additive_inverse(s, 11);
 }
 
 TEST_CASE("1010") {
@@ -221,3 +232,24 @@ TEST_CASE("upc_has_error too many digits throws") {
     std::vector<int> v{0, 5, 9, 4, 6, 4, 7, 0, 0, 2, 1, 1, 8};
     CHECK_THROWS_AS(upc_has_error(v), std::invalid_argument);
 }
+
+TEST_CASE("ISBN check digit happy path") {
+    std::vector<int> v{0, 3, 9, 4, 7, 5, 6, 8, 2};
+    CHECK_EQ(7, isbn10_check_digit(v));
+}
+
+TEST_CASE("ISBN check digit happy path, 10 as valid result") {
+    std::vector<int> v{0, 3, 8, 7, 9, 7, 9, 9, 3};
+    CHECK_EQ(10, isbn10_check_digit(v));
+}
+
+TEST_CASE("ISBN check digit too few digits throws") {
+    std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8};  // should be 9
+    CHECK_THROWS_AS(isbn10_check_digit(v), std::invalid_argument);
+}
+
+TEST_CASE("ISBN check digit too many digits throws") {
+    std::vector<int> v{1, 2, 3, 4, 5, 6, 7, 8, 9, 10};  // should be 9
+    CHECK_THROWS_AS(isbn10_check_digit(v), std::invalid_argument);
+}
+
