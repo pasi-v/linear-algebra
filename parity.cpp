@@ -51,6 +51,51 @@ T check_digit(It first, It last, T m) {
     return (m - (s % m)) % m;
 }
 
+/**
+ * @brief Computes the check digit for UPC code vector.
+ * @param v the UPC vector without check digit, each element in range [0, 9].
+ * If the digits are not within the range, the check digit will be meaningless.
+ * @return the check digit in the range [0, 9]
+ * @throws std::invalid argument if size of v != 11
+ */
+int upc_check_digit(std::vector<int> v) {
+    if (v.size() != 11) {
+        throw std::invalid_argument("UPC digits vector must be length 11");
+    }
+    int s = upc_weighted_sum(v);
+    return (10 - (s % 10)) % 10;
+}
+
+/**
+ * @brief Checks whether the UPC code has an error.
+ * @param v the UPC vector with check digit, each element in range [0, 9].
+ * If the digits are not within the range, the check digit will be meaningless.
+ * @return true if the code has an error, false if not.
+ * @throws std::invalid argument if size of v != 12
+ */
+bool upc_has_error(std::vector<int> v) {
+    if (v.size() != 12) {
+        throw std::invalid_argument("UPC digits vector must be length 12");
+    }
+    int s = upc_weighted_sum(v);
+    return !(s % 10 == 0);
+}
+
+/**
+ * @brief Computes the check digit for UPC code vector.
+ * @param v the UPC vector without check digit, each element in range [0, 9].
+ * If the digits are not within the range, the check digit will be meaningless.
+ * @return the check digit in the range [0, 9]
+ * @throws std::invalid argument if size of v != 11
+ */
+int isbn10_check_digit(std::vector<int> v) {
+    if (v.size() != 10) {
+        throw std::invalid_argument("ISBN digits vector must be length 10");
+    }
+    int s = isbn_weighted_sum(v);
+    return (11 - (s % 11)) % 11;
+}
+
 TEST_CASE("1010") {
     std::bitset<4> bits("1010");
     CHECK(!has_parity_error(bits));
