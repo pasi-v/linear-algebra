@@ -57,6 +57,9 @@ class Vector {
     /** @return index of first non-zero element, -1 if all zeroes */
     int first_non_zero_column() const;
 
+    /** @return first non-zero element, 0 if all zeros */
+    int leading_element() const;
+
   private:
     std::vector<double> data_;
 };

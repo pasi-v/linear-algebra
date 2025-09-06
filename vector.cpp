@@ -88,6 +88,15 @@ int Vector::first_non_zero_column() const {
     return -1;
 }
 
+int Vector::leading_element() const {
+    int column = first_non_zero_column();
+    if (column == -1) {
+        return 0;
+    } else {
+        return data_[column];
+    }
+}
+
 TEST_CASE("Vector()") {
     int size = 3;
     Vector v(size);
@@ -254,4 +263,19 @@ TEST_CASE("first_non_zero_column returns m-1 if only last element is non-zero") 
 TEST_CASE("first_non_zero_column returns -1 for zero vector") {
     Vector v = Vector::from_values({0, 0, 0});
     CHECK_EQ(-1, v.first_non_zero_column());
+}
+
+TEST_CASE("leading_element returns first element if it is not zero") {
+    Vector v = Vector::from_values({1, 2, 3});
+    CHECK_EQ(1, v.leading_element());
+}
+
+TEST_CASE("leading_element returns last element if preceding ones are zero") {
+    Vector v = Vector::from_values({0, 0, 4});
+    CHECK_EQ(4, v.leading_element());
+}
+
+TEST_CASE("leading_element returns 0 for zero vector") {
+    Vector v = Vector::from_values({0, 0, 0});
+    CHECK_EQ(0, v.leading_element());
 }
