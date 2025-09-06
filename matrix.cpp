@@ -523,6 +523,7 @@ TEST_CASE("is_ref returns true for REF") {
 
 TEST_CASE("is_ref returns false for zero row not at the bottom") {
     Matrix m(3, 3, {2, 4, 1, 0, 0, 0, 0, -1, 2}); // zero row at 2
+    CHECK(!m.is_ref());
 }
 
 TEST_CASE("is_ref returns false for not REF") {
