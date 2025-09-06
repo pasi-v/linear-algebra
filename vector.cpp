@@ -78,6 +78,16 @@ bool Vector::is_zero() const {
     return true;
 }
 
+int Vector::first_non_zero_column() const {
+    for (int i = 0; i < size(); i++) {
+        if (data_[i] != 0) {
+            return i;
+        }
+    }
+
+    return -1;
+}
+
 TEST_CASE("Vector()") {
     int size = 3;
     Vector v(size);
@@ -229,4 +239,19 @@ TEST_CASE("is_zero returns TRUE for zero vector") {
 TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
     Vector v = Vector::from_values({0, 3, 0});
     CHECK(!v.is_zero());
+}
+
+TEST_CASE("first_non_zero_column returns 0 if first element is non-zero") {
+    Vector v = Vector::from_values({1, 2, 3});
+    CHECK_EQ(0, v.first_non_zero_column());
+}
+
+TEST_CASE("first_non_zero_column returns m-1 if only last element is non-zero") {
+    Vector v = Vector::from_values({0, 0, 1});
+    CHECK_EQ(2, v.first_non_zero_column());
+}
+
+TEST_CASE("first_non_zero_column returns -1 for zero vector") {
+    Vector v = Vector::from_values({0, 0, 0});
+    CHECK_EQ(-1, v.first_non_zero_column());
 }
