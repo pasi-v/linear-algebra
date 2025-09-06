@@ -117,6 +117,13 @@ class Matrix {
      */
     bool is_ref() const;
 
+    /**
+     * @brief determine whether matrix is in reduced row-echelon form.
+     *
+     * @return true if it is, false if not.
+     */
+    bool is_rref() const;
+
   private:
     size_t rows_;
     size_t cols_;
@@ -287,6 +294,37 @@ bool Matrix::is_ref() const {
     }
 
     // Both requirements hold, the matrix is in row echelon form.
+    return true;
+}
+
+bool Matrix::is_rref() const {
+    // 1. Is in row echelon form
+    if (!is_ref()) {
+        std::cout << "Not REF\n";
+        return false;
+    }
+
+    for (size_t i = 0; i < rows_; i++) {
+        // 2. The leading entry in each nonzero row is a leading 1
+        Vector v = row(i);
+        if (v.is_zero()) {
+            continue; // no leading entry in zero row
+        }
+        auto leading_element = v.leading_element();
+        if (leading_element != 1) {
+            std::cout << "Row " << i << " leading element is " << leading_element << "\n";
+            return false;
+        }
+
+        // 3. Each column containing a leading 1 is standard basis vector
+        int leading_entry_column = v.first_non_zero_column();
+        Vector col = column(leading_entry_column);
+        if (!col.is_standard_basis()) {
+            std::cout << "Column " << leading_entry_column << " is not standard basis\n";
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -490,4 +528,50 @@ TEST_CASE("is_ref returns false for zero row not at the bottom") {
 TEST_CASE("is_ref returns false for not REF") {
     Matrix m(3, 3, {1, 0, 1, 0, 0, 3, 0, 1, 0});
     CHECK(!m.is_ref());
+}
+
+TEST_CASE("is_rref returns true for RREF") {
+    Matrix m(5, 7, {1, 2,  0, 0, -3, 1, 0, 0, 0, 1, 0, 4, -1, 0, 0, 0, 0, 1,
+                    3, -2, 0, 0, 0,  0, 0, 0, 0, 1, 0, 0, 0,  0, 0, 0, 0});
+    CHECK(m.is_rref());
+}
+
+TEST_CASE("is_rref returns false for column containing leading 1 not a standard basis vector") {
+    Matrix m(3, 3, {1, 0, 1, 0, 1, 0, 0, 0, 1});
+    CHECK(!m.is_rref());
+}
+
+TEST_CASE("is_rref returns false for leading entry not 1") {
+    Matrix m(3, 3, {2, 0, 0, 0, 1, 0, 0, 0, 1});
+    CHECK(!m.is_rref());
+}
+
+TEST_CASE("is_rref returns false for not REF") {
+    Matrix m(3, 3, {1, 0, 1, 0, 0, 3, 0, 1, 0});
+    CHECK(!m.is_rref());
+}
+
+TEST_CASE("is_rref returns true for zero matrix") {
+    Matrix m(3, 3, 0.0);
+    CHECK(m.is_rref());
+}
+
+TEST_CASE("is_rref returns true for 1x1 matrix with 0") {
+    Matrix m(1, 1, 0.0);
+    CHECK(m.is_rref());
+}
+
+TEST_CASE("is_rref returns true for 1x1 matrix with 1") {
+    Matrix m(1, 1, 1.0);
+    CHECK(m.is_rref());
+}
+
+TEST_CASE("is_rref returns false for 1x1 matrix with value other than 0 or 1") {
+    Matrix m(1, 1, 2.0);
+    CHECK(!m.is_rref());
+}
+
+TEST_CASE("is_rref returns true for empty matrix") {
+    Matrix m(0, 0);
+    CHECK(m.is_rref());
 }
