@@ -279,3 +279,18 @@ TEST_CASE("leading_element returns 0 for zero vector") {
     Vector v = Vector::from_values({0, 0, 0});
     CHECK_EQ(0, v.leading_element());
 }
+
+TEST_CASE("has_leading_one returns true if leading element is 1") {
+    Vector v = Vector::from_values({0, 1, 2});
+    CHECK(v.has_leading_one());
+}
+
+TEST_CASE("has_leading_one returns false if leading element is 3") {
+    Vector v = Vector::from_values({0, 3, 0});
+    CHECK(!v.has_leading_one());
+}
+
+TEST_CASE("has_leading_one returns false for zero vector") {
+    Vector v = Vector::from_values({0, 0, 0});
+    CHECK(!v.has_leading_one());
+}

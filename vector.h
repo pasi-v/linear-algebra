@@ -60,6 +60,9 @@ class Vector {
     /** @return first non-zero element, 0 if all zeros */
     int leading_element() const;
 
+    /** @return true if leading element is 1, false otherwise */
+    bool has_leading_one() const { return leading_element() == 1; };
+
   private:
     std::vector<double> data_;
 };
