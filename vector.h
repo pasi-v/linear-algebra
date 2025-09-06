@@ -51,6 +51,9 @@ class Vector {
     /** @return the projection of v onto this vector */
     Vector proj(const Vector &v) const;
 
+    /** @return true if all elements are zero, false otherwise */
+    bool is_zero() const;
+
   private:
     std::vector<double> data_;
 };

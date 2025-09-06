@@ -69,6 +69,15 @@ std::ostream &operator<<(std::ostream &os, const Vector &v) {
     return os;
 }
 
+bool Vector::is_zero() const {
+    for (int i = 0; i < size(); i++) {
+        if (data_[i] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 TEST_CASE("Vector()") {
     int size = 3;
     Vector v(size);
@@ -210,4 +219,14 @@ TEST_CASE("Projection different sizes throws") {
     Vector u(2);
     Vector v(3);
     CHECK_THROWS_AS(u.proj(v), std::invalid_argument);
+}
+
+TEST_CASE("is_zero returns TRUE for zero vector") {
+    Vector v = Vector::from_values({0, 0, 0});
+    CHECK(v.is_zero());
+}
+
+TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
+    Vector v = Vector::from_values({0, 3, 0});
+    CHECK(!v.is_zero());
 }
