@@ -97,6 +97,27 @@ int Vector::leading_element() const {
     }
 }
 
+bool Vector::is_standard_basis() const {
+    bool one_found = false;
+    for (int i = 0; i < size(); i++) {
+        auto elem = data_[i];
+        if (elem != 0 && elem != 1) {
+            return false; // only ones and zeros allowed
+        }
+        if (elem == 0) {
+            continue; // keep on looking
+        } else {      // elem is 1, check if we already have found a 1
+            if (one_found) {
+                return false; // another 1, not allowed
+            } else {
+                one_found = true;
+            }
+        }
+    }
+
+    return one_found;
+}
+
 TEST_CASE("Vector()") {
     int size = 3;
     Vector v(size);
@@ -293,4 +314,24 @@ TEST_CASE("has_leading_one returns false if leading element is 3") {
 TEST_CASE("has_leading_one returns false for zero vector") {
     Vector v = Vector::from_values({0, 0, 0});
     CHECK(!v.has_leading_one());
+}
+
+TEST_CASE("is_standard_basis returns true if one element is 1 and rest 0") {
+    Vector v = Vector::from_values({0, 1, 0});
+    CHECK(v.is_standard_basis());
+}
+
+TEST_CASE("is_standard_basis returns false if two elements are 1 and rest 0") {
+    Vector v = Vector::from_values({0, 1, 1});
+    CHECK(!v.is_standard_basis());
+}
+
+TEST_CASE("is_standard_basis returns false if one element is 2 and rest 0") {
+    Vector v = Vector::from_values({0, 2, 0});
+    CHECK(!v.is_standard_basis());
+}
+
+TEST_CASE("is_standard_basis returns false for zero vector") {
+    Vector v = Vector::from_values({0, 0, 0});
+    CHECK(!v.is_standard_basis());
 }

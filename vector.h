@@ -63,6 +63,11 @@ class Vector {
     /** @return true if leading element is 1, false otherwise */
     bool has_leading_one() const { return leading_element() == 1; };
 
+    /**
+     * @return true if this is a standard basis vector, i.e. has 1 in one
+     * element and the rest are zeros. */
+    bool is_standard_basis() const;
+
   private:
     std::vector<double> data_;
 };
