@@ -110,6 +110,13 @@ class Matrix {
     /** @return columns */
     size_t cols() const { return cols_; }
 
+    /**
+     * @brief determine whether matrix is in row-echelon form.
+     *
+     * @return true if it is, false if not.
+     */
+    bool is_ref() const;
+
   private:
     size_t rows_;
     size_t cols_;
@@ -233,6 +240,54 @@ Vector Matrix::column(int i) const {
         v[j] = (*this)(j, i);
     }
     return v;
+}
+
+bool Matrix::is_ref() const {
+    /*
+     * A matrix is in row echelon form if it statisfies the following
+     * properties:
+     * 1. Any rows consisting entirely of zeros are at the bottom.
+     * 2. In each nonzero row, the first nonzero entry (leading entry) is in a
+     *    column to the left of any leading entries below it.
+     */
+
+    // Assert zero rows are at the bottom:
+    // 1. find first zero row starting from top and record its presence
+    // 2. if any non-zero rows are found below it, return false
+    bool found_zero = false;
+    for (size_t i = 0; i < rows_; i++) {
+        Vector v = row(i);
+        if (!found_zero) {
+            found_zero = v.is_zero();
+        } else { // a zero row has been found before this row
+            // from now on, it is allowed to have only zero rows
+            if (!v.is_zero()) {
+                return false;
+            }
+        }
+    }
+    // All zero rows are at the bottom.
+
+    // Assert leading entry index grows when going down non-zero vectors
+    int prev_leading_entry_column = -1; // valid columns indexed from 0 to m-1
+    for (size_t i = 0; i < rows_; i++) {
+        Vector v = row(i);
+        // When we find first zero vector, there will be no more leading
+        // enries to check and matrix is in row-echelon form.
+        if (v.is_zero()) {
+            return true;
+        }
+
+        // Assert this leading entry column index is greater than previous.
+        int cur_leading_entry_column = v.first_non_zero_column();
+        if (cur_leading_entry_column <= prev_leading_entry_column) {
+            return false;
+        }
+        prev_leading_entry_column = cur_leading_entry_column;
+    }
+
+    // Both requirements hold, the matrix is in row echelon form.
+    return true;
 }
 
 TEST_CASE("m x n Zero Matrix()") {
@@ -421,4 +476,18 @@ TEST_CASE("Matrix *  vector wrong dimensions") {
     Matrix m(2, 2, {1, 2, 3, 4}); // need 3 columns to multiply
     Vector v = Vector::from_values({7, 8, 9});
     CHECK_THROWS_AS(m * v, std::invalid_argument);
+}
+
+TEST_CASE("is_ref returns true for REF") {
+    Matrix m(3, 3, {2, 4, 1, 0, -1, 2, 0, 0, 0});
+    CHECK(m.is_ref());
+}
+
+TEST_CASE("is_ref returns false for zero row not at the bottom") {
+    Matrix m(3, 3, {2, 4, 1, 0, 0, 0, 0, -1, 2}); // zero row at 2
+}
+
+TEST_CASE("is_ref returns false for not REF") {
+    Matrix m(3, 3, {1, 0, 1, 0, 0, 3, 0, 1, 0});
+    CHECK(!m.is_ref());
 }
