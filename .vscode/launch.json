@@ -22,6 +22,17 @@
           "ignoreFailures": true
         }
       ]
+    },
+    {
+      "name": "Debug: vector tests",
+      "type": "cppdbg",
+      "request": "launch",
+      "program": "${workspaceFolder}/tests",
+      "args": ["-tc=*vector*"],
+      "cwd": "${workspaceFolder}",
+      "MIMode": "lldb",
+      "externalConsole": false,
+      "preLaunchTask": "make: build"
     }
   ]
 }
