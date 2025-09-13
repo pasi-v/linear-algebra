@@ -16,7 +16,7 @@ Vector Vector::operator+(const Vector &v) const {
     if (size() != v.size())
         throw std::invalid_argument("Vector sizes must match for addition");
     Vector result(size());
-    for (int i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++) {
         result[i] = data_[i] + v[i];
     }
     return result;
@@ -24,7 +24,7 @@ Vector Vector::operator+(const Vector &v) const {
 
 Vector Vector::operator*(double c) const {
     Vector result(size());
-    for (int i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++) {
         result[i] = data_[i] * c;
     }
     return result;
@@ -38,7 +38,7 @@ double Vector::dot_product(const Vector &v) const {
 
     double result = 0.0;
 
-    for (int i = 0; i < size(); i++)
+    for (std::size_t i = 0; i < size(); i++)
         result += data_[i] * v[i];
 
     return result;
@@ -54,7 +54,7 @@ Vector Vector::proj(const Vector &v) const { return *this * (dot_product(v) / do
 
 std::ostream &operator<<(std::ostream &os, const Vector &v) {
     os << "{ ";
-    for (int i = 0; i < v.size(); ++i) {
+    for (std::size_t i = 0; i < v.size(); ++i) {
         os << v[i];
         if (i != v.size() - 1)
             os << ", ";
@@ -64,7 +64,7 @@ std::ostream &operator<<(std::ostream &os, const Vector &v) {
 }
 
 bool Vector::is_zero() const {
-    for (int i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++) {
         if (data_[i] != 0) {
             return false;
         }
@@ -73,7 +73,7 @@ bool Vector::is_zero() const {
 }
 
 int Vector::first_non_zero_column() const {
-    for (int i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++) {
         if (data_[i] != 0) {
             return i;
         }
@@ -93,7 +93,7 @@ int Vector::leading_element() const {
 
 bool Vector::is_standard_basis() const {
     bool one_found = false;
-    for (int i = 0; i < size(); i++) {
+    for (std::size_t i = 0; i < size(); i++) {
         auto elem = data_[i];
         if (elem != 0 && elem != 1) {
             return false; // only ones and zeros allowed

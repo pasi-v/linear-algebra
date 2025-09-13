@@ -31,7 +31,7 @@ class Vector {
     friend bool operator==(const Vector &a, const Vector &b) { return a.data_ == b.data_; }
 
     /** @return the size (dimensions) of the vector */
-    int size() const { return data_.size(); }
+    std::size_t size() const { return data_.size(); }
 
     /** @return the data of the vector */
     const std::vector<double> &data() const { return data_; }
