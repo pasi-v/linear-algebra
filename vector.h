@@ -21,7 +21,7 @@ class Vector {
 
     // construct from {1,2,3}
     Vector(std::initializer_list<double> init) : data_(init) {}
-    
+
     // --- size ---
     /** @return the size (dimensions) of the vector */
     std::size_t size() const { return data_.size(); }
@@ -92,7 +92,7 @@ class Vector {
     int first_non_zero_column() const;
 
     /** @return first non-zero element, 0 if all zeros */
-    int leading_element() const;
+    double leading_element() const;
 
     /** @return true if leading element is 1, false otherwise */
     bool has_leading_one() const { return leading_element() == 1; };

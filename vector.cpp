@@ -76,7 +76,7 @@ int Vector::first_non_zero_column() const {
     return -1;
 }
 
-int Vector::leading_element() const {
+double Vector::leading_element() const {
     int column = first_non_zero_column();
     if (column == -1) {
         return 0;
