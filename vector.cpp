@@ -124,6 +124,16 @@ TEST_CASE("Construct vector of size 0 does not throw") {
     CHECK(v.size() == size);
 }
 
+TEST_CASE("Empty vector is empty") {
+    Vector v;
+    CHECK(v.empty());
+}
+
+TEST_CASE("Non-empty vector is not empty") {
+    Vector v(1);
+    CHECK(!v.empty());
+}
+
 TEST_CASE("Subscript operator happy path") {
     int size = 3;
     Vector v(size);

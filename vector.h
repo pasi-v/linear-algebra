@@ -33,6 +33,9 @@ class Vector {
     /** @return the size (dimensions) of the vector */
     std::size_t size() const { return data_.size(); }
 
+    /** @return whether the vector is empty (length zero) */
+    bool empty() const { return data_.empty(); }
+
     /** @return the data of the vector */
     const std::vector<double> &data() const { return data_; }
 
