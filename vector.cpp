@@ -12,12 +12,6 @@ Vector Vector::from_values(std::initializer_list<double> data) {
     return v;
 }
 
-Vector::Vector(int s) {
-    if (s < 0)
-        throw std::out_of_range{"Vector size can't be negative"};
-    data_ = std::vector<double>(s);
-}
-
 Vector Vector::operator+(const Vector &v) const {
     if (size() != v.size())
         throw std::invalid_argument("Vector sizes must match for addition");
@@ -122,10 +116,6 @@ TEST_CASE("Vector()") {
     int size = 3;
     Vector v(size);
     CHECK(v.size() == size);
-}
-
-TEST_CASE("Construct vector with negative size throws") {
-    CHECK_THROWS_AS(Vector(-1), std::out_of_range);
 }
 
 TEST_CASE("Construct vector of size 0 does not throw") {

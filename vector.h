@@ -9,8 +9,15 @@ class Vector {
     /** @return a Vector from the initializer list data */
     static Vector from_values(std::initializer_list<double> data);
 
+    Vector() = default;
+
     /** @return a Zero Vector with size s */
-    explicit Vector(int s);
+    explicit Vector(std::size_t s) : data_(s, 0.0) {}
+
+    explicit Vector(int s) : Vector(static_cast<std::size_t>(s)) {
+        if (s < 0)
+            throw std::invalid_argument("negative size");
+    }
 
     /** @return the element at i with range check */
     double &operator[](int i) { return data_.at(i); }
