@@ -6,6 +6,8 @@
  */
 class Vector {
   public:
+    using value_type = double;
+
     /** @return a Vector from the initializer list data */
     static Vector from_values(std::initializer_list<double> data);
 
