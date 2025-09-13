@@ -36,6 +36,11 @@ class Vector {
     /** @return whether the vector is empty (length zero) */
     bool empty() const { return data_.empty(); }
 
+    // --- element access ---
+    // checked
+    double &at(std::size_t i) { return data_.at(i); }
+    const double& at(std::size_t i) const { return data_.at(i); }
+
     /** @return the data of the vector */
     const std::vector<double> &data() const { return data_; }
 

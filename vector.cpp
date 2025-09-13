@@ -138,25 +138,25 @@ TEST_CASE("Subscript operator happy path") {
     int size = 3;
     Vector v(size);
     v[0] = 1;
-    CHECK(v[0] == 1);
+    CHECK(v.at(0) == 1);
 }
 
 TEST_CASE("Subscript operator negative throws") {
     int size = 3;
     Vector v(size);
-    CHECK_THROWS_AS(v[-1] = 1, std::out_of_range);
+    CHECK_THROWS_AS(v.at(-1) = 1, std::out_of_range);
 }
 
 TEST_CASE("Subscript operator equal to size throws") {
     int size = 3;
     Vector v(size);
-    CHECK_THROWS_AS(v[size] = 1, std::out_of_range);
+    CHECK_THROWS_AS(v.at(size) = 1, std::out_of_range);
 }
 
 TEST_CASE("Subscript operator larger than size throws") {
     int size = 3;
     Vector v(size);
-    CHECK_THROWS_AS(v[size + 1] = 1, std::out_of_range);
+    CHECK_THROWS_AS(v.at(size + 1) = 1, std::out_of_range);
 }
 
 TEST_CASE("Vector comparison") {
