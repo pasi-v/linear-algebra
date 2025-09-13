@@ -21,12 +21,6 @@ class Vector {
             throw std::invalid_argument("negative size");
     }
 
-    /** @return the element at i with range check */
-    double &operator[](int i) { return data_.at(i); }
-
-    /** @return the element at i without range check */
-    double operator[](int i) const { return data_.at(i); }
-
     /** @return true if the vector elements are the same */
     friend bool operator==(const Vector &a, const Vector &b) { return a.data_ == b.data_; }
 
@@ -40,6 +34,13 @@ class Vector {
     // checked
     double &at(std::size_t i) { return data_.at(i); }
     const double& at(std::size_t i) const { return data_.at(i); }
+
+    // unchecked (match std::vector semantics)
+    /** @return the element at i without range check */
+    const double& operator[](std::size_t i) const noexcept { return data_[i]; }
+
+    /** @return the element at i without range check */
+    double& operator[](std::size_t i) noexcept { return data_[i]; }
 
     /** @return the data of the vector */
     const std::vector<double> &data() const { return data_; }
