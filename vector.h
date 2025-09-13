@@ -9,9 +9,6 @@ class Vector {
     using value_type = double;
 
     // --- constructors ---
-    /** @return a Vector from the initializer list data */
-    static Vector from_values(std::initializer_list<double> data);
-
     Vector() = default;
 
     /** @return a Zero Vector with size s */
@@ -22,6 +19,9 @@ class Vector {
             throw std::invalid_argument("negative size");
     }
 
+    // construct from {1,2,3}
+    Vector(std::initializer_list<double> init) : data_(init) {}
+    
     // --- size ---
     /** @return the size (dimensions) of the vector */
     std::size_t size() const { return data_.size(); }

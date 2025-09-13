@@ -6,12 +6,6 @@
 #include <stdexcept>
 #include <vector>
 
-Vector Vector::from_values(std::initializer_list<double> data) {
-    Vector v(static_cast<int>(data.size()));
-    std::copy(data.begin(), data.end(), v.data_.begin());
-    return v;
-}
-
 Vector Vector::operator+(const Vector &v) const {
     if (size() != v.size())
         throw std::invalid_argument("Vector sizes must match for addition");
@@ -160,19 +154,19 @@ TEST_CASE("Subscript operator larger than size throws") {
 }
 
 TEST_CASE("Vector comparison") {
-    Vector u = Vector::from_values({1.0, 2.0});
-    Vector v = Vector::from_values({1.0, 2.0});
-    Vector w = Vector::from_values({1.0, 3.0});
+    Vector u{1.0, 2.0};
+    Vector v{1.0, 2.0};
+    Vector w{1.0, 3.0};
 
     CHECK(u == v);
     CHECK_FALSE(u == w);
 }
 
 TEST_CASE("Vector addition happy path") {
-    Vector u = Vector::from_values({1, 2});
-    Vector v = Vector::from_values({2, 2});
+    Vector u{1, 2};
+    Vector v{2, 2};
     Vector sum = u + v;
-    Vector expected = Vector::from_values({3, 4});
+    Vector expected{3, 4};
     CHECK(sum == expected);
 }
 
@@ -184,17 +178,17 @@ TEST_CASE("Vector addition different sizes throws") {
 
 TEST_CASE("Vector scalar multiplication happy path") {
     int c = 2;
-    Vector v = Vector::from_values({-2, 4});
+    Vector v{-2, 4};
     Vector cv = v * c;
-    Vector expected = Vector::from_values({-4, 8});
+    Vector expected{-4, 8};
     CHECK(cv == expected);
 }
 
 TEST_CASE("Vector subtraction happy path") {
-    Vector u = Vector::from_values({1, 2});
-    Vector v = Vector::from_values({2, 2});
+    Vector u{1, 2};
+    Vector v{2, 2};
     Vector diff = u - v;
-    Vector expected = Vector::from_values({-1, 0});
+    Vector expected{-1, 0};
     CHECK(diff == expected);
 }
 
@@ -205,8 +199,8 @@ TEST_CASE("Vector subtraction different sizes throws") {
 }
 
 TEST_CASE("Dot product happy case") {
-    Vector u = Vector::from_values({1, 2, -3});
-    Vector v = Vector::from_values({-3, 5, 2});
+    Vector u{1, 2, -3};
+    Vector v{-3, 5, 2};
     double result = u.dot_product(v);
     CHECK(result == 1.0);
 }
@@ -218,13 +212,13 @@ TEST_CASE("Dot product different sizes throws") {
 }
 
 TEST_CASE("Vector length") {
-    Vector u = Vector::from_values({2, 3});
+    Vector u{2, 3};
     CHECK(u.length() == std::sqrt(13.0));
 }
 
 TEST_CASE("Vector difference happy path") {
-    Vector u = Vector::from_values({std::sqrt(2), 1, -1});
-    Vector v = Vector::from_values({0, 2, -2});
+    Vector u{std::sqrt(2), 1, -1};
+    Vector v{0, 2, -2};
     CHECK(u.difference(v) == 2.0);
 }
 
@@ -235,8 +229,8 @@ TEST_CASE("Difference different sizes throws") {
 }
 
 TEST_CASE("Angle happy path") {
-    Vector u = Vector::from_values({2, 1, -2});
-    Vector v = Vector::from_values({1, 1, 1});
+    Vector u{2, 1, -2};
+    Vector v{1, 1, 1};
     double result = u.angle(v);
     CHECK(result == doctest::Approx(1.377).epsilon(0.01));
 }
@@ -248,10 +242,10 @@ TEST_CASE("Angle different sizes throws") {
 }
 
 TEST_CASE("Projection happy path") {
-    Vector u = Vector::from_values({2, 1});
-    Vector v = Vector::from_values({-1, 3});
+    Vector u{2, 1};
+    Vector v{-1, 3};
     Vector result = u.proj(v);
-    Vector expected = Vector::from_values({2.0 / 5.0, 1.0 / 5.0});
+    Vector expected{2.0 / 5.0, 1.0 / 5.0};
     CHECK(result == expected);
 }
 
@@ -262,76 +256,76 @@ TEST_CASE("Projection different sizes throws") {
 }
 
 TEST_CASE("is_zero returns TRUE for zero vector") {
-    Vector v = Vector::from_values({0, 0, 0});
+    Vector v{0, 0, 0};
     CHECK(v.is_zero());
 }
 
 TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
-    Vector v = Vector::from_values({0, 3, 0});
+    Vector v{0, 3, 0};
     CHECK(!v.is_zero());
 }
 
 TEST_CASE("first_non_zero_column returns 0 if first element is non-zero") {
-    Vector v = Vector::from_values({1, 2, 3});
+    Vector v{1, 2, 3};
     CHECK_EQ(0, v.first_non_zero_column());
 }
 
 TEST_CASE("first_non_zero_column returns m-1 if only last element is non-zero") {
-    Vector v = Vector::from_values({0, 0, 1});
+    Vector v{0, 0, 1};
     CHECK_EQ(2, v.first_non_zero_column());
 }
 
 TEST_CASE("first_non_zero_column returns -1 for zero vector") {
-    Vector v = Vector::from_values({0, 0, 0});
+    Vector v{0, 0, 0};
     CHECK_EQ(-1, v.first_non_zero_column());
 }
 
 TEST_CASE("leading_element returns first element if it is not zero") {
-    Vector v = Vector::from_values({1, 2, 3});
+    Vector v{1, 2, 3};
     CHECK_EQ(1, v.leading_element());
 }
 
 TEST_CASE("leading_element returns last element if preceding ones are zero") {
-    Vector v = Vector::from_values({0, 0, 4});
+    Vector v{0, 0, 4};
     CHECK_EQ(4, v.leading_element());
 }
 
 TEST_CASE("leading_element returns 0 for zero vector") {
-    Vector v = Vector::from_values({0, 0, 0});
+    Vector v{0, 0, 0};
     CHECK_EQ(0, v.leading_element());
 }
 
 TEST_CASE("has_leading_one returns true if leading element is 1") {
-    Vector v = Vector::from_values({0, 1, 2});
+    Vector v{0, 1, 2};
     CHECK(v.has_leading_one());
 }
 
 TEST_CASE("has_leading_one returns false if leading element is 3") {
-    Vector v = Vector::from_values({0, 3, 0});
+    Vector v{0, 3, 0};
     CHECK(!v.has_leading_one());
 }
 
 TEST_CASE("has_leading_one returns false for zero vector") {
-    Vector v = Vector::from_values({0, 0, 0});
+    Vector v{0, 0, 0};
     CHECK(!v.has_leading_one());
 }
 
 TEST_CASE("is_standard_basis returns true if one element is 1 and rest 0") {
-    Vector v = Vector::from_values({0, 1, 0});
+    Vector v{0, 1, 0};
     CHECK(v.is_standard_basis());
 }
 
 TEST_CASE("is_standard_basis returns false if two elements are 1 and rest 0") {
-    Vector v = Vector::from_values({0, 1, 1});
+    Vector v{0, 1, 1};
     CHECK(!v.is_standard_basis());
 }
 
 TEST_CASE("is_standard_basis returns false if one element is 2 and rest 0") {
-    Vector v = Vector::from_values({0, 2, 0});
+    Vector v{0, 2, 0};
     CHECK(!v.is_standard_basis());
 }
 
 TEST_CASE("is_standard_basis returns false for zero vector") {
-    Vector v = Vector::from_values({0, 0, 0});
+    Vector v{0, 0, 0};
     CHECK(!v.is_standard_basis());
 }
