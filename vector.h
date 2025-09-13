@@ -42,9 +42,19 @@ class Vector {
     /** @return the element at i without range check */
     double& operator[](std::size_t i) noexcept { return data_[i]; }
 
-    /** @return the data of the vector */
-    const std::vector<double> &data() const { return data_; }
+    // --- raw data pointers (for std::copy_n etc.) ---
+    /** @return the raw data pointet of the vector */
+    double *data() noexcept { return data_.data(); }
+    /** @return the raw data pointer of the vector */
+    const double* data() const noexcept { return data_.data(); }
 
+    // --- iterators (STL-friendly) ---
+    std::vector<double>::iterator begin() noexcept { return data_.begin(); }
+    std::vector<double>::const_iterator begin() const noexcept { return data_.begin(); }
+    std::vector<double>::iterator end() noexcept { return data_.end(); }
+    std::vector<double>::const_iterator end() const noexcept { return data_.end(); }
+
+    // --- Linear algebra vector operations ---
     /** @return the sum of this and the other vector */
     Vector operator+(const Vector &v) const;
 

@@ -19,6 +19,8 @@ class Matrix {
     /** @return Matrix with size rows x cols from vector data */
     Matrix(int rows, int cols, const std::vector<double> &data);
 
+    Matrix(std::size_t rows, std::size_t cols, const Vector& v); 
+
     /** @return the element at i,j without range check */
     double operator()(int i, int j) const { return data_[i * cols_ + j]; }
 
@@ -153,6 +155,15 @@ Matrix::Matrix(int rows, int cols, const std::vector<double> &data) : rows_(rows
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
+}
+
+Matrix::Matrix(std::size_t rows, std::size_t cols, const Vector& v) {
+    if (v.size() != rows * cols) {
+        throw std::out_of_range("Matrix dimensions and vector size do not match");
+    }
+    rows_ = rows;
+    cols_ = cols;
+    data_.assign(v.begin(), v.end());
 }
 
 Matrix Matrix::operator+(const Matrix &m) const {
