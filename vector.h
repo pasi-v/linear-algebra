@@ -8,6 +8,7 @@ class Vector {
   public:
     using value_type = double;
 
+    // --- constructors ---
     /** @return a Vector from the initializer list data */
     static Vector from_values(std::initializer_list<double> data);
 
@@ -21,9 +22,7 @@ class Vector {
             throw std::invalid_argument("negative size");
     }
 
-    /** @return true if the vector elements are the same */
-    friend bool operator==(const Vector &a, const Vector &b) { return a.data_ == b.data_; }
-
+    // --- size ---
     /** @return the size (dimensions) of the vector */
     std::size_t size() const { return data_.size(); }
 
@@ -53,6 +52,13 @@ class Vector {
     std::vector<double>::const_iterator begin() const noexcept { return data_.begin(); }
     std::vector<double>::iterator end() noexcept { return data_.end(); }
     std::vector<double>::const_iterator end() const noexcept { return data_.end(); }
+
+    // --- comparison --- 
+    /** @return true if the vector elements are the same */
+    friend bool operator==(const Vector &a, const Vector &b) { return a.data_ == b.data_; }
+
+    /** @return true if the vector elements are not the same */
+    friend bool operator!=(const Vector &a, const Vector &b) { return !(a == b); }
 
     // --- Linear algebra vector operations ---
     /** @return the sum of this and the other vector */
