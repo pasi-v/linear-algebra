@@ -1,6 +1,8 @@
 #include "doctest.h"
 #include "utils.h"
 #include "vector.h"
+#include <algorithm>
+#include <cassert>
 #include <initializer_list>
 #include <iostream>
 #include <stdexcept>
@@ -136,7 +138,25 @@ class Matrix {
      */
     bool is_rref() const;
 
+    /**
+     * @brief return a row echelon form of this matrix
+     *
+     * @return a REF version of this matrix
+     */
+    Matrix ref() const;
+
   private:
+    double *pointer_to_row_unchecked(std::size_t r) noexcept { return data_.data() + r * cols_; }
+
+    const double *pointer_to_row_unchecked(std::size_t r) const noexcept {
+        return data_.data() + r * cols_;
+    }
+
+    // Create a new matrix from this, with rows [lower, upper)
+    Matrix row_range(size_t lower, size_t upper) const;
+    void set_row(size_t i, const Vector &v);
+    int get_leftmost_non_zero_column_index() const;
+    void exchange_rows(std::size_t a, std::size_t b);
     size_t rows_;
     size_t cols_;
     std::vector<double> data_;
@@ -263,6 +283,24 @@ Vector Matrix::column(int i) const {
     return v;
 }
 
+void Matrix::set_row(size_t row, const Vector &v) {
+    assert(v.size() == cols_);
+    assert(row < rows_);
+    std::copy_n(v.data(), cols_, pointer_to_row_unchecked(row));
+}
+
+Matrix Matrix::row_range(std::size_t lower, std::size_t upper) const {
+    assert(lower <= upper);
+    assert(upper <= rows_);
+
+    Matrix new_matrix = Matrix(upper - lower, cols_);
+    for (size_t i = lower; i < upper; i++) {
+        new_matrix.set_row(i - lower, row(i));
+    }
+
+    return new_matrix;
+}
+
 bool Matrix::is_ref() const {
     /*
      * A matrix is in row echelon form if it statisfies the following
@@ -340,6 +378,61 @@ bool Matrix::is_rref() const {
     }
 
     return true;
+}
+
+int Matrix::get_leftmost_non_zero_column_index() const {
+    for (size_t i = 0; i < cols_; i++) {
+        Vector column = (*this).column(i);
+        if (!column.is_zero())
+            return i;
+    }
+    return -1;
+}
+
+void Matrix::exchange_rows(std::size_t idx_a, std::size_t idx_b) {
+    Vector vector_a = row(idx_a);
+    Vector vector_b = row(idx_b);
+    set_row(idx_a, vector_b);
+    set_row(idx_b, vector_a);
+}
+
+Matrix Matrix::ref() const {
+    Matrix r = *this; // copy this matrix
+
+    if (r.is_ref()) {
+        return r; // already in REF
+    }
+
+    // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp 72-73
+    //
+    // For each row as top row, starting with the top row of the whole matrix:
+    //   1. Locate the leftmost non-zero column of the rows below (and including) the top row
+    //   2. Create a leading entry in the top row by interchanging it with the top row
+    //   3. Create a leading 1 by scaling the row
+    //   4. Use the leading 1 to create zeros below it
+    for (size_t top_row_idx = 0; top_row_idx < r.rows_; top_row_idx++) {
+        // 0. Take the remaining matrix: from top_row_idx to end:
+        Matrix remaining = r.row_range(top_row_idx, r.rows_);
+
+        // 1. Locate the leftmost non-zero column of the rows below (and including) the top row
+        int leftmost_non_zero_column_index = remaining.get_leftmost_non_zero_column_index();
+        if (leftmost_non_zero_column_index != -1) // no non-zero columns left, return
+            break;                                // or break out of the loop?
+
+        // 2. Create a leading entry in the top row by interchanging it with the top row
+        Vector pivot_col = remaining.column(leftmost_non_zero_column_index);
+        int row_idx = pivot_col.first_non_zero_column();
+        assert(row_idx != -1); // Should not be possible, but assert
+        remaining.exchange_rows(top_row_idx, row_idx);
+
+        // 3. Create a leading 1 by scaling the row
+        Vector top_row = remaining.row(0);
+        double leading_element_value = top_row.leading_element();
+        Vector scaled_row = top_row * (1 / leading_element_value);
+        remaining.set_row(0, scaled_row);
+    }
+
+    return r;
 }
 
 TEST_CASE("m x n Zero Matrix()") {
@@ -590,3 +683,21 @@ TEST_CASE("is_rref returns true for empty matrix") {
     Matrix m(0, 0);
     CHECK(m.is_rref());
 }
+
+TEST_CASE("exchange_rows") { Matrix m(2, 2, {1, 2, 3, 4}); }
+
+// TEST_CASE("ref returns a matrix that is in REF") {
+//     Matrix m(4, 5, {
+//         1, 2, -4, -4, 5,
+//         2, 4, 0, 0, 2,
+//         2, 3, 2, 1, 5,
+//         -1, 1, 3, 6, 5
+//     });
+//     // Since REF is not unique, we assert these properties:
+//     // 1. It is in REF
+//     // 2. It has same dimensions as original matrix
+
+//     Matrix r = m.ref();
+//     CHECK(r.is_ref());
+//     CHECK(r.has_same_dimensions(m));
+// }
