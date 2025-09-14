@@ -24,8 +24,6 @@ Vector Vector::operator*(double c) const {
     return result;
 }
 
-Vector Vector::operator-(const Vector &v) const { return *this + (v * -1); }
-
 double Vector::dot_product(const Vector &v) const {
     if (size() != v.size())
         throw std::invalid_argument("Vector sizes must match for dot product");
@@ -37,14 +35,6 @@ double Vector::dot_product(const Vector &v) const {
 
     return result;
 }
-
-double Vector::difference(const Vector &v) const { return (*this - v).length(); }
-
-double Vector::angle(const Vector &v) const {
-    return acos(dot_product(v) / (length() * v.length()));
-}
-
-Vector Vector::proj(const Vector &v) const { return *this * (dot_product(v) / dot_product(*this)); }
 
 std::ostream &operator<<(std::ostream &os, const Vector &v) {
     os << "{ ";
