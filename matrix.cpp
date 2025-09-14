@@ -1,4 +1,5 @@
 #include "doctest.h"
+#include "utils.h"
 #include "vector.h"
 #include <initializer_list>
 #include <iostream>
@@ -11,15 +12,24 @@
 class Matrix {
   public:
     /** @return Matrix with size m x n, or rows x cols, initialised to value */
-    Matrix(int rows, int cols, double value = 0.0);
+    Matrix(std::size_t rows, std::size_t cols, double value = 0.0)
+        : rows_(rows), cols_(cols), data_(rows * cols, value) {}
+
+    /**
+     * @return Matrix with size m x n, or rows x cols, initialised to value
+     * @throws std::invalid_argument if rows or cols is negative
+     */
+    Matrix(int rows, int cols, double value = 0.0)
+        : Matrix(utils::check_nonnegative(rows, "row count"),
+                 utils::check_nonnegative(cols, "column count"), value) {}
 
     /** @return Matrix with size rows x cols from initializer list data */
-    Matrix(int rows, int cols, std::initializer_list<double> data);
+    Matrix(std::size_t rows, std::size_t cols, std::initializer_list<double> data);
 
     /** @return Matrix with size rows x cols from vector data */
-    Matrix(int rows, int cols, const std::vector<double> &data);
+    Matrix(std::size_t rows, std::size_t cols, const std::vector<double> &data);
 
-    Matrix(std::size_t rows, std::size_t cols, const Vector& v); 
+    Matrix(std::size_t rows, std::size_t cols, const Vector &v);
 
     /** @return the element at i,j without range check */
     double operator()(int i, int j) const { return data_[i * cols_ + j]; }
@@ -132,32 +142,26 @@ class Matrix {
     std::vector<double> data_;
 };
 
-Matrix::Matrix(int rows, int cols, double value) {
-    if (rows < 0 || cols < 0)
-        throw std::out_of_range{"Matrix size can't be negative"};
-    rows_ = rows;
-    cols_ = cols;
-    data_ = std::vector<double>(rows * cols, value);
-}
-
-Matrix::Matrix(int rows, int cols, std::initializer_list<double> data) : rows_(rows), cols_(cols) {
-    if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
+Matrix::Matrix(std::size_t rows, std::size_t cols, std::initializer_list<double> data)
+    : rows_(rows), cols_(cols) {
+    if (static_cast<size_t>(rows * cols) != data.size()) {
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
 }
 
-Matrix::Matrix(int rows, int cols, const std::vector<double> &data) : rows_(rows), cols_(cols) {
+Matrix::Matrix(std::size_t rows, std::size_t cols, const std::vector<double> &data)
+    : rows_(rows), cols_(cols) {
     // std::cout << "rows=" << rows << " cols=" << cols << " data.size()=" << data.size()
     //<< " rows*cols=" << rows * cols << "\n";
 
-    if (rows < 0 || cols < 0 || static_cast<size_t>(rows * cols) != data.size()) {
+    if (static_cast<size_t>(rows * cols) != data.size()) {
         throw std::out_of_range{"Matrix dimensions did not match with elements in data"};
     }
     data_ = data; // Initialize data only after the check
 }
 
-Matrix::Matrix(std::size_t rows, std::size_t cols, const Vector& v) {
+Matrix::Matrix(std::size_t rows, std::size_t cols, const Vector &v) {
     if (v.size() != rows * cols) {
         throw std::out_of_range("Matrix dimensions and vector size do not match");
     }
@@ -230,9 +234,8 @@ Matrix Matrix::operator*(const Matrix &m) const {
 }
 
 Vector Matrix::operator*(const Vector &v) const {
-    std::vector<double> data = v.data();
-    Matrix col_matrix = Matrix(data.size(), 1, data);
-    Matrix result = ((*this) * col_matrix);
+    Matrix col_matrix(v.size(), 1, v);
+    Matrix result = (*this) * col_matrix;
     return result.column(0);
 }
 
@@ -371,8 +374,8 @@ TEST_CASE("m x n initialised Matrix()") {
 }
 
 TEST_CASE("Construct matrix with negative rows or columns throws") {
-    CHECK_THROWS_AS(Matrix(-1, 1), std::out_of_range);
-    CHECK_THROWS_AS(Matrix(1, -1), std::out_of_range);
+    CHECK_THROWS_AS(Matrix(-1, 1), std::invalid_argument);
+    CHECK_THROWS_AS(Matrix(1, -1), std::invalid_argument);
 }
 
 TEST_CASE("Construct matrix of size 0 does not throw") {
