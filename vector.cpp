@@ -66,22 +66,22 @@ bool Vector::is_zero() const {
     return true;
 }
 
-int Vector::first_non_zero_column() const {
+int Vector::first_non_zero_column(double eps) const {
     for (std::size_t i = 0; i < size(); i++) {
-        if (data_[i] != 0) {
-            return i;
+        if (std::fabs((*this)[i]) > eps) {
+            return static_cast<int>(i);
         }
     }
 
     return -1;
 }
 
-double Vector::leading_element() const {
-    int column = first_non_zero_column();
+double Vector::leading_element(double eps) const {
+    int column = first_non_zero_column(eps);
     if (column == -1) {
         return 0;
     } else {
-        return data_[column];
+        return (*this)[column];
     }
 }
 
