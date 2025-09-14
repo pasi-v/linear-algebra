@@ -1,3 +1,4 @@
+#include "utils.h"
 #include <initializer_list>
 #include <vector>
 
@@ -14,10 +15,7 @@ class Vector {
     /** @return a Zero Vector with size s */
     explicit Vector(std::size_t s) : data_(s, 0.0) {}
 
-    explicit Vector(int s) : Vector(static_cast<std::size_t>(s)) {
-        if (s < 0)
-            throw std::invalid_argument("negative size");
-    }
+    explicit Vector(int s) : Vector(utils::check_nonnegative(s, "vector size")) {}
 
     // construct from {1,2,3}
     Vector(std::initializer_list<double> init) : data_(init) {}
