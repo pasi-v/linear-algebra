@@ -36,6 +36,31 @@ double Vector::dot_product(const Vector &v) const {
     return result;
 }
 
+double Vector::angle(const Vector &v, double eps) const {
+    // Simple implementation is:
+    // return acos(dot_product(v) / (length() * v.length()));
+    // But acos needs to be clamped to [-1, 1] without rounding errors drifting it out
+    const double asq = this->dot_product(*this);
+    const double bsq = v.dot_product(v);
+
+    // Use squared tolerance to avoid an extra sqrt.
+    const double tol2 = eps * eps;
+    if (asq <= tol2 || bsq <= tol2) {
+        throw std::domain_error("angle: undefined for zero-length vector");
+    }
+
+    const double denom = std::sqrt(asq * bsq);
+    double cos_theta = this->dot_product(v) / denom;
+
+    // Clamp into [-1, 1] (C++11, no std::clamp)
+    if (cos_theta > 1.0)
+        cos_theta = 1.0;
+    else if (cos_theta < -1.0)
+        cos_theta = -1.0;
+
+    return std::acos(cos_theta);
+};
+
 std::ostream &operator<<(std::ostream &os, const Vector &v) {
     os << "{ ";
     for (std::size_t i = 0; i < v.size(); ++i) {
@@ -226,9 +251,15 @@ TEST_CASE("Angle happy path") {
 }
 
 TEST_CASE("Angle different sizes throws") {
-    Vector u(2);
-    Vector v(3);
+    Vector u{1, 2};
+    Vector v{1, 2, 3};
     CHECK_THROWS_AS(u.angle(v), std::invalid_argument);
+}
+
+TEST_CASE("Angle with zero vector throws") {
+    Vector u{0, 0, 0};
+    Vector v{1, 2, 3};
+    CHECK_THROWS_AS(u.angle(v), std::domain_error);
 }
 
 TEST_CASE("Projection happy path") {

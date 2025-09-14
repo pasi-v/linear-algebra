@@ -94,8 +94,9 @@ class Vector {
     /**
      * @return the angle between the vectors in radians
      * @throws std::invalid_argument if the vector sizes don't match
+     * @throws std::domain_error if either vector is zero length within eps
      */
-    double angle(const Vector &v) const { return acos(dot_product(v) / (length() * v.length())); };
+    double angle(const Vector &v, double eps = 1e-12) const;
 
     /**
      * @return the projection of v onto this vector
