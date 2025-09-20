@@ -147,9 +147,9 @@ class Matrix {
 
     /**
      * @brief calculate the determinant of this matrix if the matrix is at most 2x2
-     * 
+     *
      * The limit to 2x2 is temporary and will be extended to 3x3 and nxn matrices in the future.
-     * 
+     *
      * @return the determinant of this matrix
      * @throws std::domain_error if the matrix is larger than 2x2
      */
@@ -445,7 +445,7 @@ Matrix Matrix::ref() const {
     return r;
 }
 
-double Matrix::determinant() const { 
+double Matrix::determinant() const {
     if (rows() != cols()) {
         throw std::domain_error("Determinant is defined only for square matrix");
     }
@@ -453,9 +453,18 @@ double Matrix::determinant() const {
         return (*this)(0, 0);
     }
     if (rows() == 2) {
-        return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0); 
+        return (*this)(0, 0) * (*this)(1, 1) - (*this)(0, 1) * (*this)(1, 0);
     }
-    throw std::domain_error("Determinant is currently implemented only for 2x2 matrix");
+    if (rows() == 3) {
+        // Using method 2 from Poole, p. 264
+        return (*this)(0, 0) * (*this)(1, 1) * (*this)(2, 2) +
+               (*this)(0, 1) * (*this)(1, 2) * (*this)(2, 0) +
+               (*this)(0, 2) * (*this)(1, 0) * (*this)(2, 1) -
+               (*this)(2, 0) * (*this)(1, 1) * (*this)(0, 2) -
+               (*this)(2, 1) * (*this)(1, 2) * (*this)(0, 0) -
+               (*this)(2, 2) * (*this)(1, 0) * (*this)(0, 1);
+    }
+    throw std::domain_error("Determinant is not currently implemented for larger than 3x3 matrix");
 }
 
 TEST_CASE("m x n Zero Matrix()") {
@@ -725,7 +734,7 @@ TEST_CASE("exchange_rows") { Matrix m(2, 2, {1, 2, 3, 4}); }
 //     CHECK(r.has_same_dimensions(m));
 // }
 
-TEST_CASE("determinant happy path") {
+TEST_CASE("2x2 determinant happy path") {
     Matrix m(2, 2, {1, 2, 3, 4});
     CHECK_EQ(m.determinant(), -2);
 };
@@ -735,12 +744,17 @@ TEST_CASE("determinant of non-square matrix throws") {
     CHECK_THROWS_AS(m.determinant(), std::domain_error);
 }
 
-TEST_CASE("determinant of larger than 2x2 matrix throws") {
-    Matrix m(3, 3);
+TEST_CASE("determinant of larger than 3x3 matrix throws") {
+    Matrix m(4, 4);
     CHECK_THROWS_AS(m.determinant(), std::domain_error);
 }
 
 TEST_CASE("determinant of 1x1 matrix is its only value") {
     Matrix m(1, 1, 3);
     CHECK_EQ(m.determinant(), 3);
+}
+
+TEST_CASE("3x3 determinant happy path") {
+    Matrix m(3, 3, {5, -3, 2, 1, 0, 2, 2, -1, 3});
+    CHECK_EQ(m.determinant(), 5);
 }
