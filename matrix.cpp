@@ -12,6 +12,8 @@
  * A class for representing an m x n matrix.
  */
 class Matrix {
+    using size_type = std::size_t;
+
   public:
     /** @return Matrix with size m x n, or rows x cols, initialised to value */
     Matrix(std::size_t rows, std::size_t cols, double value = 0.0)
@@ -34,10 +36,16 @@ class Matrix {
     Matrix(std::size_t rows, std::size_t cols, const Vector &v);
 
     /** @return the element at i,j without range check */
-    double operator()(int i, int j) const { return data_[i * cols_ + j]; }
+    double operator()(std::size_t i, std::size_t j) const noexcept { return data_[i * cols_ + j]; }
 
     /** @return the element at i,j, writeable and without range check */
-    double &operator()(int i, int j) { return data_[i * cols_ + j]; }
+    double &operator()(std::size_t i, std::size_t j) { return data_[i * cols_ + j]; }
+
+    /** @return the element at i,j with range check */
+    double at(std::ptrdiff_t i, std::ptrdiff_t j) const { return data_[checked_index(i, j)]; }
+
+    /** @return the element at i,j, writeable and with range check */
+    double &at(std::ptrdiff_t i, std::ptrdiff_t j) { return data_[checked_index(i, j)]; }
 
     /** @return true if the matrices have same dimensions and elements */
     friend bool operator==(const Matrix &a, const Matrix &b) {
@@ -167,6 +175,23 @@ class Matrix {
     void set_row(size_t i, const Vector &v);
     int get_leftmost_non_zero_column_index() const;
     void exchange_rows(std::size_t a, std::size_t b);
+
+    size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
+        if (i < 0 || j < 0) {
+            throw std::out_of_range("negative index");
+        }
+        const size_type ui = static_cast<size_type>(i);
+        const size_type uj = static_cast<size_type>(j);
+        if (ui >= rows_) {
+            throw std::out_of_range("row index out of range");
+        }
+        if (uj >= cols_) {
+            throw std::out_of_range("column index out of range");
+        }
+        // safe now: ui < rows_ and uj < cols_
+        return ui * cols_ + uj;
+    }
+
     size_t rows_;
     size_t cols_;
     std::vector<double> data_;
@@ -522,6 +547,19 @@ TEST_CASE("Construct Matrix with initializer, happy case") {
 TEST_CASE("Construct Matrix with initializer, wrong size") {
     CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2}), std::out_of_range);
     CHECK_THROWS_AS(Matrix m(2, 2, {0, 1, 2, 3, 4}), std::out_of_range);
+}
+
+TEST_CASE("Matrix checked element access") {
+    Matrix m(2, 2, {1, 2, 3, 4});
+    CHECK_EQ(1, m.at(0, 0));
+    CHECK_EQ(2, m.at(0, 1));
+    CHECK_EQ(3, m.at(1, 0));
+    CHECK_EQ(4, m.at(1, 1));
+    // This would calculate as 3rd element in the data, but is still invalid
+    CHECK_THROWS_AS(m.at(0, 2), std::out_of_range);
+    CHECK_THROWS_AS(m.at(0, 2), std::out_of_range);
+    CHECK_THROWS_AS(m.at(-1, 0), std::out_of_range);
+    CHECK_THROWS_AS(m.at(0, -1), std::out_of_range);
 }
 
 TEST_CASE("Matrices with same dimensions and elements are equal") {
