@@ -54,3 +54,6 @@ compile_commands.json
 
 # Geany project files
 *.geany
+
+# VS Code
+.vscode/
