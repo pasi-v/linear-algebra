@@ -84,6 +84,18 @@ public:
   Vector operator*(double c) const;
 
   /**
+   * @return a subvector with elements [start, start + length]
+   * @throws std::out_of_range if the range is invalid
+   */
+  Vector subvector(std::size_t start, std::size_t length) const;
+
+  /**
+   * @return a subvector from start to end of this vector
+   * @throws std::out_of_range if start > size()
+   */
+  Vector subvector(std::size_t start) const;
+
+  /**
    * @return the dot product betwee this and the other vector
    * @throws std::invalid_argument if the vector sizes don't match
    */

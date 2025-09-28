@@ -1,5 +1,6 @@
 #include "vector.h"
 #include "doctest.h"
+#include <algorithm>
 #include <cmath>
 #include <initializer_list>
 #include <ostream>
@@ -22,6 +23,35 @@ Vector Vector::operator*(double c) const {
     result[i] = data_[i] * c;
   }
   return result;
+}
+
+Vector Vector::subvector(std::size_t start, std::size_t length) const {
+  const std::size_t n = data_.size();
+
+  // Allow an empty slice at end (start==n && length==0), but reject others.
+  if (start > n) {
+    throw std::out_of_range("Vector::subvector: start > size()");
+  }
+  // Use n - start to avoid size_t overflow on (start + length).
+  if (length > n - start) {
+    throw std::out_of_range("Vector::subvector: range exceeds size()");
+  }
+
+  Vector out(length);
+  if (length > 0) {
+    std::copy(data_.begin() + static_cast<std::ptrdiff_t>(start),
+              data_.begin() + static_cast<std::ptrdiff_t>(start + length),
+              out.data_.begin());
+  }
+  return out; // NRVO / move elision
+}
+
+Vector Vector::subvector(std::size_t start) const {
+  const std::size_t n = data_.size();
+  if (start > n) {
+    throw std::out_of_range("Vector::subvector: start > size()");
+  }
+  return subvector(start, n - start);
 }
 
 double Vector::dot_product(const Vector &v) const {
@@ -212,6 +242,38 @@ TEST_CASE("Vector subtraction different sizes throws") {
   Vector u(2);
   Vector v(3);
   CHECK_THROWS_AS(u + v, std::invalid_argument);
+}
+
+TEST_CASE("Vector::subvector basics") {
+  Vector v{10, 20, 30, 40, 50};
+
+  SUBCASE("middle segment") {
+    auto s = v.subvector(1, 3); // {20, 30, 40}
+    CHECK(s.size() == 3);
+    CHECK(s[0] == doctest::Approx(20));
+    CHECK(s[1] == doctest::Approx(30));
+    CHECK(s[2] == doctest::Approx(40));
+  }
+
+  SUBCASE("to end") {
+    auto s = v.subvector(2); // {30, 40, 50}
+    CHECK(s.size() == 3);
+    CHECK(s[0] == doctest::Approx(30));
+    CHECK(s[2] == doctest::Approx(50));
+  }
+
+  SUBCASE("empty at end") {
+    auto s = v.subvector(5, 0);
+    CHECK(s.size() == 0);
+  }
+
+  SUBCASE("start > size throws") {
+    CHECK_THROWS_AS(v.subvector(6, 0), std::out_of_range);
+  }
+
+  SUBCASE("range exceeds size throws") {
+    CHECK_THROWS_AS(v.subvector(4, 2), std::out_of_range);
+  }
 }
 
 TEST_CASE("Dot product happy case") {
