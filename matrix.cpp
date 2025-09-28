@@ -46,6 +46,23 @@ public:
     return data_[i * cols_ + j];
   }
 
+  /**
+   * Output stream operator for Matrix.
+   * Prints the matrix in row-major order, one row per line.
+   */
+  friend std::ostream &operator<<(std::ostream &os, const Matrix &m) {
+    for (size_t i = 0; i < m.rows(); ++i) {
+      os << "[ ";
+      for (size_t j = 0; j < m.cols(); ++j) {
+        os << m(i, j);
+        if (j + 1 < m.cols())
+          os << ", ";
+      }
+      os << " ]\n";
+    }
+    return os;
+  }
+
   /** @return the element at i,j with range check */
   double at(std::ptrdiff_t i, std::ptrdiff_t j) const {
     return data_[checked_index(i, j)];
@@ -187,7 +204,7 @@ private:
   // Create a new matrix from this, with rows [lower, upper)
   Matrix row_range(size_t lower, size_t upper) const;
   void set_row(size_t i, const Vector &v);
-  int get_leftmost_non_zero_column_index() const;
+  int get_leftmost_non_zero_column_index(int start_index = 0) const;
   void exchange_rows(std::size_t a, std::size_t b);
 
   size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
@@ -437,8 +454,8 @@ bool Matrix::is_rref() const {
   return true;
 }
 
-int Matrix::get_leftmost_non_zero_column_index() const {
-  for (size_t i = 0; i < cols_; i++) {
+int Matrix::get_leftmost_non_zero_column_index(int start_index) const {
+  for (size_t i = start_index; i < cols_; i++) {
     Vector column = (*this).column(i);
     if (!column.is_zero())
       return i;
@@ -454,10 +471,10 @@ void Matrix::exchange_rows(std::size_t idx_a, std::size_t idx_b) {
 }
 
 Matrix Matrix::ref() const {
-  Matrix r = *this; // copy this matrix
+  Matrix result = *this; // copy this matrix
 
-  if (r.is_ref()) {
-    return r; // already in REF
+  if (result.is_ref()) {
+    return result; // already in REF
   }
 
   // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
@@ -470,33 +487,49 @@ Matrix Matrix::ref() const {
   //   top row
   //   3. Create a leading 1 by scaling the row
   //   4. Use the leading 1 to create zeros below it
-  for (size_t top_row_idx = 0; top_row_idx < r.rows_; top_row_idx++) {
-    // 0. Take the remaining matrix: from top_row_idx to end:
-    Matrix remaining = r.row_range(top_row_idx, r.rows_);
-
+  for (size_t lead_row = 0; lead_row < result.rows_ - 1; lead_row++) {
     // 1. Locate the leftmost non-zero column of the rows below (and including)
     // the top row
-    int leftmost_non_zero_column_index =
-        remaining.get_leftmost_non_zero_column_index();
-    if (leftmost_non_zero_column_index !=
-        -1)  // no non-zero columns left, return
-      break; // or break out of the loop?
+    int lead_col = result.get_leftmost_non_zero_column_index(lead_row);
+
+    if (lead_col == -1) {
+      // no non-zero columns left, we are done
+      break;
+    }
 
     // 2. Create a leading entry in the top row by interchanging it with the
     // top row
-    Vector pivot_col = remaining.column(leftmost_non_zero_column_index);
-    int row_idx = pivot_col.first_non_zero_column();
-    assert(row_idx != -1); // Should not be possible, but assert
-    remaining.exchange_rows(top_row_idx, row_idx);
+    Vector pivot_col = result.column(lead_col).subvector(lead_row);
+    int pivot_row = pivot_col.first_non_zero_column();
+    assert(pivot_row != -1); // Should not be possible, but assert
+    // Above pivot_row is relative to the submatrix we are examining, but for
+    // row operations we need to add top_row_idx to it to get the row index of
+    // the complete matrix:
+    pivot_row += lead_row;
+    // After the assert it is safe to cast int to size_int
+    if (static_cast<std::size_t>(pivot_row) != lead_row)
+      result.exchange_rows(lead_row, pivot_row);
 
     // 3. Create a leading 1 by scaling the row
-    Vector top_row = remaining.row(0);
-    double leading_element_value = top_row.leading_element();
-    Vector scaled_row = top_row * (1 / leading_element_value);
-    remaining.set_row(0, scaled_row);
+    Vector top_row = result.row(lead_row);
+    Vector pivot_row_norm = top_row * (1 / top_row.leading_element());
+    result.set_row(lead_row, pivot_row_norm);
+
+    // 4. Use the leading 1 to create zeros below it on the
+    // lead_col.
+    for (size_t i = lead_row + 1; i < result.rows_; i++) {
+      Vector current = result.row(i);
+      double factor = current[lead_col];
+      if (factor != 0.0) {
+        // TODO: Name v
+        Vector v = pivot_row_norm * factor;
+        Vector new_row = current - v;
+        result.set_row(i, new_row);
+      }
+    }
   }
 
-  return r;
+  return result;
 }
 
 double Matrix::determinant() const {
@@ -790,21 +823,60 @@ TEST_CASE("is_rref returns true for empty matrix") {
 
 TEST_CASE("exchange_rows") { Matrix m(2, 2, {1, 2, 3, 4}); }
 
-// TEST_CASE("ref returns a matrix that is in REF") {
-//     Matrix m(4, 5, {
-//         1, 2, -4, -4, 5,
-//         2, 4, 0, 0, 2,
-//         2, 3, 2, 1, 5,
-//         -1, 1, 3, 6, 5
-//     });
-//     // Since REF is not unique, we assert these properties:
-//     // 1. It is in REF
-//     // 2. It has same dimensions as original matrix
+TEST_CASE("ref returns a matrix that is in REF") {
+  Matrix m(4, 5,
+           {1, 2, -4, -4, 5, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+  // Since REF is not unique, we assert these properties:
+  // 1. It is in REF
+  // 2. It has same dimensions as original matrix
 
-//     Matrix r = m.ref();
-//     CHECK(r.is_ref());
-//     CHECK(r.has_same_dimensions(m));
-// }
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("ref handles correctly a zero row at the beginning") {
+  Matrix m(4, 5,
+           {0, 0, 0, 0, 0, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+  // Since REF is not unique, we assert these properties:
+  // 1. It is in REF
+  // 2. It has same dimensions as original matrix
+
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("ref handles correctly a zero row at the end") {
+  Matrix m(4, 5,
+           {-1, 1, 3, 6, 5, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, 0, 0, 0, 0, 0});
+  // Since REF is not unique, we assert these properties:
+  // 1. It is in REF
+  // 2. It has same dimensions as original matrix
+
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("ref handles correctly a zero row in the middle") {
+  Matrix m(4, 5,
+           {-1, 1, 3, 6, 5, 2, 4, 0, 0, 2, 0, 0, 0, 0, 0, 2, 3, 2, 1, 5});
+  // Since REF is not unique, we assert these properties:
+  // 1. It is in REF
+  // 2. It has same dimensions as original matrix
+
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("ref handles correctly a zero matrix") {
+  Matrix m(3, 3, {0, 0, 0, 0, 0, 0, 0, 0, 0});
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
 
 TEST_CASE("2x2 determinant happy path") {
   Matrix m(2, 2, {1, 2, 3, 4});
