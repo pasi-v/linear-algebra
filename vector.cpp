@@ -39,8 +39,8 @@ double Vector::dot_product(const Vector &v) const {
 double Vector::angle(const Vector &v, double eps) const {
   // Simple implementation is:
   // return acos(dot_product(v) / (length() * v.length()));
-  // But acos needs to be clamped to [-1, 1] without rounding errors drifting it
-  // out
+  // But acos needs to be clamped to [-1, 1] without rounding errors drifting
+  // it out
   const double asq = this->dot_product(*this);
   const double bsq = v.dot_product(v);
 

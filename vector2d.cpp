@@ -81,8 +81,8 @@ struct Point2D {
 };
 
 /**
- * Struct for representing a directed vector from start point to end point in 2D
- * plane
+ * Struct for representing a directed vector from start point to end point in
+ * 2D plane
  */
 struct DirectedVector2D {
   Point2D start;

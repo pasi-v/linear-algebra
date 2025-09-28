@@ -466,8 +466,8 @@ Matrix Matrix::ref() const {
   // For each row as top row, starting with the top row of the whole matrix:
   //   1. Locate the leftmost non-zero column of the rows below (and including)
   //   the top row
-  //   2. Create a leading entry in the top row by interchanging it with the top
-  //   row
+  //   2. Create a leading entry in the top row by interchanging it with the
+  //   top row
   //   3. Create a leading 1 by scaling the row
   //   4. Use the leading 1 to create zeros below it
   for (size_t top_row_idx = 0; top_row_idx < r.rows_; top_row_idx++) {
@@ -482,8 +482,8 @@ Matrix Matrix::ref() const {
         -1)  // no non-zero columns left, return
       break; // or break out of the loop?
 
-    // 2. Create a leading entry in the top row by interchanging it with the top
-    // row
+    // 2. Create a leading entry in the top row by interchanging it with the
+    // top row
     Vector pivot_col = remaining.column(leftmost_non_zero_column_index);
     int row_idx = pivot_col.first_non_zero_column();
     assert(row_idx != -1); // Should not be possible, but assert
@@ -777,7 +777,8 @@ TEST_CASE("is_rref returns true for 1x1 matrix with 1") {
   CHECK(m.is_rref());
 }
 
-TEST_CASE("is_rref returns false for 1x1 matrix with value other than 0 or 1") {
+TEST_CASE(
+    "is_rref returns false for 1x1 matrix with value other than 0 or 1") {
   Matrix m(1, 1, 2.0);
   CHECK(!m.is_rref());
 }

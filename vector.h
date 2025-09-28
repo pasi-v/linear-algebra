@@ -15,7 +15,8 @@ public:
   /** @return a Zero Vector with size s */
   explicit Vector(std::size_t s) : data_(s, 0.0) {}
 
-  explicit Vector(int s) : Vector(utils::check_nonnegative(s, "vector size")) {}
+  explicit Vector(int s)
+      : Vector(utils::check_nonnegative(s, "vector size")) {}
 
   // construct from {1,2,3}
   Vector(std::initializer_list<double> init) : data_(init) {}
@@ -62,7 +63,9 @@ public:
   }
 
   /** @return true if the vector elements are not the same */
-  friend bool operator!=(const Vector &a, const Vector &b) { return !(a == b); }
+  friend bool operator!=(const Vector &a, const Vector &b) {
+    return !(a == b);
+  }
 
   // --- Linear algebra vector operations ---
   /**

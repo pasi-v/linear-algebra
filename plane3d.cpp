@@ -16,7 +16,8 @@ struct PlaneEquation {
   bool operator==(const PlaneEquation &other) const {
     return std::fabs(a - other.a) < EPSILON &&
            std::fabs(b - other.b) < EPSILON &&
-           std::fabs(c - other.c) < EPSILON && std::fabs(d - other.d) < EPSILON;
+           std::fabs(c - other.c) < EPSILON &&
+           std::fabs(d - other.d) < EPSILON;
   }
 
   Vector3D normal() const { return Vector3D{a, b, c}; }
