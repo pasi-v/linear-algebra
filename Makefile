@@ -19,7 +19,7 @@ test: $(TARGET)
 
 # Reformat source files
 format:
-	clang-format -i $(SRC) $(HEADERS)
+	clang-format -i $(SRC) $(HEADERS) -style='{ColumnLimit: 80}'
 
 # Clean build artifacts
 clean:
