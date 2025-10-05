@@ -181,6 +181,11 @@ public:
   Matrix ref() const;
 
   /**
+   * @return the number on nonzero rows in row echelon form
+   */
+  std::size_t rank() const;
+
+  /**
    * @brief calculate the determinant of this matrix if the matrix is at most
    * 2x2
    *
@@ -530,6 +535,19 @@ Matrix Matrix::ref() const {
   }
 
   return result;
+}
+
+std::size_t Matrix::rank() const {
+  Matrix refm = (*this).ref();
+  std::size_t nonzero_rows = 0;
+
+  for (std::size_t i = 0; i < refm.rows(); i++) {
+    if (!(refm.row(i).is_zero())) {
+      nonzero_rows++;
+    }
+  }
+
+  return nonzero_rows;
 }
 
 double Matrix::determinant() const {
@@ -883,6 +901,24 @@ TEST_CASE("ref handles correctly a matrix without zero rows") {
   Matrix r = m.ref();
   CHECK(r.is_ref());
   CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("rank") {
+  SUBCASE("zero matrix") {
+    Matrix m(2, 2, {0, 0, 0, 0});
+    CHECK_EQ(m.rank(), 0);
+  }
+
+  SUBCASE("rank less than rows") {
+    Matrix m(3, 5, {1, -1, -1, 2, 1, 2, -2, -1, 3, 3, -1, 1, -1, 0, -3});
+    CHECK_EQ(m.rank(), 2);
+  }
+
+  SUBCASE("rank equal to rows") {
+    Matrix m(4, 5,
+             {1, 2, -4, -4, 5, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+    CHECK_EQ(m.rank(), 4);
+  }
 }
 
 TEST_CASE("2x2 determinant happy path") {
