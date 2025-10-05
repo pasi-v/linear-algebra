@@ -204,7 +204,7 @@ private:
   // Create a new matrix from this, with rows [lower, upper)
   Matrix row_range(size_t lower, size_t upper) const;
   void set_row(size_t i, const Vector &v);
-  int get_leftmost_non_zero_column_index(int start_index = 0) const;
+  int get_leftmost_non_zero_column_index(int row_start_index) const;
   void exchange_rows(std::size_t a, std::size_t b);
 
   size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
@@ -454,9 +454,9 @@ bool Matrix::is_rref() const {
   return true;
 }
 
-int Matrix::get_leftmost_non_zero_column_index(int start_index) const {
-  for (size_t i = start_index; i < cols_; i++) {
-    Vector column = (*this).column(i);
+int Matrix::get_leftmost_non_zero_column_index(int leading_row) const {
+  for (size_t i = 0; i < cols_; i++) {
+    Vector column = (*this).column(i).subvector(leading_row);
     if (!column.is_zero())
       return i;
   }
@@ -873,6 +873,13 @@ TEST_CASE("ref handles correctly a zero row in the middle") {
 
 TEST_CASE("ref handles correctly a zero matrix") {
   Matrix m(3, 3, {0, 0, 0, 0, 0, 0, 0, 0, 0});
+  Matrix r = m.ref();
+  CHECK(r.is_ref());
+  CHECK(r.has_same_dimensions(m));
+}
+
+TEST_CASE("ref handles correctly a matrix without zero rows") {
+  Matrix m(3, 5, {1, -1, -1, 2, 1, 2, -2, -1, 3, 3, -1, 1, -1, 0, -3});
   Matrix r = m.ref();
   CHECK(r.is_ref());
   CHECK(r.has_same_dimensions(m));
