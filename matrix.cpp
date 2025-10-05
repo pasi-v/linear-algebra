@@ -233,6 +233,60 @@ private:
   std::vector<double> data_;
 };
 
+// TODO: Put Pivot and helpers in a namespace?
+struct Pivot {
+  std::size_t row, col;
+  double value;
+};
+
+static constexpr double kEps = 1e-12;
+
+Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
+void normalize_row(Matrix &A, std::size_t row, double pivot_value);
+void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
+
+Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
+  std::size_t m = A.rows(), n = A.cols();
+  std::size_t best_col = n; // n means “none found”
+  for (std::size_t j = 0; j < n; ++j) {
+    for (std::size_t i = start_row; i < m; ++i) {
+      if (std::fabs(A(i, j)) > kEps) {
+        best_col = j;
+        break;
+      }
+    }
+    if (best_col != n)
+      break;
+  }
+  if (best_col == n)
+    return {m, n, 0.0};
+  // choose topmost nonzero in best_col
+  for (std::size_t i = start_row; i < m; ++i) {
+    if (std::fabs(A(i, best_col)) > kEps) {
+      return {i, best_col, A(i, best_col)};
+    }
+  }
+  return {m, n, 0.0}; // unreachable logically
+}
+
+void normalize_row(Matrix &A, std::size_t row, double pivot_value) {
+  if (std::fabs(pivot_value) <= kEps)
+    return; // guard
+  for (std::size_t j = 0; j < A.cols(); ++j)
+    A(row, j) /= pivot_value;
+}
+
+void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
+  for (std::size_t i = lead_row + 1; i < A.rows(); ++i) {
+    double factor = A(i, lead_col);
+    if (std::fabs(factor) <= kEps)
+      continue;
+    for (std::size_t j = lead_col; j < A.cols(); ++j) {
+      A(i, j) -= factor * A(lead_row, j);
+    }
+  }
+}
+
 Matrix::Matrix(std::size_t rows, std::size_t cols,
                std::initializer_list<double> data)
     : rows_(rows), cols_(cols) {
@@ -476,65 +530,40 @@ void Matrix::exchange_rows(std::size_t idx_a, std::size_t idx_b) {
 }
 
 Matrix Matrix::ref() const {
-  Matrix result = *this; // copy this matrix
+  Matrix R = *this; // copy this matrix
 
-  if (result.is_ref()) {
-    return result; // already in REF
+  if (R.is_ref()) {
+    return R; // already in REF
   }
 
   // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
   // 72-73
   //
   // For each row as top row, starting with the top row of the whole matrix:
-  //   1. Locate the leftmost non-zero column of the rows below (and including)
-  //   the top row
-  //   2. Create a leading entry in the top row by interchanging it with the
-  //   top row
-  //   3. Create a leading 1 by scaling the row
-  //   4. Use the leading 1 to create zeros below it
-  for (size_t lead_row = 0; lead_row < result.rows_ - 1; lead_row++) {
+  const std::size_t m = R.rows_, n = R.cols_;
+  for (std::size_t lead_row = 0; lead_row + 1 < m; ++lead_row) {
     // 1. Locate the leftmost non-zero column of the rows below (and including)
     // the top row
-    int lead_col = result.get_leftmost_non_zero_column_index(lead_row);
-
-    if (lead_col == -1) {
-      // no non-zero columns left, we are done
-      break;
-    }
+    Pivot p = find_leftmost_pivot(R, lead_row);
+    if (p.col == n)
+      break; // non nonzero columns below => done
 
     // 2. Create a leading entry in the top row by interchanging it with the
     // top row
-    Vector pivot_col = result.column(lead_col).subvector(lead_row);
-    int pivot_row = pivot_col.first_non_zero_column();
-    assert(pivot_row != -1); // Should not be possible, but assert
-    // Above pivot_row is relative to the submatrix we are examining, but for
-    // row operations we need to add top_row_idx to it to get the row index of
-    // the complete matrix:
-    pivot_row += lead_row;
-    // After the assert it is safe to cast int to size_int
-    if (static_cast<std::size_t>(pivot_row) != lead_row)
-      result.exchange_rows(lead_row, pivot_row);
+    if (p.row != lead_row)
+      R.exchange_rows(lead_row, p.row);
 
+    // Pivot value may have changed after swap
     // 3. Create a leading 1 by scaling the row
-    Vector top_row = result.row(lead_row);
-    Vector pivot_row_norm = top_row * (1 / top_row.leading_element());
-    result.set_row(lead_row, pivot_row_norm);
+    double pivot_value = R(lead_row, p.col);
+    normalize_row(R, lead_row, pivot_value);
 
     // 4. Use the leading 1 to create zeros below it on the
     // lead_col.
-    for (size_t i = lead_row + 1; i < result.rows_; i++) {
-      Vector current = result.row(i);
-      double factor = current[lead_col];
-      if (factor != 0.0) {
-        // TODO: Name v
-        Vector v = pivot_row_norm * factor;
-        Vector new_row = current - v;
-        result.set_row(i, new_row);
-      }
-    }
+    eliminate_below(R, lead_row, p.col);
   }
 
-  return result;
+  return R;
 }
 
 std::size_t Matrix::rank() const {
