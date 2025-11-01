@@ -21,7 +21,7 @@ test: $(TARGET)
 
 # Reformat source files
 format:
-	clang-format -i $(SRC) $(shell find include -name '*.hpp') -style='{ColumnLimit: 79}'
+	clang-format -i $(SRC) $(shell find include -name '*.hpp')
 
 # Clean build artifacts
 clean:
