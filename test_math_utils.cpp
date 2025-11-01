@@ -1,4 +1,4 @@
-#include "doctest.h"
+#include "doctest/doctest.h"
 
 #include "la/math_utils.hpp"
 

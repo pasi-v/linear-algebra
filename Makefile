@@ -3,8 +3,9 @@ CXX      := clang++
 CXXFLAGS := -Iinclude -std=c++11 -Wall -Wextra -Wtype-limits -O0 -g -fno-omit-frame-pointer -MMD -MP
 
 # Source and target
-SRC      := test_main.cpp vector.cpp vector2d.cpp plane3d.cpp \
-test_vector3d.cpp test_math_utils.cpp matrix.cpp parity.cpp
+SRCDIR   := src
+SRC      := $(wildcard $(SRCDIR)/*.cpp) test_main.cpp \
+test_vector3d.cpp test_math_utils.cpp
 OBJ := $(SRC:.cpp=.o)
 DEPS := $(OBJ:.o=.d)
 TARGET   := tests
@@ -25,6 +26,6 @@ format:
 
 # Clean build artifacts
 clean:
-	rm -f $(TARGET) *.o
+	rm -f $(TARGET) $(SRCDIR)/*.o
 
 .PHONY: all clean format test

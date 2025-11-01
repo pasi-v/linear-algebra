@@ -1,4 +1,4 @@
-#include "doctest.h"
+#include "doctest/doctest.h"
 #include "la/vector3d.hpp"
 #include <cmath>
 #include <iostream>
