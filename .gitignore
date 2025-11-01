@@ -30,7 +30,7 @@
 *.exe
 *.out
 *.app
-tests
+bin/
 
 # Build artifacts
 compile_commands.json
