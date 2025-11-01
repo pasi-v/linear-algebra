@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "vector3d.h"
+#include "la/vector3d.hpp"
 
 TEST_CASE("Operator -") {
   Vector3D u = {2, 0, 2};

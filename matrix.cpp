@@ -1,6 +1,6 @@
 #include "doctest.h"
-#include "utils.h"
-#include "vector.h"
+#include "la/utils.hpp"
+#include "la/vector.hpp"
 #include <algorithm>
 #include <cassert>
 #include <initializer_list>

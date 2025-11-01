@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "vector3d.h"
+#include "la/vector3d.hpp"
 #include <cmath>
 #include <iostream>
 #include <sstream>

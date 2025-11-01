@@ -1,5 +1,5 @@
 #include "doctest.h"
-#include "math_utils.h"
+#include "la/math_utils.hpp"
 #include <cmath>
 
 /**
