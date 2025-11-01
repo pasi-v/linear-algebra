@@ -2,10 +2,10 @@
 #define LA_MATRIX_HPP
 
 #include "la/vector.hpp"
-#include <cstddef>  // size_t
+#include <cstddef> // size_t
 #include <initializer_list>
-#include <vector>
 #include <iostream>
+#include <vector>
 
 namespace la {
 /**
@@ -160,43 +160,8 @@ class Matrix {
     /** @return columns */
     size_t cols() const { return cols_; }
 
-    /**
-     * @brief determine whether matrix is in row-echelon form.
-     *
-     * @return true if it is, false if not.
-     */
-    bool is_ref() const;
-
-    /**
-     * @brief determine whether matrix is in reduced row-echelon form.
-     *
-     * @return true if it is, false if not.
-     */
-    bool is_rref() const;
-
-    /**
-     * @brief return a row echelon form of this matrix
-     *
-     * @return a REF version of this matrix
-     */
-    Matrix ref() const;
-
-    /**
-     * @return the number on nonzero rows in row echelon form
-     */
-    std::size_t rank() const;
-
-    /**
-     * @brief calculate the determinant of this matrix if the matrix is at most
-     * 2x2
-     *
-     * The limit to 2x2 is temporary and will be extended to 3x3 and nxn
-     * matrices in the future.
-     *
-     * @return the determinant of this matrix
-     * @throws std::domain_error if the matrix is larger than 2x2
-     */
-    double determinant() const;
+    /** @brief swap rows a and b */
+    void exchange_rows(std::size_t a, std::size_t b);
 
   private:
     double *pointer_to_row_unchecked(std::size_t r) noexcept {
@@ -211,7 +176,6 @@ class Matrix {
     Matrix row_range(size_t lower, size_t upper) const;
     void set_row(size_t i, const Vector &v);
     int get_leftmost_non_zero_column_index(int row_start_index) const;
-    void exchange_rows(std::size_t a, std::size_t b);
 
     size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
         if (i < 0 || j < 0) {
@@ -233,6 +197,6 @@ class Matrix {
     size_t cols_;
     std::vector<double> data_;
 };
-}
+} // namespace la
 
 #endif
