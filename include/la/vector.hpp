@@ -1,3 +1,6 @@
+#ifndef LA_VECTOR_HPP
+#define LA_VECTOR_HPP
+
 #include "utils.hpp"
 #include <initializer_list>
 #include <vector>
@@ -147,3 +150,5 @@ class Vector {
   private:
     std::vector<double> data_;
 };
+
+#endif
