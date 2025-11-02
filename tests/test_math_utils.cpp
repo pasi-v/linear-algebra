@@ -1,6 +1,6 @@
 #include "doctest/doctest.h"
 
-#include "la/math_utils.hpp"
+#include "math_utils/math_utils.hpp"
 
 TEST_CASE("Radians to degrees and back") {
     using namespace math_utils;
