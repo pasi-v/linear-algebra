@@ -1,6 +1,6 @@
 #include "la/matrix.hpp"
-#include "la/utils.hpp"
 #include "la/vector.hpp"
+#include "utils/utils.hpp"
 #include <algorithm>
 #include <cassert>
 #include <initializer_list>
