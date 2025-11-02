@@ -5,6 +5,7 @@
 #include <initializer_list>
 #include <vector>
 
+namespace la {
 /**
  * An n-dimensional vector useful for linear algebra calculations
  */
@@ -150,5 +151,6 @@ class Vector {
   private:
     std::vector<double> data_;
 };
+} // namespace la
 
 #endif
