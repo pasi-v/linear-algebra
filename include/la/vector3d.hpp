@@ -1,3 +1,6 @@
+#ifndef LA_VECTOR_3D_HPP
+#define LA_VECTOR_3D_HPP
+
 namespace la {
 class Vector3D {
   public:
@@ -31,3 +34,5 @@ class Vector3D {
     double z_;
 };
 } // namespace la
+
+#endif
