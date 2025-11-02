@@ -1,3 +1,4 @@
+namespace la {
 class Vector3D {
   public:
     Vector3D(const double x, const double y, const double z)
@@ -29,3 +30,4 @@ class Vector3D {
     double y_;
     double z_;
 };
+} // namespace la

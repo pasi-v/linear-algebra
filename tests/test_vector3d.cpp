@@ -2,6 +2,7 @@
 #include "la/vector3d.hpp"
 
 TEST_CASE("Operator -") {
+    using la::Vector3D;
     Vector3D u = {2, 0, 2};
     Vector3D v = {0, -1, 1};
     Vector3D expected = {2, 1, 1};
@@ -9,6 +10,7 @@ TEST_CASE("Operator -") {
 }
 
 TEST_CASE("Cross product") {
+    using la::Vector3D;
     Vector3D u = {0, 1, 1};
     Vector3D v = {3, -1, 2};
     Vector3D expected = {3, 3, -3};
@@ -17,6 +19,7 @@ TEST_CASE("Cross product") {
 }
 
 TEST_CASE("Dot product") {
+    using la::Vector3D;
     Vector3D u = {1, 2, -3};
     Vector3D v = {-3, 5, 2};
     double expected = 1.0;
@@ -25,6 +28,7 @@ TEST_CASE("Dot product") {
 }
 
 TEST_CASE("Cross product and dot product is zero") {
+    using la::Vector3D;
     Vector3D u = {0, 1, 1};
     Vector3D v = {3, -1, 2};
     Vector3D uxv = u.crossProduct(v);
