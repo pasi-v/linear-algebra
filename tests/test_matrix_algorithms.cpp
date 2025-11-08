@@ -1,6 +1,7 @@
 #include "doctest/doctest.h"
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
+#include <cmath>
 
 TEST_CASE("is_ref returns true for REF") {
     using la::Matrix;
@@ -196,4 +197,57 @@ TEST_CASE("3x3 determinant happy path") {
     using la::Matrix;
     Matrix m(3, 3, {5, -3, 2, 1, 0, 2, 2, -1, 3});
     CHECK_EQ(determinant(m), 5);
+}
+
+TEST_CASE("Reduced Row Echelon Form") {
+    using la::Matrix;
+
+    SUBCASE("rref() returns equal to itself if already in RREF") {
+        // clang-format off
+        Matrix m(3, 5, {
+            1, -1, 0,  1, 2,
+            0,  0, 1, -1, 1,
+            0,  0, 0,  0, 0
+        });
+        // clang-format on
+        CHECK_EQ(m, rref(m));
+    }
+
+    SUBCASE("rref() happy case") {
+        // clang-format off
+        Matrix m(3, 5, {
+             1, -1, -1, 2,  1,
+             2, -2, -1, 3,  3,
+            -1,  1, -1, 0, -3
+        });
+        Matrix expected(3, 5, {
+            1, -1, 0,  1, 2,
+            0,  0, 1, -1, 1,
+            0,  0, 0,  0, 0
+        });
+        // clang-format on
+        CHECK_EQ(expected, rref(m));
+    }
+}
+
+TEST_CASE("rref eliminates using the last pivot row") {
+    using la::Matrix;
+
+    // Construct a matrix whose REF has pivots in all 3 rows.
+    // The last pivot is in the last row; its column has a nonzero above.
+    // clang-format off
+    Matrix A(3, 3, {
+        1, 2, 0,
+        0, 1, 3,
+        0, 0, 1
+    });
+    // clang-format on
+
+    Matrix R = la::rref(A);
+
+    SUBCASE("all entries above last pivot are zero") {
+        // The pivot in column 2 should have zeros above it.
+        CHECK(std::fabs(R(0, 2)) <= la::kEps);
+        CHECK(std::fabs(R(1, 2)) <= la::kEps);
+    }
 }

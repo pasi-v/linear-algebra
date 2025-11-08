@@ -3,6 +3,22 @@
 
 namespace la {
 /**
+ * @brief Numerical tolerance used for floating-point comparisons.
+ *
+ * Values with absolute magnitude less than or equal to `kEps` are
+ * considered to be zero in equality checks and elimination steps.
+ *
+ * This constant defines the default threshold for detecting pivots,
+ * zeroing entries, and other floating-point comparisons in matrix
+ * operations such as REF/RREF transformations.
+ *
+ * @note Users may rely on this value when implementing custom
+ *       algorithms to maintain consistency with the library’s
+ *       numerical behavior.
+ */
+static constexpr double kEps = 1e-12;
+
+/**
  * @brief determine whether matrix is in row-echelon form.
  *
  * @return true if it is, false if not.
@@ -22,6 +38,13 @@ bool is_rref(const Matrix &A);
  * @return a REF version of this matrix
  */
 Matrix ref(const Matrix &A);
+
+/**
+ * @brief return a reduced row echelon form of matrix
+ * @param A the matrix
+ * @return a RREF version of A
+ */
+Matrix rref(const Matrix &A);
 
 /**
  * @return the number on nonzero rows in row echelon form

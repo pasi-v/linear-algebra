@@ -1,5 +1,6 @@
 #include "la/matrix_algorithms.hpp"
 #include "la/matrix.hpp"
+#include <cmath>
 
 namespace la {
 struct Pivot {
@@ -10,8 +11,10 @@ struct Pivot {
 Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
 void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
+void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 
-static constexpr double kEps = 1e-12;
+void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
+                 std::size_t lead_row);
 
 Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
     std::size_t m = A.rows(), n = A.cols();
@@ -46,12 +49,24 @@ void normalize_row(Matrix &A, std::size_t row, double pivot_value) {
 
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
     for (std::size_t i = lead_row + 1; i < A.rows(); ++i) {
-        double factor = A(i, lead_col);
-        if (std::fabs(factor) <= kEps)
-            continue;
-        for (std::size_t j = lead_col; j < A.cols(); ++j) {
-            A(i, j) -= factor * A(lead_row, j);
-        }
+        row_replace(A, i, lead_col, lead_row);
+    }
+}
+
+void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
+    for (std::size_t i = 0; i < lead_row; ++i) {
+        row_replace(A, i, lead_col, lead_row);
+    }
+}
+
+void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
+                 std::size_t lead_row) {
+    double factor = A(i, lead_col);
+    if (std::fabs(factor) <= kEps) {
+        return;
+    };
+    for (std::size_t j = lead_col; j < A.cols(); ++j) {
+        A(i, j) -= factor * A(lead_row, j);
     }
 }
 
@@ -168,6 +183,26 @@ Matrix ref(const Matrix &A) {
         // 4. Use the leading 1 to create zeros below it on the
         // lead_col.
         eliminate_below(R, lead_row, p.col);
+    }
+
+    return R;
+}
+
+Matrix rref(const Matrix &A) {
+    Matrix R = ref(A); // REF: pivots are 1, zeros below, zero rows at bottom
+
+    // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
+    // 76 Starting from row 2, for each row until first zero row:
+    //   - find leftmost pivot column (leading 1)
+    //   - create zeros above it by eliminate_above()
+    const std::size_t m = R.rows(), n = R.cols();
+    for (std::size_t lead_row = 0; lead_row < m; ++lead_row) {
+        Pivot p = find_leftmost_pivot(R, lead_row);
+        if (p.col == n)
+            break; // first zero row => done
+
+        // Use the leading 1 to create zeros above it on the lead column
+        eliminate_above(R, lead_row, p.col);
     }
 
     return R;
