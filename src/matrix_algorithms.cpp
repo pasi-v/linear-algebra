@@ -13,6 +13,7 @@ void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 bool almost_zero(double value);
+std::size_t rank_from_ref(const Matrix &R);
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
@@ -60,8 +61,16 @@ void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
     }
 }
 
-bool almost_zero(double value) {
-    return std::fabs(value) <= kEps;
+bool almost_zero(double value) { return std::fabs(value) <= kEps; }
+
+std::size_t rank_from_ref(const Matrix &R) {
+    std::size_t r = 0;
+    for (std::size_t i = 0; i < R.rows(); ++i) {
+        if (!R.row(i).is_zero()) {
+            ++r;
+        }
+    }
+    return r;
 }
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
@@ -215,15 +224,7 @@ Matrix rref(const Matrix &A) {
 
 std::size_t rank(const Matrix &A) {
     Matrix refm = ref(A);
-    std::size_t nonzero_rows = 0;
-
-    for (std::size_t i = 0; i < refm.rows(); i++) {
-        if (!(refm.row(i).is_zero())) {
-            nonzero_rows++;
-        }
-    }
-
-    return nonzero_rows;
+    return rank_from_ref(refm);
 }
 
 double determinant(const Matrix &A) {
@@ -285,13 +286,7 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
         }
     }
 
-    std::size_t rankA = 0;
-    for (std::size_t i = 0; i < m; ++i) {
-        if (!ref_A.row(i).is_zero()) {
-            ++rankA;
-        }
-    }
-
+    std::size_t rankA = rank_from_ref(ref_A);
     const std::size_t n_free_variables = (n > rankA) ? (n - rankA) : 0;
 
     if (n_free_variables == 0) {
