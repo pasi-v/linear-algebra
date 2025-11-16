@@ -251,3 +251,32 @@ TEST_CASE("rref eliminates using the last pivot row") {
         CHECK(std::fabs(R(1, 2)) <= la::kEps);
     }
 }
+
+TEST_CASE("augment") {
+    using la::Matrix;
+    using la::Vector;
+
+    // clang-format off
+    Matrix A(3, 3, {
+        1, -1,  2,
+        1,  2, -1,
+        0,  2, -2
+    });
+
+    SUBCASE("happy path") {
+        Vector b({3, -3, 1});
+        Matrix R(3, 4, {
+            1, -1,  2,  3,
+            1,  2, -1, -3,
+            0,  2, -2, 1
+        });
+        // clang-format on
+
+        CHECK_EQ(augment(A, b), R);
+    }
+
+    SUBCASE("wrong size b throws") {
+        Vector b({1, 2});
+        CHECK_THROWS_AS(augment(A, b), std::domain_error);
+    }
+}

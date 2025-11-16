@@ -63,4 +63,15 @@ std::size_t rank(const Matrix &A);
  * matrix
  */
 double determinant(const Matrix &A);
+
+/**
+ * @brief construct an augmented matrix from coefficient matrix and righ-hand
+ * side vector
+ *
+ * @param A coefficient matrix of a linear system
+ * @param b right-hand side vector of a linear system
+ * @return augmented matrix A|b
+ * @throws std::domain_error if the size of b does not match rows of A
+ */
+Matrix augment(const Matrix &A, const Vector &b);
 } // namespace la
