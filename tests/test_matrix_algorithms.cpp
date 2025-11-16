@@ -280,3 +280,35 @@ TEST_CASE("augment") {
         CHECK_THROWS_AS(augment(A, b), std::domain_error);
     }
 }
+
+
+TEST_CASE("Number of solutions") {
+    using la::Matrix;
+    using la::Vector;
+    using la::SolutionKind;
+
+    SUBCASE("Unique solution") {
+        // clang-format off
+        Matrix A(3, 3, {
+            0,  2,  3,
+            2,  3,  1,
+            1, -1, -2
+        });
+        // clang-format on
+        Vector b({8, 5, -5});
+
+        CHECK_EQ(n_solutions(A, b), SolutionKind::Unique);
+    }
+
+    SUBCASE("Infinite solutions") {
+        // clang-format off
+        Matrix A(3, 4, {
+             1, -1, -1, 2,
+             2, -2, -1, 3,
+            -1,  1, -1, 0
+        });
+        // clang-format on
+        Vector b({1, 3, -3});
+        CHECK_EQ(n_solutions(A, b), SolutionKind::Infinite);
+    }
+}

@@ -261,4 +261,16 @@ Matrix augment(const Matrix &A, const Vector &b) {
 
     return M;
 }
+
+SolutionKind n_solutions(const Matrix &A, const Vector &b) {
+    std::size_t n_free_variables = A.rows() - rank(A);
+
+    if (n_free_variables == 0) {
+        return SolutionKind::Unique;
+    } else if (n_free_variables > 0) {
+        return SolutionKind::Infinite;
+    }
+
+    return SolutionKind::None;
+}
 } // namespace la
