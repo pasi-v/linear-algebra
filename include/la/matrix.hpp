@@ -165,14 +165,25 @@ class Matrix {
 
     /**
      * @brief Create a new matrix from this, with rows [lower, upper)
-     * 
+     *
      * @param lower the first row to include
      * @param upper the first row not to include
      * @return a new matrix
-     * 
+     *
      * @throws std::out_of_range if upper >= lower or upper >= rows
      */
     Matrix row_range(size_t lower, size_t upper) const;
+
+    /**
+     * @brief Create a new matrix from this, with columns [lower, upper)
+     *
+     * @param lower the first column to include
+     * @param upper the first column not to include
+     * @return a new matrix
+     *
+     * @throws std::out_of_range if upper >= lower or upper >= rows
+     */
+    Matrix col_range(size_t lower, size_t upper) const;
 
   private:
     double *pointer_to_row_unchecked(std::size_t r) noexcept {
@@ -184,6 +195,7 @@ class Matrix {
     }
 
     void set_row(size_t i, const Vector &v);
+    void set_col(size_t i, const Vector &v);
     int get_leftmost_non_zero_column_index(int row_start_index) const;
 
     size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {

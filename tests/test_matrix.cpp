@@ -271,39 +271,80 @@ TEST_CASE("exchange_rows") {
     // TODO: Call act and asser
 }
 
-TEST_CASE("row_range") {
+TEST_SUITE("range methods") {
     using la::Matrix;
 
-    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+    // clang-format off
+    Matrix m(3, 4, {
+        1,  2,  3,  4,
+        5,  6,  7,  8,
+        9, 10, 11, 12
+    });
+    // clang-format on
 
-    SUBCASE("take first rows") {
-        Matrix expected(2, 3, {1, 2, 3, 4, 5, 6});
-        CHECK_EQ(m.row_range(0, 2), expected);
+    TEST_CASE("row_range") {
+        SUBCASE("take first rows") {
+            Matrix expected(2, 4, {1, 2, 3, 4, 5, 6, 7, 8});
+            CHECK_EQ(m.row_range(0, 2), expected);
+        }
+
+        SUBCASE("take middle row") {
+            Matrix expected(1, 4, {5, 6, 7, 8});
+            CHECK_EQ(m.row_range(1, 2), expected);
+        }
+
+        SUBCASE("take one last row") {
+            Matrix expected(1, 4, {9, 10, 11, 12});
+            CHECK_EQ(m.row_range(2, 3), expected);
+        }
+
+        SUBCASE("take all rows") { CHECK_EQ(m.row_range(0, 3), m); }
+
+        SUBCASE("take no rows returns zero-row matrix") {
+            CHECK_EQ(m.row_range(0, 0), Matrix(0, 4));
+        }
+
+        SUBCASE("lower > upper throws") {
+            CHECK_THROWS_AS(m.row_range(1, 0), std::range_error);
+        }
+
+        SUBCASE("upper > total rows throws") {
+            CHECK_THROWS_AS(m.row_range(0, 5), std::range_error);
+        }
     }
 
-    SUBCASE("take middle row") {
-        Matrix expected(1, 3, {4, 5, 6});
-        CHECK_EQ(m.row_range(1, 2), expected);
-    }
+    TEST_CASE("column range") {
+        SUBCASE("take first two columns") {
+            Matrix expected(3, 2, {1, 2, 5, 6, 9, 10});
+            CHECK_EQ(m.col_range(0, 2), expected);
+        }
 
-    SUBCASE("take one last row") {
-        Matrix expected(1, 3, {7, 8, 9});
-        CHECK_EQ(m.row_range(2, 3), expected);
-    }
+        SUBCASE("take first column") {
+            Matrix expected(3, 1, {1, 5, 9});
+            CHECK_EQ(m.col_range(0, 1), expected);
+        }
 
-    SUBCASE("take all rows") {
-        CHECK_EQ(m.row_range(0, 3), m);
-    }
+        SUBCASE("take one middle column") {
+            Matrix expected(3, 1, {2, 6, 10});
+            CHECK_EQ(m.col_range(1, 2), expected);
+        }
 
-    SUBCASE("take no rows returns zero-row matrix") {
-        CHECK_EQ(m.row_range(0, 0), Matrix(0, 3));
-    }
+        SUBCASE("take last column") {
+            Matrix expected(3, 1, {4, 8, 12});
+            CHECK_EQ(m.col_range(3, 4), expected);
+        }
 
-    SUBCASE("lower > upper throws") {
-        CHECK_THROWS_AS(m.row_range(1, 0), std::range_error);
-    }
+        SUBCASE("take two last columns") {
+            Matrix expected(3, 2, {3, 4, 7, 8, 11, 12});
+            CHECK_EQ(m.col_range(2, 4), expected);
+        }
 
-    SUBCASE("upper > total rows throws") {
-        CHECK_THROWS_AS(m.row_range(0, 4), std::range_error);
+        SUBCASE("lower > upper throws") {
+            CHECK_THROWS_AS(m.col_range(1, 0), std::range_error);
+        }
+
+        SUBCASE("upper > total rows throws") {
+            CHECK_THROWS_AS(m.col_range(0, 5), std::range_error);
+        }
     }
 }

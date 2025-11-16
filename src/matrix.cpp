@@ -147,6 +147,15 @@ void Matrix::set_row(size_t row, const Vector &v) {
     std::copy_n(v.data(), cols_, pointer_to_row_unchecked(row));
 }
 
+void Matrix::set_col(size_t col, const Vector &v) {
+    assert(v.size() == rows_);
+    assert(col < cols_);
+
+    for (std::size_t r = 0; r < rows_; ++r) {
+        (*this)(r, col) = v[r];
+    }
+}
+
 Matrix Matrix::row_range(std::size_t lower, std::size_t upper) const {
     if (lower > upper) {
         throw std::range_error("upper must be greater than lower");
@@ -158,6 +167,22 @@ Matrix Matrix::row_range(std::size_t lower, std::size_t upper) const {
     Matrix new_matrix = Matrix(upper - lower, cols_);
     for (size_t i = lower; i < upper; i++) {
         new_matrix.set_row(i - lower, row(i));
+    }
+
+    return new_matrix;
+}
+
+Matrix Matrix::col_range(std::size_t lower, std::size_t upper) const {
+    if (lower > upper) {
+        throw std::range_error("upper must be greater than lower");
+    }
+    if (upper > cols()) {
+        throw std::range_error("upper must be less than or equal to cols");
+    }
+
+    Matrix new_matrix = Matrix(rows(), upper - lower);
+    for (size_t i = lower; i < upper; i++) {
+        new_matrix.set_col(i - lower, column(i));
     }
 
     return new_matrix;
