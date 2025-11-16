@@ -163,6 +163,17 @@ class Matrix {
     /** @brief swap rows a and b */
     void exchange_rows(std::size_t a, std::size_t b);
 
+    /**
+     * @brief Create a new matrix from this, with rows [lower, upper)
+     * 
+     * @param lower the first row to include
+     * @param upper the first row not to include
+     * @return a new matrix
+     * 
+     * @throws std::out_of_range if upper >= lower or upper >= rows
+     */
+    Matrix row_range(size_t lower, size_t upper) const;
+
   private:
     double *pointer_to_row_unchecked(std::size_t r) noexcept {
         return data_.data() + r * cols_;
@@ -172,8 +183,6 @@ class Matrix {
         return data_.data() + r * cols_;
     }
 
-    // Create a new matrix from this, with rows [lower, upper)
-    Matrix row_range(size_t lower, size_t upper) const;
     void set_row(size_t i, const Vector &v);
     int get_leftmost_non_zero_column_index(int row_start_index) const;
 

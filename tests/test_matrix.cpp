@@ -270,3 +270,40 @@ TEST_CASE("exchange_rows") {
     Matrix m(2, 2, {1, 2, 3, 4});
     // TODO: Call act and asser
 }
+
+TEST_CASE("row_range") {
+    using la::Matrix;
+
+    Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+
+    SUBCASE("take first rows") {
+        Matrix expected(2, 3, {1, 2, 3, 4, 5, 6});
+        CHECK_EQ(m.row_range(0, 2), expected);
+    }
+
+    SUBCASE("take middle row") {
+        Matrix expected(1, 3, {4, 5, 6});
+        CHECK_EQ(m.row_range(1, 2), expected);
+    }
+
+    SUBCASE("take one last row") {
+        Matrix expected(1, 3, {7, 8, 9});
+        CHECK_EQ(m.row_range(2, 3), expected);
+    }
+
+    SUBCASE("take all rows") {
+        CHECK_EQ(m.row_range(0, 3), m);
+    }
+
+    SUBCASE("take no rows returns zero-row matrix") {
+        CHECK_EQ(m.row_range(0, 0), Matrix(0, 3));
+    }
+
+    SUBCASE("lower > upper throws") {
+        CHECK_THROWS_AS(m.row_range(1, 0), std::range_error);
+    }
+
+    SUBCASE("upper > total rows throws") {
+        CHECK_THROWS_AS(m.row_range(0, 4), std::range_error);
+    }
+}

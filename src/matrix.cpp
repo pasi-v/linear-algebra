@@ -148,8 +148,12 @@ void Matrix::set_row(size_t row, const Vector &v) {
 }
 
 Matrix Matrix::row_range(std::size_t lower, std::size_t upper) const {
-    assert(lower <= upper);
-    assert(upper <= rows_);
+    if (lower > upper) {
+        throw std::range_error("upper must be greater than lower");
+    }
+    if (upper > rows()) {
+        throw std::range_error("upper must be less than or equal to rows");
+    }
 
     Matrix new_matrix = Matrix(upper - lower, cols_);
     for (size_t i = lower; i < upper; i++) {
