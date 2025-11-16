@@ -281,11 +281,10 @@ TEST_CASE("augment") {
     }
 }
 
-
 TEST_CASE("Number of solutions") {
     using la::Matrix;
-    using la::Vector;
     using la::SolutionKind;
+    using la::Vector;
 
     SUBCASE("Unique solution") {
         // clang-format off
@@ -310,5 +309,17 @@ TEST_CASE("Number of solutions") {
         // clang-format on
         Vector b({1, 3, -3});
         CHECK_EQ(n_solutions(A, b), SolutionKind::Infinite);
+    }
+
+    SUBCASE("Zero solutions") {
+        // clang-format off
+        Matrix A(3, 3, {
+            1, -1,  2,
+            1,  2, -1,
+            0,  2, -2
+        });
+        // clang-format on
+        Vector b({3, -3, 1});
+        CHECK_EQ(n_solutions(A, b), SolutionKind::None);
     }
 }

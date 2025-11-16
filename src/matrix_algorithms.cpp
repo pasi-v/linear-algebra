@@ -12,6 +12,7 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
 void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
+bool almost_zero(double value);
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
@@ -57,6 +58,10 @@ void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
     for (std::size_t i = 0; i < lead_row; ++i) {
         row_replace(A, i, lead_col, lead_row);
     }
+}
+
+bool almost_zero(double value) {
+    return std::fabs(value) <= kEps;
 }
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
@@ -263,14 +268,42 @@ Matrix augment(const Matrix &A, const Vector &b) {
 }
 
 SolutionKind n_solutions(const Matrix &A, const Vector &b) {
-    std::size_t n_free_variables = A.rows() - rank(A);
+    std::size_t m = A.rows();
+    std::size_t n = A.cols();
+
+    Matrix Ab = augment(A, b);
+    Matrix R = ref(Ab);
+    Matrix ref_A = R.col_range(0, A.cols());
+    Vector ref_b = R.column(R.cols() - 1);
+
+    // Find inconsistency, which is that a row of A in REF is all zeroes
+    // and corresponding element in b is non-zero:
+    // [0 ... 0 | c ] with c != 0:
+    for (std::size_t i = 0; i < m; i++) {
+        if (ref_A.row(i).is_zero() && !almost_zero(ref_b.at(i))) {
+            return SolutionKind::None;
+        }
+    }
+
+    std::size_t rankA = 0;
+    for (std::size_t i = 0; i < m; ++i) {
+        if (!ref_A.row(i).is_zero()) {
+            ++rankA;
+        }
+    }
+
+    const std::size_t n_free_variables = (n > rankA) ? (n - rankA) : 0;
 
     if (n_free_variables == 0) {
+        // We have already established that system is consistent to zero
+        // free variables means unique solution
         return SolutionKind::Unique;
     } else if (n_free_variables > 0) {
+        // consistent and infinite solutions
         return SolutionKind::Infinite;
     }
 
+    // Should never reach this point, just keeping compiler happy
     return SolutionKind::None;
 }
 } // namespace la

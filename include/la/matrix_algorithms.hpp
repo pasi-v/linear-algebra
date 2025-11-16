@@ -3,16 +3,16 @@
 
 namespace la {
 enum class SolutionKind {
-    None,      // no solutions (inconsistent system)
-    Unique,    // exactly one solution
-    Infinite   // infinitely many solutions
+    None,    // no solutions (inconsistent system)
+    Unique,  // exactly one solution
+    Infinite // infinitely many solutions
 };
 
 struct LinearSystemSolution {
     SolutionKind kind;
 
     // Defined iff kind != SolutionKind::None
-    Vector particular;           
+    Vector particular;
 
     // Basis for the homogeneous solution space.
     // - empty if unique solution
@@ -20,7 +20,7 @@ struct LinearSystemSolution {
     std::vector<Vector> directions;
 
     bool has_solution() const { return kind != SolutionKind::None; }
-    bool is_unique()   const { return kind == SolutionKind::Unique; }
+    bool is_unique() const { return kind == SolutionKind::Unique; }
     bool is_infinite() const { return kind == SolutionKind::Infinite; }
 };
 
