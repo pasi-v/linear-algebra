@@ -148,7 +148,18 @@ class Vector {
      * element and the rest are zeros. */
     bool is_standard_basis() const;
 
-  private:
+    /**
+     * @param start start index of the suffix
+     * @return the suffix of the vector (original without head element)
+     *         or an empty Vector if start > this Vector's size
+     */
+    Vector tail(std::size_t start = 1) const;
+
+private:
+    Vector(std::vector<double>::const_iterator first,
+           std::vector<double>::const_iterator last)
+        : data_(first, last) {}
+
     std::vector<double> data_;
 };
 } // namespace la

@@ -303,3 +303,27 @@ TEST_CASE("is_standard_basis returns false for zero vector") {
     Vector v{0, 0, 0};
     CHECK(!v.is_standard_basis());
 }
+
+TEST_CASE("tail") {
+    using la::Vector;
+
+    SUBCASE("tail of 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({2, 3}), v.tail());
+    }
+
+    SUBCASE("start = 2 tail of 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({3}), v.tail(2));
+    }
+
+    SUBCASE("tail of 1-element vector is empty") {
+        Vector v({1});
+        CHECK_EQ(Vector(0), v.tail());
+    }
+
+    SUBCASE("start > size returns empty vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector(0), v.tail(3));
+    }
+}

@@ -151,4 +151,11 @@ bool Vector::is_standard_basis() const {
 
     return one_found;
 }
+
+Vector Vector::tail(std::size_t start) const {
+    if (start > data_.size()) {
+        return Vector();
+    }
+    return Vector(data_.begin() + start, data_.end());
+}
 } // namespace la
