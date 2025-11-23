@@ -41,7 +41,8 @@ struct LinearSystemSolution {
 static constexpr double kEps = 1e-12;
 
 /**
- * @brief determine whether matrix is in row-echelon form.
+ * @brief determine whether matrix is in row-echelon form with normalised
+ * leading entries (all pivots = 1)
  *
  * @return true if it is, false if not.
  */
@@ -55,7 +56,8 @@ bool is_ref(const Matrix &A);
 bool is_rref(const Matrix &A);
 
 /**
- * @brief return a row echelon form of this matrix
+ * @brief return a row echelon form of this matrix with normalised leading
+ * entries (all pivots = 1)
  *
  * @return a REF version of this matrix
  */

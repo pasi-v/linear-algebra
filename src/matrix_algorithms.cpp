@@ -1,5 +1,6 @@
 #include "la/matrix_algorithms.hpp"
 #include "la/matrix.hpp"
+#include "la/vector.hpp"
 #include <cmath>
 
 namespace la {
@@ -111,6 +112,7 @@ bool is_ref(const Matrix &A) {
     // All zero rows are at the bottom.
 
     // Assert leading entry index grows when going down non-zero vectors
+    // and leading entries are all 1.
     int prev_leading_entry_column = -1; // valid columns indexed from 0 to m-1
     for (size_t i = 0; i < A.rows(); i++) {
         Vector v = A.row(i);
@@ -126,9 +128,14 @@ bool is_ref(const Matrix &A) {
             return false;
         }
         prev_leading_entry_column = cur_leading_entry_column;
+
+        double leading_entry = A(i, cur_leading_entry_column);
+        if (!almost_zero(1.0 - leading_entry)) {
+            return false;
+        }
     }
 
-    // Both requirements hold, the matrix is in row echelon form.
+    // All requirements hold, the matrix is in row echelon form.
     return true;
 }
 
@@ -177,7 +184,7 @@ Matrix ref(const Matrix &A) {
     //
     // For each row as top row, starting with the top row of the whole matrix:
     const std::size_t m = R.rows(), n = R.cols();
-    for (std::size_t lead_row = 0; lead_row + 1 < m; ++lead_row) {
+    for (std::size_t lead_row = 0; lead_row < m; ++lead_row) {
         // 1. Locate the leftmost non-zero column of the rows below (and
         // including) the top row
         Pivot p = find_leftmost_pivot(R, lead_row);

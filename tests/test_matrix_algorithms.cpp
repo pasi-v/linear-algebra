@@ -3,25 +3,55 @@
 #include "la/matrix_algorithms.hpp"
 #include <cmath>
 
-TEST_CASE("is_ref returns true for REF") {
+TEST_CASE("is_ref returns true for REF that is normalised") {
+    using la::Matrix;
+    // clang-format off
+    Matrix m(3, 3, {
+        1, 4, 1,
+        0, 1, 2,
+        0, 0, 0
+    });
+    // clang-format on
+    CHECK(is_ref(m));
+}
+
+TEST_CASE("is_ref returns false for REF that is not normalised") {
     using la::Matrix;
     // ADL (Argument-Dependent Lookup) at work here:
     // The compiler automatically searches the namespace of Matrix for the
     // function that has Matrix as its argument (is_ref) and finds it without
     // using la::is_ref;
-    Matrix m(3, 3, {2, 4, 1, 0, -1, 2, 0, 0, 0});
-    CHECK(is_ref(m));
+    // clang-format off
+    Matrix m(3, 3, {
+        2,  4, 1,
+        0, -1, 2,
+        0,  0, 0
+    });
+    // clang-format on
+    CHECK(!is_ref(m));
 }
 
 TEST_CASE("is_ref returns false for zero row not at the bottom") {
     using la::Matrix;
-    Matrix m(3, 3, {2, 4, 1, 0, 0, 0, 0, -1, 2}); // zero row at 2
+    // clang-format off
+    Matrix m(3, 3, {
+        2, 4, 1,
+        0, 0, 0,
+        0, -1, 2
+    }); // zero row at 2
+    // clang-format on
     CHECK(!is_ref(m));
 }
 
 TEST_CASE("is_ref returns false for not REF") {
     using la::Matrix;
-    Matrix m(3, 3, {1, 0, 1, 0, 0, 3, 0, 1, 0});
+    // clang-format off
+    Matrix m(3, 3, {
+        1, 0, 1,
+        0, 0, 3,
+        0, 1, 0
+    });
+    // clang-format on
     CHECK(!is_ref(m));
 }
 
@@ -84,10 +114,16 @@ TEST_CASE("is_rref returns true for empty matrix") {
 
 TEST_CASE("ref returns a matrix that is in REF") {
     using la::Matrix;
-    Matrix m(4, 5,
-             {1, 2, -4, -4, 5, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+    // clang-format off
+    Matrix m(4, 5, {
+        1,  2, -4, -4, 5,
+        2,  4,  0,  0, 2,
+        2,  3,  2,  1, 5,
+        -1, 1,  3,  6, 5
+    });
+    // clang-format on
     // Since REF is not unique, we assert these properties:
-    // 1. It is in REF
+    // 1. It is in REF and normalised
     // 2. It has same dimensions as original matrix
 
     Matrix r = ref(m);
