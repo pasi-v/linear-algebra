@@ -108,4 +108,14 @@ Matrix augment(const Matrix &A, const Vector &b);
  * @throws std::domain_error if the size of b does not match rows of A
  */
 SolutionKind n_solutions(const Matrix &A, const Vector &b);
+
+/**
+ * @brief solve a linear system A|b
+ *
+ * @param A coefficient matrix of a linear system
+ * @param b right-hand side vector of a linear system
+ * @return a solution structure
+ * @throws std::domain_error if the size of b does not match rows of A
+ */
+LinearSystemSolution solve(const Matrix &A, const Vector &b);
 } // namespace la

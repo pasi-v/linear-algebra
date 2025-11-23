@@ -359,3 +359,33 @@ TEST_CASE("Number of solutions") {
         CHECK_EQ(n_solutions(A, b), SolutionKind::None);
     }
 }
+
+TEST_CASE("Gaussian elimination") {
+    SUBCASE("Happy case one solution") {
+        using la::Matrix;
+        using la::Vector;
+        using la::LinearSystemSolution;
+        using la::SolutionKind;
+
+        // Same matrix and vector as in "Number of solutions" subcase "One Solution".
+        // Maybe combine this test case with that?
+        // clang-format off
+        Matrix A(3, 3, {
+            0,  2,  3,
+            2,  3,  1,
+            1, -1, -2
+        });
+        // clang-format on
+        Vector b({8, 5, -5});
+
+        Vector expected_particular({0, 1, 2});
+
+        auto sol = solve(A, b);
+        CHECK(sol.has_solution());
+        CHECK(sol.is_unique());
+        CHECK(!sol.is_infinite());
+        // TODO: What was this?
+        // CHECK(sol.directions.size() == 0);
+        CHECK_EQ(expected_particular, sol.particular);
+    }
+}

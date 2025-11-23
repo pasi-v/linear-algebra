@@ -15,6 +15,7 @@ void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 bool almost_zero(double value);
 std::size_t rank_from_ref(const Matrix &R);
+Vector back_substitute(const Matrix &A, const Vector &b);
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
@@ -307,5 +308,32 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
 
     // Should never reach this point, just keeping compiler happy
     return SolutionKind::None;
+}
+
+Vector back_substitute(const Matrix &A, const Vector &b) {
+    std::size_t n = A.cols();  // assume square + unique solution
+    Vector x(n);
+
+    for (int i = n - 1; i >= 0; --i) {
+        double sum = A.row(i).tail(i+1).dot_product(x.tail(i+1));
+        x[i] = b[i] - sum;
+    }
+
+    return x;
+}
+
+LinearSystemSolution solve(const Matrix &A, const Vector &b) {
+    LinearSystemSolution sol;
+    // TODO: n_solutions calculates ref too
+    sol.kind = n_solutions(A, b);
+
+    if (sol.kind == SolutionKind::Unique) {
+        Matrix Ab = augment(A, b);
+        Matrix R = ref(Ab);
+        Matrix ref_A = R.col_range(0, A.cols());
+        Vector ref_b = R.column(R.cols() - 1);
+        sol.particular = back_substitute(ref_A, ref_b);
+    }
+    return sol;
 }
 } // namespace la
