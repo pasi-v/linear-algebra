@@ -92,17 +92,6 @@ double Vector::angle(const Vector &v, double eps) const {
     return std::acos(cos_theta);
 };
 
-std::ostream &operator<<(std::ostream &os, const Vector &v) {
-    os << "{ ";
-    for (std::size_t i = 0; i < v.size(); ++i) {
-        os << v[i];
-        if (i != v.size() - 1)
-            os << ", ";
-    }
-    os << " }";
-    return os;
-}
-
 bool Vector::is_zero() const {
     for (std::size_t i = 0; i < size(); i++) {
         if (data_[i] != 0) {

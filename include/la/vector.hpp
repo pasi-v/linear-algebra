@@ -4,6 +4,7 @@
 #include "utils/utils.hpp"
 #include <initializer_list>
 #include <vector>
+#include <ostream>
 
 namespace la {
 /**
@@ -162,6 +163,18 @@ private:
 
     std::vector<double> data_;
 };
+
+// --- output ---
+inline std::ostream& operator<<(std::ostream& os, const Vector& v) {
+    os << "{ ";
+    for (std::size_t i = 0; i < v.size(); ++i) {
+        os << v[i];
+        if (i != v.size() - 1)
+            os << ", ";
+    }
+    os << " }";
+    return os;
+}
 } // namespace la
 
 #endif
