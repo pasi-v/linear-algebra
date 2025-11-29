@@ -384,8 +384,7 @@ TEST_CASE("Gaussian elimination") {
         CHECK(sol.has_solution());
         CHECK(sol.is_unique());
         CHECK(!sol.is_infinite());
-        // TODO: What was this?
-        // CHECK(sol.directions.size() == 0);
+        CHECK(sol.directions.size() == 0);
         CHECK_EQ(expected_particular, sol.particular);
     }
 
@@ -403,5 +402,36 @@ TEST_CASE("Gaussian elimination") {
         CHECK(!sol.has_solution());
         CHECK(!sol.is_unique());
         CHECK(!sol.is_infinite());
+        CHECK(sol.directions.size() == 0);
+    }
+
+    SUBCASE("Happy case infinite solutions") {
+        // Example 2.11 from Poole pp. 74-75
+        // clang-format off
+        Matrix A(3, 4, {
+           1, -1, -1, 2,
+           2, -2, -1, 3,
+           -1,  1, -1, 0,
+        });
+        // Matrix ref_A(3, 4, {
+        //   1, -1, -1,  2,
+        //   0,  0,  1, -1,
+        //   0,  0,  0,  0,
+        // });
+        Vector b({1, 3, -3});
+        // Vector ref_b({1, 1, 0});
+        Vector expected_particular({2, 0, 1, 0});
+        std::vector<Vector> expected_directions = {{1, 1, 0, 0}, {-1, 0, 1, 1}};
+
+        // clang-format on
+
+        auto sol = solve(A, b);
+
+        CHECK(sol.has_solution());
+        CHECK(!sol.is_unique());
+        CHECK(sol.is_infinite());
+        CHECK_EQ(sol.directions.size(), 2);
+        CHECK_EQ(expected_particular, sol.particular);
+        CHECK_EQ(expected_directions, sol.directions);
     }
 }

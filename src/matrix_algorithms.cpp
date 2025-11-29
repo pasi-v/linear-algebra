@@ -327,13 +327,19 @@ LinearSystemSolution solve(const Matrix &A, const Vector &b) {
     // TODO: n_solutions calculates ref too
     sol.kind = n_solutions(A, b);
 
-    if (sol.kind == SolutionKind::Unique) {
+    if (sol.kind != SolutionKind::None) {
         Matrix Ab = augment(A, b);
         Matrix R = ref(Ab);
         Matrix ref_A = R.col_range(0, A.cols());
         Vector ref_b = R.column(R.cols() - 1);
         sol.particular = back_substitute(ref_A, ref_b);
+
+        if (sol.kind == SolutionKind::Infinite) {
+            // TODO: How to get particular and directions from ref_A and ref_b
+        }
     }
+
+    // Nothing to be done for no solution, default struct contains all
     return sol;
 }
 } // namespace la
