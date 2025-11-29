@@ -57,3 +57,14 @@ compile_commands.json
 
 # VS Code
 .vscode/
+
+# Qt Creator user-specific
+*.config
+*.cflags
+*.cxxflags
+*.creator.user
+*.creator.user.*
+*.autosave
+
+# Qt Creator build + cache
+.qtcreator/
