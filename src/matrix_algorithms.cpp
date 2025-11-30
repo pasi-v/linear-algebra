@@ -15,7 +15,7 @@ void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 bool almost_zero(double value);
 std::size_t rank_from_ref(const Matrix &R);
-Vector back_substitute(const Matrix &A, const Vector &b);
+Vector back_substitute_unique(const Matrix &A, const Vector &b);
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
@@ -310,7 +310,10 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
     return SolutionKind::None;
 }
 
-Vector back_substitute(const Matrix &A, const Vector &b) {
+// This is for Gaussian elimination with unique solution from REF.
+// With Gauss-Jordan and RREF there is no need for back substition, so no
+// point in extending this to handle infinite solutions.
+Vector back_substitute_unique(const Matrix &A, const Vector &b) {
     std::size_t n = A.cols();  // assume square + unique solution
     Vector x(n);
 
@@ -332,9 +335,12 @@ LinearSystemSolution solve(const Matrix &A, const Vector &b) {
         Matrix R = ref(Ab);
         Matrix ref_A = R.col_range(0, A.cols());
         Vector ref_b = R.column(R.cols() - 1);
-        sol.particular = back_substitute(ref_A, ref_b);
 
-        if (sol.kind == SolutionKind::Infinite) {
+        if (sol.kind == SolutionKind::Unique) {
+            sol.particular = back_substitute_unique(ref_A, ref_b);
+        }
+
+        else if (sol.kind == SolutionKind::Infinite) {
             // TODO: How to get particular and directions from ref_A and ref_b
         }
     }
