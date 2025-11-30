@@ -4,18 +4,31 @@
 #include <cmath>
 
 namespace la {
+
+inline bool is_zero(double x) {
+    return std::abs(x) < kEps;
+}
+
 struct Pivot {
     std::size_t row, col;
     double value;
 };
 
+struct PivotInfo {
+    std::vector<std::size_t> pivot_cols;
+    std::vector<std::size_t> free_cols;
+};
+
 Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
+PivotInfo find_pivots_and_free_cols(const Matrix& R);
 void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 bool almost_zero(double value);
 std::size_t rank_from_ref(const Matrix &R);
 Vector back_substitute_unique(const Matrix &A, const Vector &b);
+Vector extract_unique(const Matrix &R);
+LinearSystemSolution extract_parametric(const Matrix &R);
 
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
@@ -42,6 +55,34 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
         }
     }
     return {m, n, 0.0}; // unreachable logically
+}
+
+// R is in RREF and pivots are ordered from top left to bottom right.
+PivotInfo find_pivots_and_free_cols(const Matrix& R) {
+    const std::size_t m = R.rows();
+    const std::size_t n = R.cols() - 1;  // number of variables
+    const std::size_t r = rank(R);       // rank(A) == number of pivot rows
+
+    PivotInfo info;
+    info.pivot_cols.reserve(r);
+    info.free_cols.reserve(n - r);
+
+    std::size_t pivot_row = 0;
+
+    for (std::size_t col = 0; col < n; ++col) {
+        // We are scanning left-to-right; for each variable column,
+        // either this column is the pivot for pivot_row, or it’s free.
+        if (pivot_row < r && !is_zero(R(pivot_row, col))) {
+            // This column has the pivot for this row
+            info.pivot_cols.push_back(col);
+            ++pivot_row;
+        } else {
+            // No pivot here -> free variable column
+            info.free_cols.push_back(col);
+        }
+    }
+
+    return info;
 }
 
 void normalize_row(Matrix &A, std::size_t row, double pivot_value) {
@@ -325,27 +366,96 @@ Vector back_substitute_unique(const Matrix &A, const Vector &b) {
     return x;
 }
 
+Vector extract_unique(const Matrix &R) {
+    // My implementation of RREF guarantees that the pivot columns are in
+    // increasing order.
+    // R is of form A|b.  Thus R.cols() == n + 1 and R.rows() >= n where
+    // n is the rank.
+    // Therefore for unique solution, this approach is safe:
+    std::size_t n = R.cols() - 1;  // number of variables
+    return R.column(n).head(n);
+}
+
+
+LinearSystemSolution extract_parametric(const Matrix &R) {
+    // 1. Detect free columns = non-pivot columns.
+    // 2. For each free column j_f:
+    //     create a direction vector dir (set dir[j_f]=1).
+    // for each pivot row r with pivot column c:
+    //     dir[c] = -RREF(r, j_f);
+    // 3. For the particular solution:
+    //     set all free variables to zero;
+    //     set pivot variables to RREF(r, last_column).
+    const std::size_t m = R.rows();
+    const std::size_t n = R.cols() - 1;  // number of variables
+    const std::size_t r = rank(R);       // rank(A)
+
+    LinearSystemSolution sol;
+    sol.kind = SolutionKind::Infinite;
+    sol.particular = Vector(n);          // zero vector
+    sol.directions.clear();
+
+    PivotInfo piv = find_pivots_and_free_cols(R);
+
+    // --- 1. Particular solution: free vars = 0, pivot vars from RHS ---
+    // last column index:
+    const std::size_t rhs_col = n;
+
+    Vector x(n); // zeroes
+    for (std::size_t i = 0; i < r; ++i) {
+        std::size_t c = piv.pivot_cols[i];  // variable index for this pivot row
+        x[c] = R(i, rhs_col);
+    }
+    sol.particular = x;
+
+    // --- 2. Directions: null space basis, one per free variable ---
+    sol.directions.reserve(piv.free_cols.size());
+
+    for (std::size_t k = 0; k < piv.free_cols.size(); ++k) {
+        std::size_t free_col = piv.free_cols[k];
+
+        Vector dir(n);       // start with all zeros
+        dir[free_col] = 1.0; // this parameter is "1", others "0"
+
+        // For each pivot row, express pivot variable in terms of this free variable
+        for (std::size_t i = 0; i < r; ++i) {
+            std::size_t pivot_col = piv.pivot_cols[i];
+            double coeff = R(i, free_col);  // coefficient of this free var in row i
+
+            // In RREF, row i equation is:
+            // x_pivot + sum_j R(i, j) * x_j = RHS
+            // For homogeneous system A*n = 0: x_pivot = - sum_j R(i, j) * x_j
+            dir[pivot_col] = -coeff;
+        }
+
+        sol.directions.push_back(std::move(dir));
+    }
+
+    return sol;
+}
+
+
 LinearSystemSolution solve(const Matrix &A, const Vector &b) {
     LinearSystemSolution sol;
     // TODO: n_solutions calculates ref too
     sol.kind = n_solutions(A, b);
 
-    if (sol.kind != SolutionKind::None) {
-        Matrix Ab = augment(A, b);
-        Matrix R = ref(Ab);
-        Matrix ref_A = R.col_range(0, A.cols());
-        Vector ref_b = R.column(R.cols() - 1);
+    Matrix Ab = augment(A, b);
+    Matrix R = rref(Ab);
 
-        if (sol.kind == SolutionKind::Unique) {
-            sol.particular = back_substitute_unique(ref_A, ref_b);
-        }
-
-        else if (sol.kind == SolutionKind::Infinite) {
-            // TODO: How to get particular and directions from ref_A and ref_b
-        }
+    if (sol.kind == SolutionKind::None) {
+        return sol;
     }
 
-    // Nothing to be done for no solution, default struct contains all
+    if (sol.kind == SolutionKind::Unique) {
+        Vector x = extract_unique(R);
+        sol.particular = x;
+        return sol;
+    }
+
+    auto result = extract_parametric(R);
+    sol.particular = result.particular;
+    sol.directions = result.directions;
     return sol;
 }
 } // namespace la
