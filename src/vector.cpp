@@ -141,6 +141,13 @@ bool Vector::is_standard_basis() const {
     return one_found;
 }
 
+Vector Vector::head(std::size_t n) const {
+    if (n > data_.size()) {
+        n = data_.size();
+    }
+    return Vector(data_.begin(), data_.begin() + n);
+}
+
 Vector Vector::tail(std::size_t start) const {
     if (start > data_.size()) {
         return Vector();

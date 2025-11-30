@@ -150,6 +150,13 @@ class Vector {
     bool is_standard_basis() const;
 
     /**
+     * @brief head of this vector
+     * @param n how many elements to include
+     * @return the n-length prefix of the vector
+     */
+    Vector head(std::size_t n) const;
+
+    /**
      * @param start start index of the suffix
      * @return the suffix of the vector (original without head element)
      *         or an empty Vector if start > this Vector's size

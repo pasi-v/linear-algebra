@@ -304,6 +304,35 @@ TEST_CASE("is_standard_basis returns false for zero vector") {
     CHECK(!v.is_standard_basis());
 }
 
+TEST_CASE("head") {
+    using la::Vector;
+
+    SUBCASE("first two elements of 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({1, 2}), v.head(2));
+    }
+
+    SUBCASE("first element of a 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({1}), v.head(1));
+    }
+
+    SUBCASE("all elements of a 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({1, 2, 3}), v.head(3));
+    }
+
+    SUBCASE("n > len elements of a 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({1, 2, 3}), v.head(4));
+    }
+
+    SUBCASE("zero elements of a 3-element vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector({}), v.head(0));
+    }
+}
+
 TEST_CASE("tail") {
     using la::Vector;
 
