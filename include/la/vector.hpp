@@ -3,8 +3,8 @@
 
 #include "utils/utils.hpp"
 #include <initializer_list>
-#include <vector>
 #include <ostream>
+#include <vector>
 
 namespace la {
 /**
@@ -163,7 +163,7 @@ class Vector {
      */
     Vector tail(std::size_t start = 1) const;
 
-private:
+  private:
     Vector(std::vector<double>::const_iterator first,
            std::vector<double>::const_iterator last)
         : data_(first, last) {}
@@ -172,7 +172,7 @@ private:
 };
 
 // --- output ---
-inline std::ostream& operator<<(std::ostream& os, const Vector& v) {
+inline std::ostream &operator<<(std::ostream &os, const Vector &v) {
     os << "{ ";
     for (std::size_t i = 0; i < v.size(); ++i) {
         os << v[i];

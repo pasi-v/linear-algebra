@@ -361,14 +361,14 @@ TEST_CASE("Number of solutions") {
 }
 
 TEST_CASE("Gaussian elimination") {
-    using la::Matrix;
-    using la::Vector;
     using la::LinearSystemSolution;
+    using la::Matrix;
     using la::SolutionKind;
+    using la::Vector;
 
     SUBCASE("Happy case one solution") {
-        // Same matrix and vector as in "Number of solutions" subcase "One Solution".
-        // Maybe combine this test case with that?
+        // Same matrix and vector as in "Number of solutions" subcase "One
+        // Solution". Maybe combine this test case with that?
         // clang-format off
         Matrix A(3, 3, {
             0,  2,  3,

@@ -5,9 +5,7 @@
 
 namespace la {
 
-inline bool is_zero(double x) {
-    return std::abs(x) < kEps;
-}
+inline bool is_zero(double x) { return std::abs(x) < kEps; }
 
 struct Pivot {
     std::size_t row, col;
@@ -20,7 +18,7 @@ struct PivotInfo {
 };
 
 Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
-PivotInfo find_pivots_and_free_cols(const Matrix& R);
+PivotInfo find_pivots_and_free_cols(const Matrix &R);
 void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
@@ -58,10 +56,9 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
 }
 
 // R is in RREF and pivots are ordered from top left to bottom right.
-PivotInfo find_pivots_and_free_cols(const Matrix& R) {
-    const std::size_t m = R.rows();
-    const std::size_t n = R.cols() - 1;  // number of variables
-    const std::size_t r = rank(R);       // rank(A) == number of pivot rows
+PivotInfo find_pivots_and_free_cols(const Matrix &R) {
+    const std::size_t n = R.cols() - 1; // number of variables
+    const std::size_t r = rank(R);      // rank(A) == number of pivot rows
 
     PivotInfo info;
     info.pivot_cols.reserve(r);
@@ -355,11 +352,11 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
 // With Gauss-Jordan and RREF there is no need for back substition, so no
 // point in extending this to handle infinite solutions.
 Vector back_substitute_unique(const Matrix &A, const Vector &b) {
-    std::size_t n = A.cols();  // assume square + unique solution
+    std::size_t n = A.cols(); // assume square + unique solution
     Vector x(n);
 
     for (int i = n - 1; i >= 0; --i) {
-        double sum = A.row(i).tail(i+1).dot_product(x.tail(i+1));
+        double sum = A.row(i).tail(i + 1).dot_product(x.tail(i + 1));
         x[i] = b[i] - sum;
     }
 
@@ -372,10 +369,9 @@ Vector extract_unique(const Matrix &R) {
     // R is of form A|b.  Thus R.cols() == n + 1 and R.rows() >= n where
     // n is the rank.
     // Therefore for unique solution, this approach is safe:
-    std::size_t n = R.cols() - 1;  // number of variables
+    std::size_t n = R.cols() - 1; // number of variables
     return R.column(n).head(n);
 }
-
 
 LinearSystemSolution extract_parametric(const Matrix &R) {
     // 1. Detect free columns = non-pivot columns.
@@ -386,13 +382,12 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
     // 3. For the particular solution:
     //     set all free variables to zero;
     //     set pivot variables to RREF(r, last_column).
-    const std::size_t m = R.rows();
-    const std::size_t n = R.cols() - 1;  // number of variables
-    const std::size_t r = rank(R);       // rank(A)
+    const std::size_t n = R.cols() - 1; // number of variables
+    const std::size_t r = rank(R);      // rank(A)
 
     LinearSystemSolution sol;
     sol.kind = SolutionKind::Infinite;
-    sol.particular = Vector(n);          // zero vector
+    sol.particular = Vector(n); // zero vector
     sol.directions.clear();
 
     PivotInfo piv = find_pivots_and_free_cols(R);
@@ -403,7 +398,7 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
 
     Vector x(n); // zeroes
     for (std::size_t i = 0; i < r; ++i) {
-        std::size_t c = piv.pivot_cols[i];  // variable index for this pivot row
+        std::size_t c = piv.pivot_cols[i]; // variable index for this pivot row
         x[c] = R(i, rhs_col);
     }
     sol.particular = x;
@@ -417,10 +412,12 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
         Vector dir(n);       // start with all zeros
         dir[free_col] = 1.0; // this parameter is "1", others "0"
 
-        // For each pivot row, express pivot variable in terms of this free variable
+        // For each pivot row, express pivot variable in terms of this free
+        // variable
         for (std::size_t i = 0; i < r; ++i) {
             std::size_t pivot_col = piv.pivot_cols[i];
-            double coeff = R(i, free_col);  // coefficient of this free var in row i
+            double coeff =
+                R(i, free_col); // coefficient of this free var in row i
 
             // In RREF, row i equation is:
             // x_pivot + sum_j R(i, j) * x_j = RHS
@@ -433,7 +430,6 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
 
     return sol;
 }
-
 
 LinearSystemSolution solve(const Matrix &A, const Vector &b) {
     LinearSystemSolution sol;
