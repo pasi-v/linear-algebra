@@ -74,4 +74,11 @@ Matrix augment(const Matrix &A, const Vector &b);
  * @return transposed matrix
  */
 Matrix transpose(const Matrix &A);
+
+/**
+ * @brief is A symmetric
+ * @param A matrix to examine
+ * @return true if A is symmetric, false otherwise
+ */
+bool is_symmetric(const Matrix &A);
 } // namespace la

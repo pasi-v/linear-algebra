@@ -342,3 +342,38 @@ TEST_CASE("transpose") {
         CHECK_EQ(transpose(A), expected);
     }
 }
+
+TEST_CASE("is_symmetric") {
+    using la::Matrix;
+
+    SUBCASE("symmetric matrix") {
+        // clang-format off
+        Matrix A(3, 3, {
+            1, 3, 2,
+            3, 5, 0,
+            2, 0, 4
+        });
+        // clang-format on
+        CHECK(is_symmetric(A));
+    }
+
+    SUBCASE("asymmetric square matrix is not symmetric") {
+        // clang-format off
+        Matrix A(2, 2, {
+             1, 2,
+            -1, 3
+        });
+        // clang-format on
+        CHECK(!is_symmetric(A));
+    }
+
+    SUBCASE("non-square matrix is not symmetric") {
+        Matrix A(1, 2, {3, 4});
+        CHECK(!is_symmetric(A));
+    }
+
+    SUBCASE("1-row 1-col matrix is symmetric") {
+        Matrix A(1, 1);
+        CHECK(is_symmetric(A));
+    }
+}
