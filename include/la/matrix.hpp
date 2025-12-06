@@ -198,6 +198,7 @@ class Matrix {
      * @param v the content of the column as Vector
      */
     void set_col(size_t i, const Vector &v);
+
   private:
     double *pointer_to_row_unchecked(std::size_t r) noexcept {
         return data_.data() + r * cols_;

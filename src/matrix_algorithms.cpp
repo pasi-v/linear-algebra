@@ -274,4 +274,17 @@ Matrix augment(const Matrix &A, const Vector &b) {
 
     return M;
 }
+
+Matrix transpose(const Matrix &A) {
+    std::size_t m = A.rows();
+    std::size_t n = A.cols();
+    Matrix T(n, m);
+
+    for (std::size_t i = 0; i < m; i++) {
+        auto v = A.row(i);
+        T.set_col(i, v);
+    }
+
+    return T;
+}
 } // namespace la

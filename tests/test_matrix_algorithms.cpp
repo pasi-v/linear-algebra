@@ -317,3 +317,28 @@ TEST_CASE("augment") {
         CHECK_THROWS_AS(augment(A, b), std::domain_error);
     }
 }
+
+TEST_CASE("transpose") {
+    using la::Matrix;
+
+    SUBCASE("2x3 matrix transposes correctly to 3x2 matrix") {
+        // clang-format off
+        Matrix A(2, 3, {
+            1, 3, 2,
+            5, 0, 1
+        });
+        Matrix expected(3, 2, {
+            1, 5,
+            3, 0,
+            2, 1
+        });
+        // clang-format on
+        CHECK_EQ(transpose(A), expected);
+    }
+
+    SUBCASE("1x3 'vector' transposes correctly to 3x1 'vector'") {
+        Matrix A(1, 3, {5, -1, 2});
+        Matrix expected(3, 1, {5, -1, 2});
+        CHECK_EQ(transpose(A), expected);
+    }
+}

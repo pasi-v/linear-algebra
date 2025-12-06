@@ -67,4 +67,11 @@ double determinant(const Matrix &A);
  * @throws std::domain_error if the size of b does not match rows of A
  */
 Matrix augment(const Matrix &A, const Vector &b);
+
+/**
+ * @brief transpose
+ * @param A matrix to transpose
+ * @return transposed matrix
+ */
+Matrix transpose(const Matrix &A);
 } // namespace la
