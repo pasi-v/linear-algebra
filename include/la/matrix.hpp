@@ -185,6 +185,19 @@ class Matrix {
      */
     Matrix col_range(size_t lower, size_t upper) const;
 
+    /**
+     * @brief set Vector v as the row
+     * @param i the row index to set
+     * @param v the content of the row as Vector
+     */
+    void set_row(size_t i, const Vector &v);
+
+    /**
+     * @brief set Vector v as the column
+     * @param i the row index to set
+     * @param v the content of the column as Vector
+     */
+    void set_col(size_t i, const Vector &v);
   private:
     double *pointer_to_row_unchecked(std::size_t r) noexcept {
         return data_.data() + r * cols_;
@@ -194,8 +207,6 @@ class Matrix {
         return data_.data() + r * cols_;
     }
 
-    void set_row(size_t i, const Vector &v);
-    void set_col(size_t i, const Vector &v);
     int get_leftmost_non_zero_column_index(int row_start_index) const;
 
     size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
