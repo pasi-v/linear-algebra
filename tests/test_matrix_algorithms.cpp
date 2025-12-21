@@ -264,6 +264,22 @@ TEST_CASE("Reduced Row Echelon Form") {
         // clang-format on
         CHECK_EQ(expected, rref(m));
     }
+
+    SUBCASE("rref() first row first col is near zero") {
+        // clang-format off
+        Matrix m(3, 3, {
+            1e-14, 1, 1,
+            1,     1, 1,
+            1,     1, 1
+        });
+        Matrix expected(3, 3, {
+            1,     0, 0,
+            1e-14, 1, 1,
+            0,     0, 0
+        });
+        // clang-format on
+        CHECK_EQ(expected, rref(m));
+    }
 }
 
 TEST_CASE("rref eliminates using the last pivot row") {
