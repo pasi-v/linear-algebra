@@ -374,7 +374,8 @@ TEST_CASE("approx_equal") {
                            math_utils::kDefaultRelTol));
     }
 
-    SUBCASE("Vectors are approximately equal with values approximately equal") {
+    SUBCASE(
+        "Vectors are approximately equal with values approximately equal") {
         Vector u({1 + 1e-14, 2 - 1e-14});
         Vector v({1, 2});
         CHECK(approx_equal(u, v, math_utils::kDefaultAbsTol,
@@ -385,6 +386,6 @@ TEST_CASE("approx_equal") {
         Vector u({1 + 1e-5, 2 - 1e-5});
         Vector v({1, 2});
         CHECK(!approx_equal(u, v, math_utils::kDefaultAbsTol,
-                           math_utils::kDefaultRelTol));
+                            math_utils::kDefaultRelTol));
     }
 }
