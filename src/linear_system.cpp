@@ -2,7 +2,6 @@
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
-#include "math_utils/math_utils.hpp"
 
 namespace la {
 LinearSystemSolution extract_parametric(const Matrix &R);
@@ -81,7 +80,7 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
     std::size_t n = A.cols();
 
     Matrix Ab = augment(A, b);
-    Matrix R = ref(Ab);
+    Matrix R = rref(Ab);
     Matrix ref_A = R.col_range(0, A.cols());
     Vector ref_b = R.column(R.cols() - 1);
 
@@ -89,7 +88,7 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
     // and corresponding element in b is non-zero:
     // [0 ... 0 | c ] with c != 0:
     for (std::size_t i = 0; i < m; i++) {
-        if (ref_A.row(i).is_zero() && !math_utils::is_zero(ref_b.at(i))) {
+        if (ref_A.row(i).is_zero() && !is_zero_pivot(ref_b.at(i))) {
             return SolutionKind::None;
         }
     }

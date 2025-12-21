@@ -1,8 +1,7 @@
 #include "doctest/doctest.h"
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
-#include "math_utils/math_utils.hpp"
-#include <cmath>
+#include "la/pivot_info.hpp"
 
 TEST_CASE("is_ref returns true for REF that is normalised") {
     using la::Matrix;
@@ -268,6 +267,7 @@ TEST_CASE("Reduced Row Echelon Form") {
 }
 
 TEST_CASE("rref eliminates using the last pivot row") {
+    using la::is_zero_pivot;
     using la::Matrix;
 
     // Construct a matrix whose REF has pivots in all 3 rows.
@@ -284,8 +284,8 @@ TEST_CASE("rref eliminates using the last pivot row") {
 
     SUBCASE("all entries above last pivot are zero") {
         // The pivot in column 2 should have zeros above it.
-        CHECK(math_utils::is_zero(std::fabs(R(0, 2))));
-        CHECK(math_utils::is_zero(std::fabs(R(1, 2))));
+        CHECK(is_zero_pivot(std::fabs(R(0, 2))));
+        CHECK(is_zero_pivot(std::fabs(R(1, 2))));
     }
 }
 

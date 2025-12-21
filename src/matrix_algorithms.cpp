@@ -1,5 +1,6 @@
 #include "la/matrix_algorithms.hpp"
 #include "la/matrix.hpp"
+#include "la/pivot_info.hpp"
 #include "la/vector.hpp"
 #include "math_utils/math_utils.hpp"
 
@@ -24,7 +25,7 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
     std::size_t best_col = n; // n means “none found”
     for (std::size_t j = 0; j < n; ++j) {
         for (std::size_t i = start_row; i < m; ++i) {
-            if (std::fabs(A(i, j)) > math_utils::kEps) {
+            if (!is_zero_pivot(A(i, j))) {
                 best_col = j;
                 break;
             }
@@ -44,7 +45,7 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
 }
 
 void normalize_row(Matrix &A, std::size_t row, double pivot_value) {
-    if (std::fabs(pivot_value) <= math_utils::kEps)
+    if (is_zero_pivot(pivot_value))
         return; // guard
     for (std::size_t j = 0; j < A.cols(); ++j)
         A(row, j) /= pivot_value;
@@ -62,8 +63,6 @@ void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
     }
 }
 
-bool almost_zero(double value) { return std::fabs(value) <= math_utils::kEps; }
-
 std::size_t rank_from_ref(const Matrix &R) {
     std::size_t r = 0;
     for (std::size_t i = 0; i < R.rows(); ++i) {
@@ -77,7 +76,7 @@ std::size_t rank_from_ref(const Matrix &R) {
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row) {
     double factor = A(i, lead_col);
-    if (std::fabs(factor) <= math_utils::kEps) {
+    if (is_zero_pivot(factor)) {
         return;
     };
     for (std::size_t j = lead_col; j < A.cols(); ++j) {
@@ -130,7 +129,7 @@ bool is_ref(const Matrix &A) {
         prev_leading_entry_column = cur_leading_entry_column;
 
         double leading_entry = A(i, cur_leading_entry_column);
-        if (!almost_zero(1.0 - leading_entry)) {
+        if (!is_zero_pivot(1.0 - leading_entry)) {
             return false;
         }
     }
