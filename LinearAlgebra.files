@@ -23,6 +23,7 @@ tests/test_matrix.cpp
 tests/test_matrix_algorithms.cpp
 tests/test_parity.cpp
 tests/test_plane3d.cpp
+tests/test_utils.hpp
 tests/test_vector.cpp
 tests/test_vector2d.cpp
 tests/test_vector3d.cpp
