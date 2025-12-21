@@ -4,6 +4,8 @@
 
 
 #include <cmath>
+#include <algorithm>
+
 namespace math_utils {
 
 /**
@@ -20,9 +22,21 @@ namespace math_utils {
  *       algorithms to maintain consistency with the library’s
  *       numerical behavior.
  */
-static constexpr double kEps = 1e-12;
+constexpr double kDefaultAbsTol = 1e-12;
+constexpr double kDefaultRelTol = 1e-10;
 
-inline bool is_zero(double x) { return std::abs(x) < kEps; }
+inline bool nearly_equal(double a, double b,
+                         double abs_tol,
+                         double rel_tol)
+{
+    return std::fabs(a - b)
+    <= abs_tol + rel_tol * std::max(std::fabs(a), std::fabs(b));
+}
+
+inline bool nearly_equal(double a, double b)
+{
+    return nearly_equal(a, b, kDefaultAbsTol, kDefaultRelTol);
+}
 
 /** @return the radians in degrees */
 inline double toDegrees(double radians) { return radians * (180.0 / M_PI); }
