@@ -2,7 +2,6 @@
 #include "la/matrix.hpp"
 #include "la/pivot_info.hpp"
 #include "la/vector.hpp"
-#include "math_utils/math_utils.hpp"
 
 namespace la {
 
@@ -150,7 +149,6 @@ bool is_ref(const Matrix &A) {
 bool is_rref(const Matrix &A) {
     // 1. Is in row echelon form
     if (!is_ref(A)) {
-        std::cout << "Not REF\n";
         return false;
     }
 
@@ -162,8 +160,6 @@ bool is_rref(const Matrix &A) {
         }
         auto leading_element = v.leading_element();
         if (leading_element != 1) {
-            std::cout << "Row " << i << " leading element is "
-                      << leading_element << "\n";
             return false;
         }
 
@@ -171,8 +167,6 @@ bool is_rref(const Matrix &A) {
         int leading_entry_column = v.first_non_zero_column();
         Vector col = A.column(leading_entry_column);
         if (!col.is_standard_basis()) {
-            std::cout << "Column " << leading_entry_column
-                      << " is not standard basis\n";
             return false;
         }
     }
