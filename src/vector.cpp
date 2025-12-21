@@ -1,8 +1,7 @@
 #include "la/vector.hpp"
+#include "math_utils/math_utils.hpp"
 #include <algorithm>
 #include <cmath>
-#include <initializer_list>
-#include <ostream>
 #include <stdexcept>
 #include <vector>
 
@@ -153,5 +152,17 @@ Vector Vector::tail(std::size_t start) const {
         return Vector();
     }
     return Vector(data_.begin() + start, data_.end());
+}
+
+bool approx_equal(const Vector &a, const Vector &b, double abs_tol,
+                  double rel_tol) {
+    if (a.size() != b.size())
+        return false;
+
+    for (std::size_t i = 0; i < a.size(); ++i) {
+        if (!math_utils::nearly_equal(a[i], b[i], abs_tol, rel_tol))
+            return false;
+    }
+    return true;
 }
 } // namespace la

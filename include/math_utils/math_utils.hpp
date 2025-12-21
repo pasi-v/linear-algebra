@@ -8,20 +8,6 @@
 
 namespace math_utils {
 
-/**
- * @brief Numerical tolerance used for floating-point comparisons.
- *
- * Values with absolute magnitude less than or equal to `kEps` are
- * considered to be zero in equality checks and elimination steps.
- *
- * This constant defines the default threshold for detecting pivots,
- * zeroing entries, and other floating-point comparisons in matrix
- * operations such as REF/RREF transformations.
- *
- * @note Users may rely on this value when implementing custom
- *       algorithms to maintain consistency with the library’s
- *       numerical behavior.
- */
 constexpr double kDefaultAbsTol = 1e-12;
 constexpr double kDefaultRelTol = 1e-10;
 

@@ -1,5 +1,6 @@
 #include "doctest/doctest.h"
 #include "la/vector.hpp"
+#include "math_utils/math_utils.hpp"
 
 TEST_CASE("Vector()") {
     using la::Vector;
@@ -354,5 +355,36 @@ TEST_CASE("tail") {
     SUBCASE("start > size returns empty vector") {
         Vector v({1, 2, 3});
         CHECK_EQ(Vector(0), v.tail(3));
+    }
+}
+
+TEST_CASE("approx_equal") {
+    using la::Vector;
+
+    SUBCASE("Vector is approximately equal to itself") {
+        Vector v({1, 2, 3});
+        CHECK(approx_equal(v, v, math_utils::kDefaultAbsTol,
+                           math_utils::kDefaultRelTol));
+    }
+
+    SUBCASE("Vector is approximately equal to a vector with same values") {
+        Vector u({1, 2, 3});
+        Vector v({1, 2, 3});
+        CHECK(approx_equal(u, v, math_utils::kDefaultAbsTol,
+                           math_utils::kDefaultRelTol));
+    }
+
+    SUBCASE("Vectors are approximately equal with values approximately equal") {
+        Vector u({1 + 1e-14, 2 - 1e-14});
+        Vector v({1, 2});
+        CHECK(approx_equal(u, v, math_utils::kDefaultAbsTol,
+                           math_utils::kDefaultRelTol));
+    }
+
+    SUBCASE("Not approximately equal if not close enough") {
+        Vector u({1 + 1e-5, 2 - 1e-5});
+        Vector v({1, 2});
+        CHECK(!approx_equal(u, v, math_utils::kDefaultAbsTol,
+                           math_utils::kDefaultRelTol));
     }
 }
