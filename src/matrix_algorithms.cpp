@@ -35,13 +35,22 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
     }
     if (best_col == n)
         return {m, n, 0.0};
-    // choose topmost nonzero in best_col
+
+    // choose row with largest |value| in best_col
+    std::size_t best_row = m;
+    double best_val = 0.0;
+
     for (std::size_t i = start_row; i < m; ++i) {
-        if (std::fabs(A(i, best_col)) > math_utils::kEps) {
-            return {i, best_col, A(i, best_col)};
+        double v = std::fabs(A(i, best_col));
+        if (v > best_val) {
+            best_val = v;
+            best_row = i;
         }
     }
-    return {m, n, 0.0}; // unreachable logically
+
+    // Since we already verified the column has a nonzero entry > eps,
+    // best_row must be valid here.
+    return {best_row, best_col, A(best_row, best_col)};
 }
 
 void normalize_row(Matrix &A, std::size_t row, double pivot_value) {

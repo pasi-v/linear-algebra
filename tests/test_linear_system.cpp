@@ -2,6 +2,7 @@
 #include "la/linear_system.hpp"
 #include "la/matrix.hpp"
 #include "la/vector.hpp"
+#include "test_utils.hpp"
 
 TEST_CASE("Number of solutions") {
     using la::Matrix;
@@ -119,5 +120,22 @@ TEST_CASE("Gaussian elimination") {
         CHECK_EQ(sol.directions.size(), 2);
         CHECK_EQ(expected_particular, sol.particular);
         CHECK_EQ(expected_directions, sol.directions);
+    }
+
+    SUBCASE("Partial pivoting") {
+        // clang-format off
+        Matrix A(3, 3, {
+            1e-14, 1, 1,
+            1,     1, 1,
+            0,     1, 2
+        });
+        // clang-format-on
+        Vector b({2 + 1e-14, 3, 3});
+        Vector expected_particular({1, 1, 1});
+
+        auto sol = solve(A, b);
+        CHECK(sol.has_solution());
+        CHECK(sol.is_unique());
+        CHECK_VEC_NEAR(expected_particular, sol.particular);
     }
 }
