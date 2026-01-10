@@ -1,4 +1,5 @@
 #include "la/linear_system.hpp"
+#include "la/eliminated_system.hpp"
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
@@ -76,22 +77,15 @@ Vector extract_unique(const Matrix &R) {
 }
 
 SolutionKind n_solutions(const Matrix &A, const Vector &b) {
-    std::size_t m = A.rows();
+    EliminatedSystem es = eliminate_system(A, b);
+
+    if (es.inconsistent == true) {
+        return SolutionKind::None;
+    }
+
     std::size_t n = A.cols();
 
-    Matrix Ab = augment(A, b);
-    Matrix R = rref(Ab);
-    Matrix ref_A = R.col_range(0, A.cols());
-    Vector ref_b = R.column(R.cols() - 1);
-
-    // Find inconsistency, which is that a row of A in REF is all zeroes
-    // and corresponding element in b is non-zero:
-    // [0 ... 0 | c ] with c != 0:
-    for (std::size_t i = 0; i < m; i++) {
-        if (ref_A.row(i).is_zero() && !is_zero_pivot(ref_b.at(i))) {
-            return SolutionKind::None;
-        }
-    }
+    Matrix ref_A = es.R.col_range(0, A.cols());
 
     std::size_t rankA = rank_from_ref(ref_A);
     const std::size_t n_free_variables = (n > rankA) ? (n - rankA) : 0;
