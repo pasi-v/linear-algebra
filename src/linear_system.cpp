@@ -120,25 +120,24 @@ Vector back_substitute_unique(const Matrix &A, const Vector &b) {
 
 LinearSystemSolution solve(const Matrix &A, const Vector &b) {
     LinearSystemSolution sol;
-    // TODO: n_solutions calculates ref too
-    sol.kind = n_solutions(A, b);
+    EliminatedSystem es = eliminate_system(A, b);
 
-    Matrix Ab = augment(A, b);
-    Matrix R = rref(Ab);
-
-    if (sol.kind == SolutionKind::None) {
-        return sol;
+    if (es.inconsistent) {
+        sol.kind = SolutionKind::None;
     }
 
-    if (sol.kind == SolutionKind::Unique) {
-        Vector x = extract_unique(R);
+    else if (es.pivots.free_cols.empty()) {
+        sol.kind = SolutionKind::Unique;
+        Vector x = extract_unique(es.R);
         sol.particular = x;
-        return sol;
     }
 
-    auto result = extract_parametric(R);
-    sol.particular = result.particular;
-    sol.directions = result.directions;
+    else {
+        sol.kind = SolutionKind::Infinite;
+        auto result = extract_parametric(es.R);
+        sol.particular = result.particular;
+        sol.directions = result.directions;
+    }
     return sol;
 }
 } // namespace la
