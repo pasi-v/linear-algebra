@@ -134,11 +134,6 @@ bool is_ref(const Matrix &A) {
             return false;
         }
         prev_leading_entry_column = cur_leading_entry_column;
-
-        double leading_entry = A(i, cur_leading_entry_column);
-        if (!is_zero_pivot(1.0 - leading_entry)) {
-            return false;
-        }
     }
 
     // All requirements hold, the matrix is in row echelon form.
@@ -198,12 +193,14 @@ Matrix ref(const Matrix &A) {
             R.exchange_rows(lead_row, p.row);
 
         // Pivot value may have changed after swap
+        // TODO: This belongs to rref(), not here.
         // 3. Create a leading 1 by scaling the row
         double pivot_value = R(lead_row, p.col);
         normalize_row(R, lead_row, pivot_value);
 
         // 4. Use the leading 1 to create zeros below it on the
         // lead_col.
+        // TODO: This changes when there is no leading 1
         eliminate_below(R, lead_row, p.col);
     }
 

@@ -15,7 +15,7 @@ TEST_CASE("is_ref returns true for REF that is normalised") {
     CHECK(is_ref(m));
 }
 
-TEST_CASE("is_ref returns false for REF that is not normalised") {
+TEST_CASE("is_ref returns true for REF that is not normalised") {
     using la::Matrix;
     // ADL (Argument-Dependent Lookup) at work here:
     // The compiler automatically searches the namespace of Matrix for the
@@ -28,7 +28,7 @@ TEST_CASE("is_ref returns false for REF that is not normalised") {
         0,  0, 0
     });
     // clang-format on
-    CHECK(!is_ref(m));
+    CHECK(is_ref(m));
 }
 
 TEST_CASE("is_ref returns false for zero row not at the bottom") {
