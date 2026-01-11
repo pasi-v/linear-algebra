@@ -279,12 +279,13 @@ TEST_CASE("Reduced Row Echelon Form") {
             1,     1, 1
         });
         Matrix expected(3, 3, {
-            1,     0, 0,
-            1e-14, 1, 1,
-            0,     0, 0
+            1, 0, 0,
+            0, 1, 1,
+            0, 0, 0
         });
         // clang-format on
-        CHECK_EQ(expected, rref(m));
+        Matrix actual = rref(m);
+        CHECK_EQ(expected, actual);
     }
 }
 
