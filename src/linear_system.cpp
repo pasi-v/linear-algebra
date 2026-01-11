@@ -5,6 +5,7 @@
 #include "la/pivot_info.hpp"
 
 namespace la {
+Vector back_substitute_unique(const Matrix &A, const Vector &b);
 LinearSystemSolution extract_parametric(const Matrix &R);
 Vector extract_unique(const Matrix &R);
 
