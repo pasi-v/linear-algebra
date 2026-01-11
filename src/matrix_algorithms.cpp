@@ -208,17 +208,22 @@ Matrix ref(const Matrix &A) {
 }
 
 Matrix rref(const Matrix &A) {
-    Matrix R = ref(A); // REF: pivots are 1, zeros below, zero rows at bottom
+    Matrix R = ref(A); // REF: zeros below pivots, zero rows at bottom
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
     // 76 Starting from row 2, for each row until first zero row:
-    //   - find leftmost pivot column (leading 1)
+    //   - find leftmost pivot column
+    //   - create leading one
     //   - create zeros above it by eliminate_above()
     const std::size_t m = R.rows(), n = R.cols();
     for (std::size_t lead_row = 0; lead_row < m; ++lead_row) {
         Pivot p = find_leftmost_pivot(R, lead_row);
         if (p.col == n)
             break; // first zero row => done
+
+        // Normalise the row by pivot value to have leading one
+        double pivot_value = R(lead_row, p.col);
+        normalize_row(R, lead_row, pivot_value);
 
         // Use the leading 1 to create zeros above it on the lead column
         eliminate_above(R, lead_row, p.col);
