@@ -80,14 +80,17 @@ std::size_t rank_from_ref(const Matrix &R) {
     return r;
 }
 
-void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
+void row_replace(Matrix &A, std::size_t row, std::size_t lead_col,
                  std::size_t lead_row) {
-    double factor = A(i, lead_col);
-    if (is_zero_pivot(factor)) {
+    double pivot_value = A(lead_row, lead_col);
+
+    if (is_zero_pivot(pivot_value)) {
         return;
     };
-    for (std::size_t j = lead_col; j < A.cols(); ++j) {
-        A(i, j) -= factor * A(lead_row, j);
+    double factor = A(row, lead_col) / pivot_value;
+
+    for (std::size_t col = lead_col; col < A.cols(); ++col) {
+        A(row, col) -= factor * A(lead_row, col);
     }
 }
 
@@ -192,15 +195,8 @@ Matrix ref(const Matrix &A) {
         if (p.row != lead_row)
             R.exchange_rows(lead_row, p.row);
 
-        // Pivot value may have changed after swap
-        // TODO: This belongs to rref(), not here.
-        // 3. Create a leading 1 by scaling the row
-        double pivot_value = R(lead_row, p.col);
-        normalize_row(R, lead_row, pivot_value);
-
-        // 4. Use the leading 1 to create zeros below it on the
+        // 3. Use the pivot to create zeros below it on the
         // lead_col.
-        // TODO: This changes when there is no leading 1
         eliminate_below(R, lead_row, p.col);
     }
 

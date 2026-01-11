@@ -133,8 +133,14 @@ TEST_CASE("ref returns a matrix that is in REF") {
 
 TEST_CASE("ref handles correctly a zero row at the beginning") {
     using la::Matrix;
-    Matrix m(4, 5,
-             {0, 0, 0, 0, 0, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+    // clang-format off
+    Matrix m(4, 5, {
+         0, 0, 0, 0, 0,
+         2, 4, 0, 0, 2,
+         2, 3, 2, 1, 5,
+        -1, 1, 3, 6, 5
+    });
+    // clang-format on
     // Since REF is not unique, we assert these properties:
     // 1. It is in REF
     // 2. It has same dimensions as original matrix
