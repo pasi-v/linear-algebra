@@ -267,8 +267,22 @@ TEST_CASE("Matrix *  vector wrong dimensions") {
 TEST_CASE("exchange_rows") {
     using la::Matrix;
 
-    Matrix m(2, 2, {1, 2, 3, 4});
-    // TODO: Call act and asser
+    // clang-format off
+    Matrix m(4, 5, {
+         0, 0, 0, 0, 0,
+         2, 4, 0, 0, 2,
+         2, 3, 2, 1, 5,
+        -1, 1, 3, 6, 5
+    });
+    Matrix expected(4, 5, {
+         2, 4, 0, 0, 2,
+         0, 0, 0, 0, 0,
+         2, 3, 2, 1, 5,
+        -1, 1, 3, 6, 5
+    });
+    // clang-format on
+    m.exchange_rows(0, 1);
+    CHECK_EQ(m, expected);
 }
 
 TEST_SUITE("range methods") {
