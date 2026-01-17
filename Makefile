@@ -25,7 +25,7 @@ TARGET_TEST := $(BINDIR)/tests
 TARGET_APP  := $(BINDIR)/la_calc
 
 # Default build rule
-all: $(TARGET_TEST)
+all: $(TARGET_TEST) $(TARGET_APP)
 
 # Ensure bin/ exists but doesn't retrigger links when timestamp changes
 $(BINDIR):
