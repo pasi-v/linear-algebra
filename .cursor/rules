@@ -1,0 +1,12 @@
+This project contains a linear algebra library and a small CLI app.
+
+You may:
+- Read and reference headers in include/la
+- Use the public API defined there
+- Suggest changes to the library API
+
+You must not:
+- Modify files under include/, src/, or tests/
+- Suggest changes to the library implementation
+
+All code changes must be confined to the app/ directory.
