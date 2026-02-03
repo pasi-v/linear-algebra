@@ -49,6 +49,7 @@ void print_help(std::ostream &out) {
         << "  mat <name> = [[1,2],[3,4]]\n"
         << "  dot <vecA> <vecB>\n"
         << "  det <mat>\n"
+        << "  rref <mat>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -116,6 +117,21 @@ void handle_det(Parser &p,
     out << la::determinant(v.mat) << "\n";
 }
 
+void handle_rref(Parser &p,
+                 std::unordered_map<std::string, Value> &symbols,
+                 std::ostream &out) {
+    std::string name = p.parse_identifier();
+    p.expect_end();
+    if (!symbols.count(name)) {
+        throw std::runtime_error("unknown symbol");
+    }
+    const Value &v = symbols.at(name);
+    if (v.kind != Value::Kind::Matrix) {
+        throw std::runtime_error("rref expects a matrix");
+    }
+    out << la::rref(v.mat);
+}
+
 void handle_print(Parser &p,
                   std::unordered_map<std::string, Value> &symbols,
                   std::ostream &out) {
@@ -171,6 +187,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "det") {
             handle_det(p, symbols, out);
+            return true;
+        }
+        if (cmd == "rref") {
+            handle_rref(p, symbols, out);
             return true;
         }
         if (cmd == "print") {
