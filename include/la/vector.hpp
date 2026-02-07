@@ -182,9 +182,6 @@ inline std::ostream &operator<<(std::ostream &os, const Vector &v) {
     os << " }";
     return os;
 }
-
-bool approx_equal(const Vector &a, const Vector &b, double abs_tol,
-                  double rel_tol);
 } // namespace la
 
 #endif

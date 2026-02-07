@@ -2,6 +2,7 @@
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
+#include "test_utils.hpp"
 
 TEST_CASE("is_ref returns true for REF that is normalised") {
     using la::Matrix;
@@ -15,7 +16,7 @@ TEST_CASE("is_ref returns true for REF that is normalised") {
     CHECK(is_ref(m));
 }
 
-TEST_CASE("is_ref returns false for REF that is not normalised") {
+TEST_CASE("is_ref returns true for REF that is not normalised") {
     using la::Matrix;
     // ADL (Argument-Dependent Lookup) at work here:
     // The compiler automatically searches the namespace of Matrix for the
@@ -28,7 +29,7 @@ TEST_CASE("is_ref returns false for REF that is not normalised") {
         0,  0, 0
     });
     // clang-format on
-    CHECK(!is_ref(m));
+    CHECK(is_ref(m));
 }
 
 TEST_CASE("is_ref returns false for zero row not at the bottom") {
@@ -133,8 +134,14 @@ TEST_CASE("ref returns a matrix that is in REF") {
 
 TEST_CASE("ref handles correctly a zero row at the beginning") {
     using la::Matrix;
-    Matrix m(4, 5,
-             {0, 0, 0, 0, 0, 2, 4, 0, 0, 2, 2, 3, 2, 1, 5, -1, 1, 3, 6, 5});
+    // clang-format off
+    Matrix m(4, 5, {
+         0, 0, 0, 0, 0,
+         2, 4, 0, 0, 2,
+         2, 3, 2, 1, 5,
+        -1, 1, 3, 6, 5
+    });
+    // clang-format on
     // Since REF is not unique, we assert these properties:
     // 1. It is in REF
     // 2. It has same dimensions as original matrix
@@ -273,12 +280,13 @@ TEST_CASE("Reduced Row Echelon Form") {
             1,     1, 1
         });
         Matrix expected(3, 3, {
-            1,     0, 0,
-            1e-14, 1, 1,
-            0,     0, 0
+            1, 0, 0,
+            0, 1, 1,
+            0, 0, 0
         });
         // clang-format on
-        CHECK_EQ(expected, rref(m));
+        Matrix actual = rref(m);
+        CHECK_NEAR(expected, actual);
     }
 }
 

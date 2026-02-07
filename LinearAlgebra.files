@@ -1,3 +1,5 @@
+include/la/approx.hpp
+include/la/eliminated_system.hpp
 include/la/linear_system.hpp
 include/la/matrix.hpp
 include/la/matrix_algorithms.hpp
@@ -9,6 +11,7 @@ include/la/vector2d.hpp
 include/la/vector3d.hpp
 include/math_utils/math_utils.hpp
 include/utils/utils.hpp
+src/eliminated_system.cpp
 src/linear_system.cpp
 src/matrix.cpp
 src/matrix_algorithms.cpp

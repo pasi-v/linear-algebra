@@ -2,7 +2,7 @@
 #include "la/matrix_algorithms.hpp"
 
 namespace la {
-// R is in RREF and pivots are ordered from top left to bottom right.
+// R is in REF and pivots are ordered from top left to bottom right.
 PivotInfo find_pivots_and_free_cols(const Matrix &R) {
     const std::size_t n = R.cols() - 1; // number of variables
     const std::size_t r = rank(R);      // rank(A) == number of pivot rows
