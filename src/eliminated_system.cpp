@@ -13,7 +13,7 @@ bool is_inconsistent(const Matrix &R, const PivotInfo pivots) {
     // n = number of variables
     std::size_t rank = pivots.pivot_cols.size();
 
-    // In RREF, a system is inconsistent iff there exists a row index i ≥ rank
+    // In REF, a system is inconsistent iff there exists a row index i ≥ rank
     // such that the RHS entry of row i is nonzero.
     for (std::size_t i = rank; i < m; i++) {
         if (!math_utils::nearly_equal(R(i, n), 0)) {
@@ -26,7 +26,7 @@ bool is_inconsistent(const Matrix &R, const PivotInfo pivots) {
 
 EliminatedSystem eliminate_system(const Matrix &A, const Vector &b) {
     Matrix Ab = augment(A, b);
-    Matrix R = rref(Ab);
+    Matrix R = ref(Ab);
     PivotInfo pivots = find_pivots_and_free_cols(R);
     bool inconsistent = is_inconsistent(R, pivots);
     EliminatedSystem system = {R, pivots, inconsistent};
