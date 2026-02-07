@@ -1,10 +1,9 @@
 #include "la/matrix.hpp"
 #include "la/vector.hpp"
-#include "utils/utils.hpp"
+#include "math_utils/math_utils.hpp"
 #include <algorithm>
 #include <cassert>
 #include <initializer_list>
-#include <iostream>
 #include <stdexcept>
 #include <vector>
 
@@ -202,5 +201,19 @@ void Matrix::exchange_rows(std::size_t idx_a, std::size_t idx_b) {
     Vector vector_b = row(idx_b);
     set_row(idx_a, vector_b);
     set_row(idx_b, vector_a);
+}
+
+bool approx_equal(const Matrix &A, const Matrix &B, double abs_tol,
+                  double rel_tol) {
+    if (A.rows() != B.rows() || A.cols() != B.cols())
+        return false;
+
+    for (std::size_t i = 0; i < A.rows(); ++i) {
+        for (std::size_t j = 0; j < A.cols(); ++j) {
+            if (!math_utils::nearly_equal(A(i, j), B(i, j), abs_tol, rel_tol))
+                return false;
+        }
+    }
+    return true;
 }
 } // namespace la

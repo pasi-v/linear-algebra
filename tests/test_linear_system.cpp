@@ -136,6 +136,6 @@ TEST_CASE("Gaussian elimination") {
         auto sol = solve(A, b);
         CHECK(sol.has_solution());
         CHECK(sol.is_unique());
-        CHECK_VEC_NEAR(expected_particular, sol.particular);
+        CHECK_NEAR(expected_particular, sol.particular);
     }
 }

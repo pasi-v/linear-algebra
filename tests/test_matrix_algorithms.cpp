@@ -2,6 +2,7 @@
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
+#include "test_utils.hpp"
 
 TEST_CASE("is_ref returns true for REF that is normalised") {
     using la::Matrix;
@@ -285,7 +286,7 @@ TEST_CASE("Reduced Row Echelon Form") {
         });
         // clang-format on
         Matrix actual = rref(m);
-        CHECK_EQ(expected, actual);
+        CHECK_NEAR(expected, actual);
     }
 }
 

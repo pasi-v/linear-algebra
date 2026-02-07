@@ -1,4 +1,5 @@
 #include "doctest/doctest.h"
+#include "la/approx.hpp"
 #include "la/vector.hpp"
 #include "math_utils/math_utils.hpp"
 
