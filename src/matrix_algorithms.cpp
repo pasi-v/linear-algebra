@@ -2,6 +2,7 @@
 #include "la/matrix.hpp"
 #include "la/pivot_info.hpp"
 #include "la/vector.hpp"
+#include <cassert>
 
 namespace la {
 
@@ -36,18 +37,19 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
 
     // choose row with largest |value| in best_col
     std::size_t best_row = m;
-    double best_val = 0.0;
+    double best_abs = 0.0;
 
     for (std::size_t i = start_row; i < m; ++i) {
-        double v = std::fabs(A(i, best_col));
-        if (v > best_val) {
-            best_val = v;
+        double a = A(i, best_col);
+        if (is_zero_pivot(a))
+            continue;
+        double v = std::fabs(a);
+        if (v > best_abs) {
+            best_abs = v;
             best_row = i;
         }
     }
-
-    // Since we already verified the column has a nonzero entry > eps,
-    // best_row must be valid here.
+    assert(best_row != m);
     return {best_row, best_col, A(best_row, best_col)};
 }
 
@@ -82,16 +84,20 @@ std::size_t rank_from_ref(const Matrix &R) {
 
 void row_replace(Matrix &A, std::size_t row, std::size_t lead_col,
                  std::size_t lead_row) {
-    double pivot_value = A(lead_row, lead_col);
+    const double piv = A(lead_row, lead_col);
+    assert(!is_zero_pivot(piv));
 
-    if (is_zero_pivot(pivot_value)) {
+    const double a = A(row, lead_col);
+    if (is_zero_pivot(a))
         return;
-    };
-    double factor = A(row, lead_col) / pivot_value;
+
+    const double factor = a / piv;
 
     for (std::size_t col = lead_col; col < A.cols(); ++col) {
         A(row, col) -= factor * A(lead_row, col);
     }
+
+    A(row, lead_col) = 0.0;
 }
 
 bool is_ref(const Matrix &A) {
