@@ -208,8 +208,6 @@ class Matrix {
         return data_.data() + r * cols_;
     }
 
-    int get_leftmost_non_zero_column_index(int row_start_index) const;
-
     size_type checked_index(std::ptrdiff_t i, std::ptrdiff_t j) const {
         if (i < 0 || j < 0) {
             throw std::out_of_range("negative index");
