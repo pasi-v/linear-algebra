@@ -1,6 +1,21 @@
 # TODO
 
-## Matrix::ref implementation details
+## Functionality
+
+### Library
+
+- find out whether v is a linear combination of u1 and u2 (one solution to `[A|b]` when A is composed of u's)
+
+
+### Application
+
+- rref
+- solve a linear system `[A|b]`
+
+
+## Refactoring
+
+### Matrix::ref implementation details
 
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa):
 
