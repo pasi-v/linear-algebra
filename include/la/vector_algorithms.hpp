@@ -43,6 +43,17 @@ inline Vector operator*(double c, const Vector &v) { return v * c; }
  * element and the rest are zeros. */
 bool is_standard_basis(const Vector &);
 
+/** @return index of first non-zero element, -1 if all zeroes */
+int first_non_zero_column(const Vector &, double eps = 1e-12);
+
+/** @return first non-zero element, 0 if all zeros */
+double leading_element(const Vector &, double eps = 1e-12);
+
+/** @return true if leading element is 1, false otherwise */
+inline bool has_leading_one(const Vector &v, double eps = 1e-12) {
+    return std::fabs(leading_element(v, eps) - 1.0) <= eps;
+}
+
 } // namespace la
 
 #endif // VECTOR_ALGORITHMS_HPP

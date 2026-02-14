@@ -79,4 +79,23 @@ bool is_standard_basis(const Vector &v) {
     return one_found;
 }
 
+int first_non_zero_column(const Vector &v, double eps) {
+    for (std::size_t i = 0; i < v.size(); i++) {
+        if (std::fabs(v[i]) > eps) {
+            return static_cast<int>(i);
+        }
+    }
+
+    return -1;
+}
+
+double leading_element(const Vector &v, double eps) {
+    int column = first_non_zero_column(v, eps);
+    if (column == -1) {
+        return 0;
+    } else {
+        return v[column];
+    }
+}
+
 } // namespace la

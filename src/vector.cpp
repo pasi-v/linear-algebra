@@ -1,7 +1,6 @@
 #include "la/vector.hpp"
 #include "math_utils/math_utils.hpp"
 #include <algorithm>
-#include <cmath>
 #include <stdexcept>
 #include <vector>
 
@@ -61,25 +60,6 @@ Vector Vector::subvector(std::size_t start) const {
         throw std::out_of_range("Vector::subvector: start > size()");
     }
     return subvector(start, n - start);
-}
-
-int Vector::first_non_zero_column(double eps) const {
-    for (std::size_t i = 0; i < size(); i++) {
-        if (std::fabs((*this)[i]) > eps) {
-            return static_cast<int>(i);
-        }
-    }
-
-    return -1;
-}
-
-double Vector::leading_element(double eps) const {
-    int column = first_non_zero_column(eps);
-    if (column == -1) {
-        return 0;
-    } else {
-        return (*this)[column];
-    }
 }
 
 Vector Vector::head(std::size_t n) const {

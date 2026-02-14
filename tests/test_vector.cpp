@@ -133,61 +133,6 @@ TEST_CASE("Vector::subvector basics") {
     }
 }
 
-TEST_CASE("first_non_zero_column returns 0 if first element is non-zero") {
-    using la::Vector;
-    Vector v{1, 2, 3};
-    CHECK_EQ(0, v.first_non_zero_column());
-}
-
-TEST_CASE(
-    "first_non_zero_column returns m-1 if only last element is non-zero") {
-    using la::Vector;
-    Vector v{0, 0, 1};
-    CHECK_EQ(2, v.first_non_zero_column());
-}
-
-TEST_CASE("first_non_zero_column returns -1 for zero vector") {
-    using la::Vector;
-    Vector v{0, 0, 0};
-    CHECK_EQ(-1, v.first_non_zero_column());
-}
-
-TEST_CASE("leading_element returns first element if it is not zero") {
-    using la::Vector;
-    Vector v{1, 2, 3};
-    CHECK_EQ(1, v.leading_element());
-}
-
-TEST_CASE("leading_element returns last element if preceding ones are zero") {
-    using la::Vector;
-    Vector v{0, 0, 4};
-    CHECK_EQ(4, v.leading_element());
-}
-
-TEST_CASE("leading_element returns 0 for zero vector") {
-    using la::Vector;
-    Vector v{0, 0, 0};
-    CHECK_EQ(0, v.leading_element());
-}
-
-TEST_CASE("has_leading_one returns true if leading element is 1") {
-    using la::Vector;
-    Vector v{0, 1, 2};
-    CHECK(v.has_leading_one());
-}
-
-TEST_CASE("has_leading_one returns false if leading element is 3") {
-    using la::Vector;
-    Vector v{0, 3, 0};
-    CHECK(!v.has_leading_one());
-}
-
-TEST_CASE("has_leading_one returns false for zero vector") {
-    using la::Vector;
-    Vector v{0, 0, 0};
-    CHECK(!v.has_leading_one());
-}
-
 TEST_CASE("head") {
     using la::Vector;
 

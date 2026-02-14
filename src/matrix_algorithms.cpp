@@ -139,7 +139,7 @@ bool is_ref(const Matrix &A) {
         }
 
         // Assert this leading entry column index is greater than previous.
-        int cur_leading_entry_column = v.first_non_zero_column();
+        int cur_leading_entry_column = first_non_zero_column(v);
         if (cur_leading_entry_column <= prev_leading_entry_column) {
             return false;
         }
@@ -162,13 +162,13 @@ bool is_rref(const Matrix &A) {
         if (is_zero(v)) {
             continue; // no leading entry in zero row
         }
-        auto leading_element = v.leading_element();
-        if (leading_element != 1) {
+        auto leading_elem = leading_element(v);
+        if (leading_elem != 1) {
             return false;
         }
 
         // 3. Each column containing a leading 1 is standard basis vector
-        int leading_entry_column = v.first_non_zero_column();
+        int leading_entry_column = first_non_zero_column(v);
         Vector col = A.column(leading_entry_column);
         if (!is_standard_basis(col)) {
             return false;
