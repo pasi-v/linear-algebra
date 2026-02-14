@@ -1,4 +1,5 @@
 #include "la/vector_algorithms.hpp"
+#include "la/pivot_info.hpp"
 #include "la/vector.hpp"
 #include <cmath>
 
@@ -50,11 +51,9 @@ Vector proj_onto(const Vector &onto, const Vector &v) {
 double distance(const Vector &u, const Vector &v) { return norm(u - v); }
 
 bool is_zero(const Vector &v) {
-    for (std::size_t i = 0; i < v.size(); i++) {
-        if (v[i] != 0) {
+    for (double x : v)
+        if (!is_zero_pivot(x))
             return false;
-        }
-    }
     return true;
 }
 
@@ -79,9 +78,9 @@ bool is_standard_basis(const Vector &v) {
     return one_found;
 }
 
-int first_non_zero_column(const Vector &v, double eps) {
+int first_non_zero_column(const Vector &v) {
     for (std::size_t i = 0; i < v.size(); i++) {
-        if (std::fabs(v[i]) > eps) {
+        if (!is_zero_pivot(v[i])) {
             return static_cast<int>(i);
         }
     }
@@ -89,8 +88,8 @@ int first_non_zero_column(const Vector &v, double eps) {
     return -1;
 }
 
-double leading_element(const Vector &v, double eps) {
-    int column = first_non_zero_column(v, eps);
+double leading_element(const Vector &v) {
+    int column = first_non_zero_column(v);
     if (column == -1) {
         return 0;
     } else {

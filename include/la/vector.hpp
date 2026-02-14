@@ -89,7 +89,7 @@ class Vector {
     Vector operator*(double c) const;
 
     /**
-     * @return a subvector with elements [start, start + length]
+     * @return a subvector with elements [start, start + length)
      * @throws std::out_of_range if the range is invalid
      */
     Vector subvector(std::size_t start, std::size_t length) const;
@@ -121,6 +121,9 @@ class Vector {
 
     std::vector<double> data_;
 };
+
+/** @return vector multiplied by the scalar c */
+inline Vector operator*(double c, const Vector &v) { return v * c; }
 
 // --- output ---
 inline std::ostream &operator<<(std::ostream &os, const Vector &v) {

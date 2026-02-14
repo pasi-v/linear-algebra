@@ -24,6 +24,8 @@ inline bool nearly_equal(double a, double b)
     return nearly_equal(a, b, kDefaultAbsTol, kDefaultRelTol);
 }
 
+inline bool is_near_zero(double x) { return nearly_equal(x, 0.0);}
+
 /** @return the radians in degrees */
 inline double toDegrees(double radians) { return radians * (180.0 / M_PI); }
 
