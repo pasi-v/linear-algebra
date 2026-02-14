@@ -2,6 +2,7 @@
 
 #include "la/matrix_algorithms.hpp"
 #include "parser.hpp"
+#include "la/vector_algorithms.hpp"
 
 #include <cctype>
 #include <stdexcept>
@@ -99,7 +100,7 @@ void handle_dot(Parser &p,
     if (va.kind != Value::Kind::Vector || vb.kind != Value::Kind::Vector) {
         throw std::runtime_error("dot expects two vectors");
     }
-    out << va.vec.dot_product(vb.vec) << "\n";
+    out << dot(va.vec, vb.vec) << "\n";
 }
 
 void handle_det(Parser &p,
