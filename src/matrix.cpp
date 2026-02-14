@@ -1,5 +1,6 @@
 #include "la/matrix.hpp"
 #include "la/vector.hpp"
+#include "la/vector_algorithms.hpp"
 #include "math_utils/math_utils.hpp"
 #include <algorithm>
 #include <cassert>
@@ -102,7 +103,7 @@ Matrix Matrix::operator*(const Matrix &m) const {
 
         for (size_t j = 0; j < m.cols(); j++) {
             Vector col = m.column(j);
-            result(i, j) = r.dot_product(col);
+            result(i, j) = dot(r, col);
         }
     }
 

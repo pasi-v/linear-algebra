@@ -100,36 +100,6 @@ class Vector {
      */
     Vector subvector(std::size_t start) const;
 
-    /**
-     * @return the dot product betwee this and the other vector
-     * @throws std::invalid_argument if the vector sizes don't match
-     */
-    double dot_product(const Vector &v) const;
-
-    /** @return the length (magnitude) of this vector */
-    double length() const { return std::sqrt(dot_product(*this)); }
-
-    /**
-     * @return the magnitude of the difference of the vectors
-     * @throws std::invalid_argument if the vector sizes don't match
-     */
-    double difference(const Vector &v) const { return (*this - v).length(); };
-
-    /**
-     * @return the angle between the vectors in radians
-     * @throws std::invalid_argument if the vector sizes don't match
-     * @throws std::domain_error if either vector is zero length within eps
-     */
-    double angle(const Vector &v, double eps = 1e-12) const;
-
-    /**
-     * @return the projection of v onto this vector
-     * @throws std::invalid_argument if the vector sizes don't match
-     */
-    Vector proj(const Vector &v) const {
-        return *this * (dot_product(v) / dot_product(*this));
-    };
-
     /** @return true if all elements are zero, false otherwise */
     bool is_zero() const;
 

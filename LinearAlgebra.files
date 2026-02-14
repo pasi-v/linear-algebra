@@ -9,6 +9,7 @@ include/la/plane3d.hpp
 include/la/vector.hpp
 include/la/vector2d.hpp
 include/la/vector3d.hpp
+include/la/vector_algorithms.hpp
 include/math_utils/math_utils.hpp
 include/utils/utils.hpp
 src/eliminated_system.cpp
@@ -19,6 +20,7 @@ src/parity.cpp
 src/pivot_info.cpp
 src/vector.cpp
 src/vector2d.cpp
+src/vector_algorithms.cpp
 tests/test_linear_system.cpp
 tests/test_main.cpp
 tests/test_math_utils.cpp
@@ -30,4 +32,5 @@ tests/test_utils.hpp
 tests/test_vector.cpp
 tests/test_vector2d.cpp
 tests/test_vector3d.cpp
+tests/test_vector_algorithms.cpp
 third_party/doctest/doctest.h
