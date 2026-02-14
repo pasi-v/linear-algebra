@@ -16,6 +16,16 @@ Vector Vector::operator+(const Vector &v) const {
     return result;
 }
 
+Vector Vector::operator-(const Vector &v) const {
+    if (size() != v.size())
+        throw std::invalid_argument("Vector sizes must match for addition");
+    Vector result(size());
+    for (std::size_t i = 0; i < size(); i++) {
+        result[i] = data_[i] - v[i];
+    }
+    return result;
+}
+
 Vector Vector::operator*(double c) const {
     Vector result(size());
     for (std::size_t i = 0; i < size(); i++) {

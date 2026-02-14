@@ -83,7 +83,7 @@ class Vector {
      * @return the difference between this and the other vector
      * @throws std::invalid_argument if the vector sizes don't match
      */
-    Vector operator-(const Vector &v) const { return *this + (v * -1); };
+    Vector operator-(const Vector &v) const;
 
     /** @return this vector multiplied by the scalar c */
     Vector operator*(double c) const;
