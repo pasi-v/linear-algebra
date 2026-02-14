@@ -2,6 +2,7 @@
 #include "la/matrix.hpp"
 #include "la/pivot_info.hpp"
 #include "la/vector.hpp"
+#include "la/vector_algorithms.hpp"
 #include <cassert>
 
 namespace la {
@@ -75,7 +76,7 @@ void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
 std::size_t rank_from_ref(const Matrix &R) {
     std::size_t r = 0;
     for (std::size_t i = 0; i < R.rows(); ++i) {
-        if (!R.row(i).is_zero()) {
+        if (!is_zero(R.row(i))) {
             ++r;
         }
     }
@@ -116,10 +117,10 @@ bool is_ref(const Matrix &A) {
     for (size_t i = 0; i < A.rows(); i++) {
         Vector v = A.row(i);
         if (!found_zero) {
-            found_zero = v.is_zero();
+            found_zero = is_zero(v);
         } else { // a zero row has been found before this row
             // from now on, it is allowed to have only zero rows
-            if (!v.is_zero()) {
+            if (!is_zero(v)) {
                 return false;
             }
         }
@@ -133,7 +134,7 @@ bool is_ref(const Matrix &A) {
         Vector v = A.row(i);
         // When we find first zero vector, there will be no more leading
         // enries to check and matrix is in row-echelon form.
-        if (v.is_zero()) {
+        if (is_zero(v)) {
             return true;
         }
 
@@ -158,7 +159,7 @@ bool is_rref(const Matrix &A) {
     for (size_t i = 0; i < A.rows(); i++) {
         // 2. The leading entry in each nonzero row is a leading 1
         Vector v = A.row(i);
-        if (v.is_zero()) {
+        if (is_zero(v)) {
             continue; // no leading entry in zero row
         }
         auto leading_element = v.leading_element();

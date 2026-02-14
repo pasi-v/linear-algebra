@@ -49,4 +49,13 @@ Vector proj_onto(const Vector &onto, const Vector &v) {
 
 double distance(const Vector &u, const Vector &v) { return norm(u - v); }
 
+bool is_zero(const Vector &v) {
+    for (std::size_t i = 0; i < v.size(); i++) {
+        if (v[i] != 0) {
+            return false;
+        }
+    }
+    return true;
+}
+
 } // namespace la

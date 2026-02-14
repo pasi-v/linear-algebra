@@ -100,9 +100,6 @@ class Vector {
      */
     Vector subvector(std::size_t start) const;
 
-    /** @return true if all elements are zero, false otherwise */
-    bool is_zero() const;
-
     /** @return index of first non-zero element, -1 if all zeroes */
     int first_non_zero_column(double eps = 1e-12) const;
 

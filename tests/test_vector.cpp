@@ -142,18 +142,6 @@ TEST_CASE("Vector::subvector basics") {
     }
 }
 
-TEST_CASE("is_zero returns TRUE for zero vector") {
-    using la::Vector;
-    Vector v{0, 0, 0};
-    CHECK(v.is_zero());
-}
-
-TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
-    using la::Vector;
-    Vector v{0, 3, 0};
-    CHECK(!v.is_zero());
-}
-
 TEST_CASE("first_non_zero_column returns 0 if first element is non-zero") {
     using la::Vector;
     Vector v{1, 2, 3};

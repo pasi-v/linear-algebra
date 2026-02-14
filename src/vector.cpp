@@ -53,15 +53,6 @@ Vector Vector::subvector(std::size_t start) const {
     return subvector(start, n - start);
 }
 
-bool Vector::is_zero() const {
-    for (std::size_t i = 0; i < size(); i++) {
-        if (data_[i] != 0) {
-            return false;
-        }
-    }
-    return true;
-}
-
 int Vector::first_non_zero_column(double eps) const {
     for (std::size_t i = 0; i < size(); i++) {
         if (std::fabs((*this)[i]) > eps) {

@@ -74,3 +74,15 @@ TEST_CASE("Projection different sizes throws") {
     Vector v(3);
     CHECK_THROWS_AS(proj_onto(u, v), std::invalid_argument);
 }
+
+TEST_CASE("is_zero returns TRUE for zero vector") {
+    using la::Vector;
+    Vector v{0, 0, 0};
+    CHECK(is_zero(v));
+}
+
+TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
+    using la::Vector;
+    Vector v{0, 3, 0};
+    CHECK(!is_zero(v));
+}

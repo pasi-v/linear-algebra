@@ -32,6 +32,9 @@ Vector proj_onto(const Vector &onto, const Vector &v);
  */
 double distance(const Vector &u, const Vector &v);
 
+/** @return true if all elements are zero, false otherwise */
+bool is_zero(const Vector &);
+
 } // namespace la
 
 #endif // VECTOR_ALGORITHMS_HPP

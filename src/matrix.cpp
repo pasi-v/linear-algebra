@@ -191,7 +191,7 @@ Matrix Matrix::col_range(std::size_t lower, std::size_t upper) const {
 int Matrix::get_leftmost_non_zero_column_index(int leading_row) const {
     for (size_t i = 0; i < cols_; i++) {
         Vector column = (*this).column(i).subvector(leading_row);
-        if (!column.is_zero())
+        if (!is_zero(column))
             return i;
     }
     return -1;
