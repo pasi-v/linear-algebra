@@ -38,6 +38,11 @@ bool is_zero(const Vector &);
 /** @return vector multiplied by the scalar c */
 inline Vector operator*(double c, const Vector &v) { return v * c; }
 
+/**
+ * @return true if this is a standard basis vector, i.e. has 1 in one
+ * element and the rest are zeros. */
+bool is_standard_basis(const Vector &);
+
 } // namespace la
 
 #endif // VECTOR_ALGORITHMS_HPP

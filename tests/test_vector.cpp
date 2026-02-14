@@ -188,30 +188,6 @@ TEST_CASE("has_leading_one returns false for zero vector") {
     CHECK(!v.has_leading_one());
 }
 
-TEST_CASE("is_standard_basis returns true if one element is 1 and rest 0") {
-    using la::Vector;
-    Vector v{0, 1, 0};
-    CHECK(v.is_standard_basis());
-}
-
-TEST_CASE("is_standard_basis returns false if two elements are 1 and rest 0") {
-    using la::Vector;
-    Vector v{0, 1, 1};
-    CHECK(!v.is_standard_basis());
-}
-
-TEST_CASE("is_standard_basis returns false if one element is 2 and rest 0") {
-    using la::Vector;
-    Vector v{0, 2, 0};
-    CHECK(!v.is_standard_basis());
-}
-
-TEST_CASE("is_standard_basis returns false for zero vector") {
-    using la::Vector;
-    Vector v{0, 0, 0};
-    CHECK(!v.is_standard_basis());
-}
-
 TEST_CASE("head") {
     using la::Vector;
 

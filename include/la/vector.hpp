@@ -112,11 +112,6 @@ class Vector {
     }
 
     /**
-     * @return true if this is a standard basis vector, i.e. has 1 in one
-     * element and the rest are zeros. */
-    bool is_standard_basis() const;
-
-    /**
      * @brief head of this vector
      * @param n how many elements to include
      * @return the n-length prefix of the vector

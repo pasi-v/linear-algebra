@@ -170,7 +170,7 @@ bool is_rref(const Matrix &A) {
         // 3. Each column containing a leading 1 is standard basis vector
         int leading_entry_column = v.first_non_zero_column();
         Vector col = A.column(leading_entry_column);
-        if (!col.is_standard_basis()) {
+        if (!is_standard_basis(col)) {
             return false;
         }
     }

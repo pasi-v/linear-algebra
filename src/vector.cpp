@@ -82,27 +82,6 @@ double Vector::leading_element(double eps) const {
     }
 }
 
-bool Vector::is_standard_basis() const {
-    bool one_found = false;
-    for (std::size_t i = 0; i < size(); i++) {
-        auto elem = data_[i];
-        if (elem != 0 && elem != 1) {
-            return false; // only ones and zeros allowed
-        }
-        if (elem == 0) {
-            continue; // keep on looking
-        } else {      // elem is 1, check if we already have found a 1
-            if (one_found) {
-                return false; // another 1, not allowed
-            } else {
-                one_found = true;
-            }
-        }
-    }
-
-    return one_found;
-}
-
 Vector Vector::head(std::size_t n) const {
     if (n > data_.size()) {
         n = data_.size();

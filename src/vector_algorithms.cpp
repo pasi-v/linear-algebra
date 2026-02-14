@@ -58,4 +58,25 @@ bool is_zero(const Vector &v) {
     return true;
 }
 
+bool is_standard_basis(const Vector &v) {
+    bool one_found = false;
+    for (std::size_t i = 0; i < v.size(); i++) {
+        auto elem = v[i];
+        if (elem != 0 && elem != 1) {
+            return false; // only ones and zeros allowed
+        }
+        if (elem == 0) {
+            continue; // keep on looking
+        } else {      // elem is 1, check if we already have found a 1
+            if (one_found) {
+                return false; // another 1, not allowed
+            } else {
+                one_found = true;
+            }
+        }
+    }
+
+    return one_found;
+}
+
 } // namespace la

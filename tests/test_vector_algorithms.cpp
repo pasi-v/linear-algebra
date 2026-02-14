@@ -104,3 +104,27 @@ TEST_CASE("Vector scalar multiplication scalar first") {
     Vector expected{-4, 8};
     CHECK(cv == expected);
 }
+
+TEST_CASE("is_standard_basis returns true if one element is 1 and rest 0") {
+    using la::Vector;
+    Vector v{0, 1, 0};
+    CHECK(is_standard_basis(v));
+}
+
+TEST_CASE("is_standard_basis returns false if two elements are 1 and rest 0") {
+    using la::Vector;
+    Vector v{0, 1, 1};
+    CHECK(!is_standard_basis(v));
+}
+
+TEST_CASE("is_standard_basis returns false if one element is 2 and rest 0") {
+    using la::Vector;
+    Vector v{0, 2, 0};
+    CHECK(!is_standard_basis(v));
+}
+
+TEST_CASE("is_standard_basis returns false for zero vector") {
+    using la::Vector;
+    Vector v{0, 0, 0};
+    CHECK(!is_standard_basis(v));
+}
