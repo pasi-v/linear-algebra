@@ -86,3 +86,21 @@ TEST_CASE("is_zero returns FALSE for non-zero element in vector") {
     Vector v{0, 3, 0};
     CHECK(!is_zero(v));
 }
+
+TEST_CASE("Vector scalar multiplication happy path") {
+    using la::Vector;
+    int c = 2;
+    Vector v{-2, 4};
+    Vector cv = v * c;
+    Vector expected{-4, 8};
+    CHECK(cv == expected);
+}
+
+TEST_CASE("Vector scalar multiplication scalar first") {
+    using la::Vector;
+    int c = 2;
+    Vector v{-2, 4};
+    Vector cv = c * v;
+    Vector expected{-4, 8};
+    CHECK(cv == expected);
+}

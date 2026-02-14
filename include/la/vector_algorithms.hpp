@@ -35,6 +35,9 @@ double distance(const Vector &u, const Vector &v);
 /** @return true if all elements are zero, false otherwise */
 bool is_zero(const Vector &);
 
+/** @return vector multiplied by the scalar c */
+inline Vector operator*(double c, const Vector &v) { return v * c; }
+
 } // namespace la
 
 #endif // VECTOR_ALGORITHMS_HPP

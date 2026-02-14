@@ -84,15 +84,6 @@ TEST_CASE("Vector addition different sizes throws") {
     CHECK_THROWS_AS(u + v, std::invalid_argument);
 }
 
-TEST_CASE("Vector scalar multiplication happy path") {
-    using la::Vector;
-    int c = 2;
-    Vector v{-2, 4};
-    Vector cv = v * c;
-    Vector expected{-4, 8};
-    CHECK(cv == expected);
-}
-
 TEST_CASE("Vector subtraction happy path") {
     using la::Vector;
     Vector u{1, 2};
