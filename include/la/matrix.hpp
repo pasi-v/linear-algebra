@@ -228,6 +228,15 @@ class Matrix {
     size_t cols_;
     std::vector<double> data_;
 };
+
+/**
+ * @brief Construct Matrix from column vectors
+ * @param cols the column vectors
+ * @return new Matrix
+ * @throws std::invalid_argument if the vector sizes don't match
+ */
+Matrix from_cols(const std::vector<Vector> &cols);
+
 } // namespace la
 
 #endif

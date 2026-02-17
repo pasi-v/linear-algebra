@@ -1,5 +1,7 @@
 #include "doctest/doctest.h"
 #include "la/matrix.hpp"
+#include "la/vector.hpp"
+#include "test_utils.hpp"
 
 TEST_CASE("m x n Zero Matrix()") {
     using la::Matrix;
@@ -360,5 +362,46 @@ TEST_SUITE("range methods") {
         SUBCASE("upper > total rows throws") {
             CHECK_THROWS_AS(m.col_range(0, 5), std::range_error);
         }
+    }
+}
+
+TEST_CASE("from_cols") {
+    using la::from_cols;
+    using la::Matrix;
+    using la::Vector;
+
+    SUBCASE("3x2 matrix") {
+        Vector col1{1, 0, 3};
+        Vector col2{-1, 1, -3};
+        std::vector<Vector> cols{col1, col2};
+        // clang-format off
+        Matrix expected(3, 2, {
+            1, -1,
+            0,  1,
+            3, -3
+        });
+        // clang-format on
+        CHECK_NEAR(expected, from_cols(cols));
+    }
+
+    SUBCASE("different size vectors throw") {
+        Vector col1{1, 0, 3};
+        Vector col2{-1, 1};
+        std::vector<Vector> cols{col1, col2};
+        CHECK_THROWS_AS(from_cols(cols), std::invalid_argument);
+    }
+
+    SUBCASE("no rows creates 0x0 matrix") {
+        std::vector<Vector> cols;
+        Matrix expected(0, 0);
+        CHECK_NEAR(expected, from_cols(cols));
+    }
+
+    SUBCASE("m 0-length vectors creates mx0 matrix") {
+        Vector col1(0);
+        Vector col2(0);
+        std::vector<Vector> cols{col1, col2};
+        Matrix expected(0, 2);
+        CHECK_NEAR(expected, from_cols(cols));
     }
 }

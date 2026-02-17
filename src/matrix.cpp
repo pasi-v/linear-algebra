@@ -208,4 +208,27 @@ bool approx_equal(const Matrix &A, const Matrix &B, double abs_tol,
     }
     return true;
 }
+
+Matrix from_cols(const std::vector<Vector> &cols) {
+    // Create mxn matrix
+    // If cols is empty, return a 0x0 Matrix
+    auto n = cols.size();
+    if (n == 0)
+        return Matrix(0, 0);
+
+    // Validate cols are all same size
+    auto m = cols[0].size();
+    for (std::size_t i = 0; i < cols.size(); i++) {
+        if (cols[i].size() != m)
+            throw std::invalid_argument("vector sizes must match");
+    }
+
+    Matrix mat(m, n);
+    for (std::size_t i = 0; i < cols.size(); i++) {
+        mat.set_col(i, cols[i]);
+    }
+
+    return mat;
+}
+
 } // namespace la
