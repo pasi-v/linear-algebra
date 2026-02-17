@@ -183,3 +183,26 @@ TEST_CASE("has_leading_one returns false for zero vector") {
     Vector v{0, 0, 0};
     CHECK(!has_leading_one(v));
 }
+
+TEST_CASE("is_in_span") {
+    using la::is_in_span;
+    using la::Vector;
+    Vector v1{1, 0, 3};
+    Vector v2{-1, 1, -3};
+    std::vector<Vector> vectors{v1, v2};
+
+    SUBCASE("[1, 2, 3] is in span of [[1, 0, 3], [-1, 1, -3]]") {
+        Vector b{1, 2, 3};
+        CHECK(is_in_span(vectors, b));
+    }
+
+    SUBCASE("[2, 3, 4] is not in span of [[1, 0, 3], [-1, 1, -3]]") {
+        Vector b{2, 3, 4};
+        CHECK(!is_in_span(vectors, b));
+    }
+
+    SUBCASE("non-matching size of b throws") {
+        Vector b{2, 3};
+        CHECK_THROWS_AS(is_in_span(vectors, b), std::invalid_argument);
+    }
+}
