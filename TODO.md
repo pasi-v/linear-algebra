@@ -4,13 +4,15 @@
 
 ### Library
 
-- find out whether v is a linear combination of u1 and u2 (one solution to `[A|b]` when A is composed of u's)
++ find out whether v is a linear combination of u1 and u2 (one solution to `[A|b]` when A is composed of u's)
 
 
 ### Application
 
-- rref
++ rref
++ in_span (linear combination)
 - solve a linear system `[A|b]`
+- take libedit into use
 
 
 ## Refactoring
