@@ -51,6 +51,7 @@ void print_help(std::ostream &out) {
         << "  dot <vecA> <vecB>\n"
         << "  det <mat>\n"
         << "  rref <mat>\n"
+        << "  in_span <b> <x1> <x2> ... <xn>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -148,6 +149,50 @@ void handle_print(Parser &p,
         out << v.mat;
     }
 }
+
+void handle_in_span(Parser &p,
+                    std::unordered_map<std::string, Value> &symbols,
+                    std::ostream &out) {
+    // Parse the target vector b
+    std::string b_name = p.parse_identifier();
+
+    // Parse the spanning vectors x1, x2, ..., xn
+    std::vector<std::string> spanning_names;
+    while (!p.empty()) {
+        spanning_names.push_back(p.parse_identifier());
+    }
+
+    if (spanning_names.empty()) {
+        throw std::runtime_error("in_span expects at least one spanning vector");
+    }
+
+    // Verify b exists and is a vector
+    if (!symbols.count(b_name)) {
+        throw std::runtime_error("unknown symbol: " + b_name);
+    }
+    const Value &b_val = symbols.at(b_name);
+    if (b_val.kind != Value::Kind::Vector) {
+        throw std::runtime_error("in_span expects vectors, but " + b_name + " is not a vector");
+    }
+
+    // Collect spanning vectors and verify they exist and are vectors
+    std::vector<la::Vector> spanning_vectors;
+    for (const auto &name : spanning_names) {
+        if (!symbols.count(name)) {
+            throw std::runtime_error("unknown symbol: " + name);
+        }
+        const Value &v = symbols.at(name);
+        if (v.kind != Value::Kind::Vector) {
+            throw std::runtime_error("in_span expects vectors, but " + name + " is not a vector");
+        }
+        spanning_vectors.push_back(v.vec);
+    }
+
+    // Call is_in_span and output result
+    la::Vector b = b_val.vec;
+    bool result = la::is_in_span(spanning_vectors, b);
+    out << (result ? "true" : "false") << "\n";
+}
 } // namespace
 
 bool execute_line(const std::string &line,
@@ -196,6 +241,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "print") {
             handle_print(p, symbols, out);
+            return true;
+        }
+        if (cmd == "in_span") {
+            handle_in_span(p, symbols, out);
             return true;
         }
 
