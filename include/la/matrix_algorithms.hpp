@@ -1,5 +1,6 @@
 #pragma once
 #include "matrix.hpp"
+#include "matrix_linear_systems.hpp"
 #include "row_reduction.hpp"
 
 namespace la {
@@ -15,17 +16,6 @@ namespace la {
  * matrix
  */
 double determinant(const Matrix &A);
-
-/**
- * @brief construct an augmented matrix from coefficient matrix and righ-hand
- * side vector
- *
- * @param A coefficient matrix of a linear system
- * @param b right-hand side vector of a linear system
- * @return augmented matrix A|b
- * @throws std::domain_error if the size of b does not match rows of A
- */
-Matrix augment(const Matrix &A, const Vector &b);
 
 /**
  * @brief transpose

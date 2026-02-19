@@ -3,6 +3,7 @@ include/la/eliminated_system.hpp
 include/la/linear_system.hpp
 include/la/matrix.hpp
 include/la/matrix_algorithms.hpp
+include/la/matrix_linear_systems.hpp
 include/la/parity.hpp
 include/la/pivot_info.hpp
 include/la/plane3d.hpp
@@ -17,6 +18,7 @@ src/eliminated_system.cpp
 src/linear_system.cpp
 src/matrix.cpp
 src/matrix_algorithms.cpp
+src/matrix_linear_systems.cpp
 src/parity.cpp
 src/pivot_info.cpp
 src/row_reduction.cpp
@@ -28,6 +30,7 @@ tests/test_main.cpp
 tests/test_math_utils.cpp
 tests/test_matrix.cpp
 tests/test_matrix_algorithms.cpp
+tests/test_matrix_linear_systems.cpp
 tests/test_parity.cpp
 tests/test_plane3d.cpp
 tests/test_row_reduction.cpp

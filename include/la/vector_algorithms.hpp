@@ -52,15 +52,6 @@ inline bool has_leading_one(const Vector &v) {
     return math_utils::nearly_equal(leading_element(v), 1.0);
 }
 
-/**
- *  @brief Determine whether b lies in the span of the given vectors
- *  @param vectors
- *  @param b
- *  @return true if there exist scalars c1...cn such that c1v1 + ... + cnvn = b
- *  @throws std::invalid_argument if the vector sizes (including b) don't match
- */
-bool is_in_span(std::vector<Vector> &vectors, Vector &b);
-
 } // namespace la
 
 #endif // LA_VECTOR_ALGORITHMS_HPP
