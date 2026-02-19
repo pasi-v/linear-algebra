@@ -7,24 +7,6 @@
 
 namespace la {
 
-void row_replace(Matrix &A, std::size_t row, std::size_t lead_col,
-                 std::size_t lead_row) {
-    const double piv = A(lead_row, lead_col);
-    assert(!is_zero_pivot(piv));
-
-    const double a = A(row, lead_col);
-    if (is_zero_pivot(a))
-        return;
-
-    const double factor = a / piv;
-
-    for (std::size_t col = lead_col; col < A.cols(); ++col) {
-        A(row, col) -= factor * A(lead_row, col);
-    }
-
-    A(row, lead_col) = 0.0;
-}
-
 double determinant(const Matrix &A) {
     if (A.rows() != A.cols()) {
         throw std::domain_error(

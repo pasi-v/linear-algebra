@@ -14,9 +14,26 @@ Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row);
 void normalize_row(Matrix &A, std::size_t row, double pivot_value);
 void eliminate_below(Matrix &A, std::size_t lead_row, std::size_t lead_col);
 void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col);
-
 void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
                  std::size_t lead_row);
+
+void row_replace(Matrix &A, std::size_t row, std::size_t lead_col,
+                 std::size_t lead_row) {
+    const double piv = A(lead_row, lead_col);
+    assert(!is_zero_pivot(piv));
+
+    const double a = A(row, lead_col);
+    if (is_zero_pivot(a))
+        return;
+
+    const double factor = a / piv;
+
+    for (std::size_t col = lead_col; col < A.cols(); ++col) {
+        A(row, col) -= factor * A(lead_row, col);
+    }
+
+    A(row, lead_col) = 0.0;
+}
 
 void normalize_row(Matrix &A, std::size_t row, double pivot_value) {
     if (is_zero_pivot(pivot_value))
