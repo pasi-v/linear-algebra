@@ -1,6 +1,7 @@
 #pragma once
 #include "matrix.hpp"
 #include "matrix_linear_systems.hpp"
+#include "matrix_transforms.hpp"
 #include "row_reduction.hpp"
 
 namespace la {
@@ -16,18 +17,4 @@ namespace la {
  * matrix
  */
 double determinant(const Matrix &A);
-
-/**
- * @brief transpose
- * @param A matrix to transpose
- * @return transposed matrix
- */
-Matrix transpose(const Matrix &A);
-
-/**
- * @brief is A symmetric
- * @param A matrix to examine
- * @return true if A is symmetric, false otherwise
- */
-bool is_symmetric(const Matrix &A);
 } // namespace la
