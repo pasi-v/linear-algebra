@@ -1,4 +1,5 @@
 include/la/approx.hpp
+include/la/determinant.hpp
 include/la/eliminated_system.hpp
 include/la/linear_system.hpp
 include/la/matrix.hpp
@@ -15,10 +16,10 @@ include/la/vector3d.hpp
 include/la/vector_algorithms.hpp
 include/math_utils/math_utils.hpp
 include/utils/utils.hpp
+src/determinant.cpp
 src/eliminated_system.cpp
 src/linear_system.cpp
 src/matrix.cpp
-src/matrix_algorithms.cpp
 src/matrix_linear_systems.cpp
 src/matrix_transforms.cpp
 src/parity.cpp
@@ -27,11 +28,11 @@ src/row_reduction.cpp
 src/vector.cpp
 src/vector2d.cpp
 src/vector_algorithms.cpp
+tests/test_determinant.cpp
 tests/test_linear_system.cpp
 tests/test_main.cpp
 tests/test_math_utils.cpp
 tests/test_matrix.cpp
-tests/test_matrix_algorithms.cpp
 tests/test_matrix_linear_systems.cpp
 tests/test_matrix_transforms.cpp
 tests/test_parity.cpp

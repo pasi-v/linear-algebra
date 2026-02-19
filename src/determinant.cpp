@@ -1,8 +1,5 @@
-#include "la/matrix_algorithms.hpp"
 #include "la/matrix.hpp"
-#include "la/pivot_info.hpp"
-#include "la/vector.hpp"
-#include "la/vector_algorithms.hpp"
+#include "la/matrix_algorithms.hpp"
 #include <cassert>
 
 namespace la {

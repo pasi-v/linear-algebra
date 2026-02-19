@@ -1,8 +1,6 @@
 #include "doctest/doctest.h"
+#include "la/determinant.hpp"
 #include "la/matrix.hpp"
-#include "la/matrix_algorithms.hpp"
-#include "la/pivot_info.hpp"
-#include "test_utils.hpp"
 
 TEST_CASE("2x2 determinant happy path") {
     using la::Matrix;
