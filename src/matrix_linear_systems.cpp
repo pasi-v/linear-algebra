@@ -22,7 +22,7 @@ Matrix augment(const Matrix &A, const Vector &b) {
     return M;
 }
 
-bool is_in_span(std::vector<Vector> &vectors, Vector &b) {
+bool is_in_span(const std::vector<Vector> &vectors, const Vector &b) {
     Matrix A = la::from_cols(vectors);
 
     if (b.size() != A.rows()) {

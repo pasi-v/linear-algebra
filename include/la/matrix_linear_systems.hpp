@@ -1,7 +1,9 @@
 #ifndef LA_MATRIX_LINEAR_SYSTEMS_HPP
 #define LA_MATRIX_LINEAR_SYSTEMS_HPP
 
+#include "vector.hpp"
 #include "matrix.hpp"
+#include <vector>
 
 namespace la {
 /**
@@ -22,7 +24,7 @@ Matrix augment(const Matrix &A, const Vector &b);
  *  @return true if there exist scalars c1...cn such that c1v1 + ... + cnvn = b
  *  @throws std::invalid_argument if the vector sizes (including b) don't match
  */
-bool is_in_span(std::vector<Vector> &vectors, Vector &b);
+bool is_in_span(const std::vector<Vector> &vectors, const Vector &b);
 
 } // namespace la
 #endif // LA_MATRIX_LINEAR_SYSTEMS_HPP
