@@ -1,6 +1,7 @@
 #include "evaluator.hpp"
 
 #include "la/matrix_algorithms.hpp"
+#include "la/matrix_linear_systems.hpp"
 #include "parser.hpp"
 #include "la/vector_algorithms.hpp"
 
@@ -52,6 +53,7 @@ void print_help(std::ostream &out) {
         << "  det <mat>\n"
         << "  rref <mat>\n"
         << "  in_span <b> <x1> <x2> ... <xn>\n"
+        << "  in_span <b> <A>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -163,7 +165,7 @@ void handle_in_span(Parser &p,
     }
 
     if (spanning_names.empty()) {
-        throw std::runtime_error("in_span expects at least one spanning vector");
+        throw std::runtime_error("in_span expects at least one spanning vector or a matrix");
     }
 
     // Verify b exists and is a vector
@@ -172,10 +174,26 @@ void handle_in_span(Parser &p,
     }
     const Value &b_val = symbols.at(b_name);
     if (b_val.kind != Value::Kind::Vector) {
-        throw std::runtime_error("in_span expects vectors, but " + b_name + " is not a vector");
+        throw std::runtime_error("in_span: " + b_name + " must be a vector");
     }
 
-    // Collect spanning vectors and verify they exist and are vectors
+    // Dispatch on the type of the first spanning argument
+    const std::string &first = spanning_names.front();
+    if (!symbols.count(first)) {
+        throw std::runtime_error("unknown symbol: " + first);
+    }
+
+    if (symbols.at(first).kind == Value::Kind::Matrix) {
+        // Matrix form: in_span <b> <A>
+        if (spanning_names.size() > 1) {
+            throw std::runtime_error("in_span: cannot mix matrix and vector arguments");
+        }
+        bool result = la::is_in_span(symbols.at(first).mat, b_val.vec);
+        out << (result ? "true" : "false") << "\n";
+        return;
+    }
+
+    // Vector form: in_span <b> <v1> <v2> ... <vn>
     std::vector<la::Vector> spanning_vectors;
     for (const auto &name : spanning_names) {
         if (!symbols.count(name)) {
@@ -183,14 +201,12 @@ void handle_in_span(Parser &p,
         }
         const Value &v = symbols.at(name);
         if (v.kind != Value::Kind::Vector) {
-            throw std::runtime_error("in_span expects vectors, but " + name + " is not a vector");
+            throw std::runtime_error("in_span: cannot mix matrix and vector arguments");
         }
         spanning_vectors.push_back(v.vec);
     }
 
-    // Call is_in_span and output result
-    la::Vector b = b_val.vec;
-    bool result = la::is_in_span(spanning_vectors, b);
+    bool result = la::is_in_span(spanning_vectors, b_val.vec);
     out << (result ? "true" : "false") << "\n";
 }
 } // namespace
