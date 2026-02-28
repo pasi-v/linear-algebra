@@ -33,9 +33,10 @@ TEST_CASE("augment") {
 }
 
 TEST_CASE("is_in_span") {
+    using la::Vector;
+
     SUBCASE("vectors and vector") {
         using la::is_in_span;
-        using la::Vector;
         Vector v1{1, 0, 3};
         Vector v2{-1, 1, -3};
         std::vector<Vector> vectors{v1, v2};
@@ -53,6 +54,31 @@ TEST_CASE("is_in_span") {
         SUBCASE("non-matching size of b throws") {
             Vector b{2, 3};
             CHECK_THROWS_AS(is_in_span(vectors, b), std::invalid_argument);
+        }
+    }
+
+    SUBCASE("matrix and vector") {
+        // clang-format off
+        la::Matrix A(3, 2, {
+           1, -1,
+           0,  1,
+           3, -3
+        });
+        // clang-format on
+
+        SUBCASE("[1, 2, 3] is in span of [[1, -1], [0, 1], [3, -3]]") {
+            Vector b{1, 2, 3};
+            CHECK(is_in_span(A, b));
+        }
+
+        SUBCASE("[2, 3, 4] is not in span of [[1, -1], [0, 1], [3, -3]]") {
+            Vector b{2, 3, 4};
+            CHECK(!is_in_span(A, b));
+        }
+
+        SUBCASE("non-matching size of b throws") {
+            Vector b{2, 3};
+            CHECK_THROWS_AS(is_in_span(A, b), std::invalid_argument);
         }
     }
 }

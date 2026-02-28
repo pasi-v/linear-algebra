@@ -26,5 +26,15 @@ Matrix augment(const Matrix &A, const Vector &b);
  */
 bool is_in_span(const std::vector<Vector> &vectors, const Vector &b);
 
+/**
+ *  @brief Determine whether b lies in the span of the given matrix
+ *  @param A matrix
+ *  @param b vector
+ *  @return true if there exist exactly one solution for linear system A|b
+ *  @throws std::invalid_argument if the matrix row count doesn't match to
+ *          size of b
+ */
+bool is_in_span(const Matrix &A, const Vector &b);
+
 } // namespace la
 #endif // LA_MATRIX_LINEAR_SYSTEMS_HPP
