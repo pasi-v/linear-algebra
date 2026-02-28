@@ -24,21 +24,10 @@ Matrix augment(const Matrix &A, const Vector &b) {
 
 bool is_in_span(const std::vector<Vector> &vectors, const Vector &b) {
     Matrix A = la::from_cols(vectors);
-
-    if (b.size() != A.rows()) {
-        throw std::invalid_argument(
-            "Size of b must match the sizes of vectors");
-    }
-
-    auto r1 = la::rank(A);
-    Matrix Ab = la::augment(A, b);
-    auto r2 = la::rank(Ab);
-
-    return r1 == r2;
+    return is_in_span(A, b);
 }
 
 bool is_in_span(const Matrix &A, const Vector &b) {
-    // TODO: DRY
     if (b.size() != A.rows()) {
         throw std::invalid_argument(
             "Size of b must match the sizes of vectors");

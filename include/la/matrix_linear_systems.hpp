@@ -1,8 +1,8 @@
 #ifndef LA_MATRIX_LINEAR_SYSTEMS_HPP
 #define LA_MATRIX_LINEAR_SYSTEMS_HPP
 
-#include "vector.hpp"
 #include "matrix.hpp"
+#include "vector.hpp"
 #include <vector>
 
 namespace la {
