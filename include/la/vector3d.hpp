@@ -1,6 +1,8 @@
 #ifndef LA_VECTOR_3D_HPP
 #define LA_VECTOR_3D_HPP
 
+#include "math_utils/math_utils.hpp"
+
 namespace la {
 class Vector3D {
   public:
@@ -12,7 +14,9 @@ class Vector3D {
     double z() const { return z_; }
 
     friend bool operator==(const Vector3D a, const Vector3D b) {
-        return a.x() == b.x() && a.y() == b.y() && a.z() == b.z();
+        return math_utils::nearly_equal(a.x(), b.x())
+            && math_utils::nearly_equal(a.y(), b.y())
+            && math_utils::nearly_equal(a.z(), b.z());
     }
 
     Vector3D operator-(const Vector3D v) const {
