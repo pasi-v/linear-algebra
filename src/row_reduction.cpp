@@ -1,5 +1,5 @@
 #include "la/row_reduction.hpp"
-#include "la/pivot_info.hpp"
+#include "la/pivot_policy.hpp"
 #include "la/vector_algorithms.hpp"
 #include "math_utils/math_utils.hpp"
 #include <cassert>

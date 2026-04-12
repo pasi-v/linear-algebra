@@ -1,18 +1,11 @@
 #ifndef PIVOT_INFO_HPP
 #define PIVOT_INFO_HPP
 
-#include "math_utils/math_utils.hpp"
 #include "matrix.hpp"
 #include <cstddef>
 #include <vector>
 
 namespace la {
-const double kPivotAbsTol = 1e-12;
-
-inline bool is_zero_pivot(double x) {
-    return math_utils::is_near_zero_abs(x, kPivotAbsTol);
-}
-
 struct PivotInfo {
     std::vector<std::size_t> pivot_cols;
     std::vector<std::size_t> free_cols;

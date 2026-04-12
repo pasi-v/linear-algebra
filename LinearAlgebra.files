@@ -8,6 +8,7 @@ include/la/matrix_linear_systems.hpp
 include/la/matrix_transforms.hpp
 include/la/parity.hpp
 include/la/pivot_info.hpp
+include/la/pivot_policy.hpp
 include/la/plane3d.hpp
 include/la/row_reduction.hpp
 include/la/vector.hpp

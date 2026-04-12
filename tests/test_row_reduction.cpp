@@ -1,6 +1,6 @@
 #include "doctest/doctest.h"
 #include "la/matrix.hpp"
-#include "la/pivot_info.hpp"
+#include "la/pivot_policy.hpp"
 #include "la/row_reduction.hpp"
 #include "test_utils.hpp"
 
