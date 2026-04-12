@@ -1,6 +1,7 @@
 #include "la/row_reduction.hpp"
 #include "la/pivot_info.hpp"
 #include "la/vector_algorithms.hpp"
+#include "math_utils/math_utils.hpp"
 #include <cassert>
 
 namespace la {
@@ -55,37 +56,38 @@ void eliminate_above(Matrix &A, std::size_t lead_row, std::size_t lead_col) {
 }
 
 Pivot find_leftmost_pivot(const Matrix &A, std::size_t start_row) {
-    std::size_t m = A.rows(), n = A.cols();
-    std::size_t best_col = n; // n means “none found”
+    const std::size_t m = A.rows();
+    const std::size_t n = A.cols();
+
+    // Scale of the active submatrix
+    double submatrix_scale = 0.0;
+    for (std::size_t i = start_row; i < m; ++i) {
+        for (std::size_t j = 0; j < n; ++j) {
+            submatrix_scale = std::max(submatrix_scale, std::fabs(A(i, j)));
+        }
+    }
+
     for (std::size_t j = 0; j < n; ++j) {
+        std::size_t best_row = m;
+        double best_abs = 0.0;
+
         for (std::size_t i = start_row; i < m; ++i) {
-            if (!is_zero_pivot(A(i, j))) {
-                best_col = j;
-                break;
+            const double v = std::fabs(A(i, j));
+            if (v > best_abs) {
+                best_abs = v;
+                best_row = i;
             }
         }
-        if (best_col != n)
-            break;
-    }
-    if (best_col == n)
-        return {m, n, 0.0};
 
-    // choose row with largest |value| in best_col
-    std::size_t best_row = m;
-    double best_abs = 0.0;
-
-    for (std::size_t i = start_row; i < m; ++i) {
-        double a = A(i, best_col);
-        if (is_zero_pivot(a))
+        if (best_row == m)
             continue;
-        double v = std::fabs(a);
-        if (v > best_abs) {
-            best_abs = v;
-            best_row = i;
+
+        if (!math_utils::is_effectively_zero(best_abs, submatrix_scale)) {
+            return {best_row, j, A(best_row, j)};
         }
     }
-    assert(best_row != m);
-    return {best_row, best_col, A(best_row, best_col)};
+
+    return {m, n, 0.0};
 }
 
 bool is_ref(const Matrix &A) {

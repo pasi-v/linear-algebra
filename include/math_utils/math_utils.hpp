@@ -30,6 +30,10 @@ inline bool is_near_zero_abs(double x, double abs_tol) {
     return std::fabs(x) <= abs_tol;
 }
 
+inline bool is_effectively_zero(double x, double scale) {
+    return std::fabs(x) <= kDefaultAbsTol + kDefaultRelTol * scale;
+}
+
 /** @return the radians in degrees */
 inline double toDegrees(double radians) { return radians * (180.0 / M_PI); }
 
