@@ -2,7 +2,7 @@
 #include "la/pivot_policy.hpp"
 #include "la/vector_algorithms.hpp"
 #include "math_utils/math_utils.hpp"
-#include <cassert>
+#include <stdexcept>
 
 namespace la {
 
@@ -21,7 +21,8 @@ void row_replace(Matrix &A, std::size_t i, std::size_t lead_col,
 void row_replace(Matrix &A, std::size_t row, std::size_t lead_col,
                  std::size_t lead_row) {
     const double piv = A(lead_row, lead_col);
-    assert(!is_zero_pivot(piv));
+    if (is_zero_pivot(piv))
+        throw std::invalid_argument("row_replace: zero pivot encountered");
 
     const double a = A(row, lead_col);
     if (is_zero_pivot(a))

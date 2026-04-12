@@ -189,13 +189,17 @@ class Matrix {
      * @brief set Vector v as the row
      * @param i the row index to set
      * @param v the content of the row as Vector
+     * @throws std::out_of_range if i >= rows()
+     * @throws std::invalid_argument if v.size() != cols()
      */
     void set_row(size_t i, const Vector &v);
 
     /**
      * @brief set Vector v as the column
-     * @param i the row index to set
+     * @param i the column index to set
      * @param v the content of the column as Vector
+     * @throws std::out_of_range if i >= cols()
+     * @throws std::invalid_argument if v.size() != rows()
      */
     void set_col(size_t i, const Vector &v);
 

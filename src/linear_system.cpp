@@ -3,7 +3,7 @@
 #include "la/matrix.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
-#include <cassert>
+#include <stdexcept>
 
 namespace la {
 Vector back_substitute_unique(const Matrix &A, const Vector &b);
@@ -136,7 +136,8 @@ LinearSystemSolution back_substitute_parametric(const Matrix &R,
     //    directions: direction j has free var f_j = 1
     for (std::size_t j = 0; j < k; ++j) {
         const std::size_t f = pivots.free_cols[j];
-        assert(f < n);
+        if (f >= n)
+            throw std::out_of_range("back_substitute_parametric: free column index out of range");
         directions[j][f] = 1.0;
     }
 
@@ -144,10 +145,12 @@ LinearSystemSolution back_substitute_parametric(const Matrix &R,
     //    Row i has pivot column p = pivots.pivot_cols[i].
     for (std::size_t ii = r; ii-- > 0;) {
         const std::size_t p = pivots.pivot_cols[ii];
-        assert(p < n);
+        if (p >= n)
+            throw std::out_of_range("back_substitute_parametric: pivot column index out of range");
 
         const double piv = R(ii, p);
-        assert(!is_zero_pivot(piv)); // or your pivot-eps check
+        if (is_zero_pivot(piv))
+            throw std::invalid_argument("back_substitute_parametric: zero pivot encountered");
 
         // Particular: x_p = (b - sum_j>p a_ij x_j) / piv
         double sum_part = 0.0;

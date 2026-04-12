@@ -3,7 +3,6 @@
 #include "la/vector_algorithms.hpp"
 #include "math_utils/math_utils.hpp"
 #include <algorithm>
-#include <cassert>
 #include <initializer_list>
 #include <stdexcept>
 #include <vector>
@@ -142,14 +141,18 @@ Vector Matrix::column(int i) const {
 }
 
 void Matrix::set_row(size_t row, const Vector &v) {
-    assert(v.size() == cols_);
-    assert(row < rows_);
+    if (v.size() != cols_)
+        throw std::invalid_argument("set_row: vector size does not match column count");
+    if (row >= rows_)
+        throw std::out_of_range("set_row: row index out of range");
     std::copy_n(v.data(), cols_, pointer_to_row_unchecked(row));
 }
 
 void Matrix::set_col(size_t col, const Vector &v) {
-    assert(v.size() == rows_);
-    assert(col < cols_);
+    if (v.size() != rows_)
+        throw std::invalid_argument("set_col: vector size does not match row count");
+    if (col >= cols_)
+        throw std::out_of_range("set_col: column index out of range");
 
     for (std::size_t r = 0; r < rows_; ++r) {
         (*this)(r, col) = v[r];
