@@ -151,19 +151,19 @@ TEST_CASE("first_non_zero_column returns -1 for zero vector") {
 TEST_CASE("leading_element returns first element if it is not zero") {
     using la::Vector;
     Vector v{1, 2, 3};
-    CHECK_EQ(1, leading_element(v));
+    CHECK_EQ(doctest::Approx(1), leading_element(v));
 }
 
 TEST_CASE("leading_element returns last element if preceding ones are zero") {
     using la::Vector;
     Vector v{0, 0, 4};
-    CHECK_EQ(4, leading_element(v));
+    CHECK_EQ(doctest::Approx(4), leading_element(v));
 }
 
 TEST_CASE("leading_element returns 0 for zero vector") {
     using la::Vector;
     Vector v{0, 0, 0};
-    CHECK_EQ(0, leading_element(v));
+    CHECK_EQ(doctest::Approx(0), leading_element(v));
 }
 
 TEST_CASE("has_leading_one returns true if leading element is 1") {

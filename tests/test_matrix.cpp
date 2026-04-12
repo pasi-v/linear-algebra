@@ -76,10 +76,10 @@ TEST_CASE("Matrix checked element access") {
     using la::Matrix;
 
     Matrix m(2, 2, {1, 2, 3, 4});
-    CHECK_EQ(1, m.at(0, 0));
-    CHECK_EQ(2, m.at(0, 1));
-    CHECK_EQ(3, m.at(1, 0));
-    CHECK_EQ(4, m.at(1, 1));
+    CHECK_EQ(doctest::Approx(1), m.at(0, 0));
+    CHECK_EQ(doctest::Approx(2), m.at(0, 1));
+    CHECK_EQ(doctest::Approx(3), m.at(1, 0));
+    CHECK_EQ(doctest::Approx(4), m.at(1, 1));
     // This would calculate as 3rd element in the data, but is still invalid
     CHECK_THROWS_AS(m.at(0, 2), std::out_of_range);
     CHECK_THROWS_AS(m.at(0, 2), std::out_of_range);

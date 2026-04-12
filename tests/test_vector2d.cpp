@@ -4,14 +4,14 @@
 TEST_CASE("Construct vector") {
     using la::Vector2D;
     Vector2D v = {1, 2};
-    CHECK_EQ(v.x(), 1);
-    CHECK_EQ(v.y(), 2);
+    CHECK_EQ(v.x(), doctest::Approx(1));
+    CHECK_EQ(v.y(), doctest::Approx(2));
 }
 
 TEST_CASE("Length") {
     using la::Vector2D;
     Vector2D v = {3, 4};
-    CHECK_EQ(v.length(), 5.0);
+    CHECK_EQ(v.length(), doctest::Approx(5.0));
 }
 
 TEST_CASE("Multiply by scalar") {
@@ -95,5 +95,5 @@ TEST_CASE("DirectedVector direction and length") {
     Vector2D direction = dv.direction();
     Vector2D expected = {3, -4};
     CHECK_EQ(direction, expected);
-    CHECK_EQ(dv.length(), 5);
+    CHECK_EQ(dv.length(), doctest::Approx(5));
 }

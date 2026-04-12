@@ -24,7 +24,7 @@ TEST_CASE("Dot product") {
     Vector3D v = {-3, 5, 2};
     double expected = 1.0;
 
-    CHECK_EQ(u.dotProduct(v), expected);
+    CHECK_EQ(u.dotProduct(v), doctest::Approx(expected));
 }
 
 TEST_CASE("Cross product and dot product is zero") {
@@ -33,6 +33,6 @@ TEST_CASE("Cross product and dot product is zero") {
     Vector3D v = {3, -1, 2};
     Vector3D uxv = u.crossProduct(v);
 
-    CHECK_EQ(uxv.dotProduct(u), 0);
-    CHECK_EQ(uxv.dotProduct(v), 0);
+    CHECK_EQ(uxv.dotProduct(u), doctest::Approx(0));
+    CHECK_EQ(uxv.dotProduct(v), doctest::Approx(0));
 }

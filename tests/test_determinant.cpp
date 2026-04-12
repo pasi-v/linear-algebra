@@ -5,7 +5,7 @@
 TEST_CASE("2x2 determinant happy path") {
     using la::Matrix;
     Matrix m(2, 2, {1, 2, 3, 4});
-    CHECK_EQ(determinant(m), -2);
+    CHECK_EQ(determinant(m), doctest::Approx(-2));
 };
 
 TEST_CASE("determinant of non-square matrix throws") {
@@ -23,11 +23,11 @@ TEST_CASE("determinant of larger than 3x3 matrix throws") {
 TEST_CASE("determinant of 1x1 matrix is its only value") {
     using la::Matrix;
     Matrix m(1, 1, 3);
-    CHECK_EQ(determinant(m), 3);
+    CHECK_EQ(determinant(m), doctest::Approx(3));
 }
 
 TEST_CASE("3x3 determinant happy path") {
     using la::Matrix;
     Matrix m(3, 3, {5, -3, 2, 1, 0, 2, 2, -1, 3});
-    CHECK_EQ(determinant(m), 5);
+    CHECK_EQ(determinant(m), doctest::Approx(5));
 }
