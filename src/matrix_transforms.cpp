@@ -1,5 +1,6 @@
 #include "la/matrix_transforms.hpp"
 #include "la/matrix.hpp"
+#include "math_utils/math_utils.hpp"
 
 namespace la {
 Matrix transpose(const Matrix &A) {
@@ -32,7 +33,7 @@ bool is_symmetric(const Matrix &A) {
     // (j, i) of lower triangle.
     for (std::size_t i = 0; i < m; i++) {
         for (std::size_t j = i + 1; j < n; j++) {
-            if (A(i, j) != A(j, i)) {
+            if (!math_utils::nearly_equal(A(i, j), A(j, i))) {
                 return false;
             }
         }
