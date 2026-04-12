@@ -26,6 +26,10 @@ inline bool nearly_equal(double a, double b)
 
 inline bool is_near_zero(double x) { return nearly_equal(x, 0.0);}
 
+inline bool is_near_zero_abs(double x, double abs_tol) {
+    return std::fabs(x) <= abs_tol;
+}
+
 /** @return the radians in degrees */
 inline double toDegrees(double radians) { return radians * (180.0 / M_PI); }
 

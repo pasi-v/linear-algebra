@@ -7,7 +7,11 @@
 #include <vector>
 
 namespace la {
-inline bool is_zero_pivot(double x) { return math_utils::is_near_zero(x); }
+const double kPivotAbsTol = 1e-12;
+
+inline bool is_zero_pivot(double x) {
+    return math_utils::is_near_zero_abs(x, kPivotAbsTol);
+}
 
 struct PivotInfo {
     std::vector<std::size_t> pivot_cols;
