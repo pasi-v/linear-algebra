@@ -52,6 +52,14 @@ inline bool has_leading_one(const Vector &v) {
     return math_utils::nearly_equal(leading_element(v), 1.0);
 }
 
+/**
+ *  @brief Determine whether a set of vectors are linearly independent or not.
+ *  @param vectors the vectors to check, sizes must be equal
+ *  @return true if the vectors are linearly independent
+ *  @throws std::invalid_argument if the vector sizes don't match
+ */
+bool are_linearly_independent(const std::vector<Vector> vectors);
+
 } // namespace la
 
 #endif // LA_VECTOR_ALGORITHMS_HPP

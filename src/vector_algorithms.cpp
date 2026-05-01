@@ -98,4 +98,9 @@ double leading_element(const Vector &v) {
         return v[column];
     }
 }
+
+bool are_linearly_independent(const std::vector<Vector> vectors) {
+    const Matrix A = from_cols(vectors);
+    return rank(A) == vectors.size();
+}
 } // namespace la

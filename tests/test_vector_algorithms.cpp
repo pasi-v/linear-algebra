@@ -183,3 +183,37 @@ TEST_CASE("has_leading_one returns false for zero vector") {
     Vector v{0, 0, 0};
     CHECK(!has_leading_one(v));
 }
+
+TEST_CASE("are_linearly_independent") {
+    using la::Vector;
+
+    SUBCASE("are_linearly_independent returns true for independent vectors") {
+        // Poole ex 2.23, p. 96
+        Vector v1{1, 1, 0};
+        Vector v2{0, 1, 1};
+        Vector v3{1, 0, 1};
+        std::vector<Vector> vectors{v1, v2, v3};
+
+        CHECK(are_linearly_independent(vectors));
+    }
+
+    SUBCASE("are_linearly_independent returns false for dependent vectors") {
+        // Poole ex 2.23, p. 96
+        Vector v1{1, -1, 0};
+        Vector v2{0, 1, -1};
+        Vector v3{-1, 0, 1};
+        std::vector<Vector> vectors{v1, v2, v3};
+
+        CHECK(!are_linearly_independent(vectors));
+    }
+
+    SUBCASE("are_linearly_independent throws if vector sizes do not match") {
+        Vector v1{1, -1, 0};
+        Vector v2{0, 1, -1};
+        Vector v3{-1, 0};
+        std::vector<Vector> vectors{v1, v2, v3};
+
+        CHECK_THROWS_AS(are_linearly_independent(vectors),
+                        std::invalid_argument);
+    }
+}
