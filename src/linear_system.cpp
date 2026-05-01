@@ -137,7 +137,8 @@ LinearSystemSolution back_substitute_parametric(const Matrix &R,
     for (std::size_t j = 0; j < k; ++j) {
         const std::size_t f = pivots.free_cols[j];
         if (f >= n)
-            throw std::out_of_range("back_substitute_parametric: free column index out of range");
+            throw std::out_of_range(
+                "back_substitute_parametric: free column index out of range");
         directions[j][f] = 1.0;
     }
 
@@ -146,11 +147,13 @@ LinearSystemSolution back_substitute_parametric(const Matrix &R,
     for (std::size_t ii = r; ii-- > 0;) {
         const std::size_t p = pivots.pivot_cols[ii];
         if (p >= n)
-            throw std::out_of_range("back_substitute_parametric: pivot column index out of range");
+            throw std::out_of_range(
+                "back_substitute_parametric: pivot column index out of range");
 
         const double piv = R(ii, p);
         if (is_zero_pivot(piv))
-            throw std::invalid_argument("back_substitute_parametric: zero pivot encountered");
+            throw std::invalid_argument(
+                "back_substitute_parametric: zero pivot encountered");
 
         // Particular: x_p = (b - sum_j>p a_ij x_j) / piv
         double sum_part = 0.0;

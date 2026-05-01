@@ -142,7 +142,8 @@ Vector Matrix::column(int i) const {
 
 void Matrix::set_row(size_t row, const Vector &v) {
     if (v.size() != cols_)
-        throw std::invalid_argument("set_row: vector size does not match column count");
+        throw std::invalid_argument(
+            "set_row: vector size does not match column count");
     if (row >= rows_)
         throw std::out_of_range("set_row: row index out of range");
     std::copy_n(v.data(), cols_, pointer_to_row_unchecked(row));
@@ -150,7 +151,8 @@ void Matrix::set_row(size_t row, const Vector &v) {
 
 void Matrix::set_col(size_t col, const Vector &v) {
     if (v.size() != rows_)
-        throw std::invalid_argument("set_col: vector size does not match row count");
+        throw std::invalid_argument(
+            "set_col: vector size does not match row count");
     if (col >= cols_)
         throw std::out_of_range("set_col: column index out of range");
 
