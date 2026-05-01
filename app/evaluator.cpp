@@ -54,6 +54,7 @@ void print_help(std::ostream &out) {
         << "  rref <mat>\n"
         << "  in_span <b> <x1> <x2> ... <xn>\n"
         << "  in_span <b> <A>\n"
+        << "  lin_indep <v1> <v2> ... <vn>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -209,6 +210,30 @@ void handle_in_span(Parser &p,
     bool result = la::is_in_span(spanning_vectors, b_val.vec);
     out << (result ? "true" : "false") << "\n";
 }
+
+void handle_lin_indep(Parser &p,
+                      std::unordered_map<std::string, Value> &symbols,
+                      std::ostream &out) {
+    std::vector<la::Vector> vectors;
+    while (!p.empty()) {
+        std::string name = p.parse_identifier();
+        if (!symbols.count(name)) {
+            throw std::runtime_error("unknown symbol: " + name);
+        }
+        const Value &v = symbols.at(name);
+        if (v.kind != Value::Kind::Vector) {
+            throw std::runtime_error("lin_indep: " + name + " must be a vector");
+        }
+        vectors.push_back(v.vec);
+    }
+
+    if (vectors.empty()) {
+        throw std::runtime_error("lin_indep expects at least one vector");
+    }
+
+    bool result = la::are_linearly_independent(vectors);
+    out << (result ? "true" : "false") << "\n";
+}
 } // namespace
 
 bool execute_line(const std::string &line,
@@ -261,6 +286,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "in_span") {
             handle_in_span(p, symbols, out);
+            return true;
+        }
+        if (cmd == "lin_indep") {
+            handle_lin_indep(p, symbols, out);
             return true;
         }
 

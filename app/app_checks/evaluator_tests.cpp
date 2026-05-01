@@ -70,3 +70,51 @@ TEST_CASE("evaluator rref rejects non-matrix") {
     CHECK(result.out.empty());
     CHECK(result.err.find("rref expects a matrix") != std::string::npos);
 }
+
+TEST_CASE("evaluator lin_indep returns true for independent vectors") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("vec a = [1, 0, 0]", symbols).err.empty());
+    CHECK(run_line("vec b = [0, 1, 0]", symbols).err.empty());
+    CHECK(run_line("vec c = [0, 0, 1]", symbols).err.empty());
+
+    auto result = run_line("lin_indep a b c", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "true\n");
+}
+
+TEST_CASE("evaluator lin_indep returns false for dependent vectors") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("vec a = [1, 2, 3]", symbols).err.empty());
+    CHECK(run_line("vec b = [2, 4, 6]", symbols).err.empty());
+
+    auto result = run_line("lin_indep a b", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "false\n");
+}
+
+TEST_CASE("evaluator lin_indep requires at least one vector") {
+    std::unordered_map<std::string, Value> symbols;
+    auto result = run_line("lin_indep", symbols);
+    CHECK(result.out.empty());
+    CHECK(result.err.find("at least one vector") != std::string::npos);
+}
+
+TEST_CASE("evaluator lin_indep rejects non-vector arguments") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("vec a = [1, 0]", symbols).err.empty());
+    CHECK(run_line("mat M = [[1, 0], [0, 1]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep a M", symbols);
+    CHECK(result.out.empty());
+    CHECK(result.err.find("must be a vector") != std::string::npos);
+}
+
+TEST_CASE("evaluator lin_indep reports mismatched vector sizes") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("vec a = [1, 2]", symbols).err.empty());
+    CHECK(run_line("vec b = [1, 2, 3]", symbols).err.empty());
+
+    auto result = run_line("lin_indep a b", symbols);
+    CHECK(result.out.empty());
+    CHECK(!result.err.empty());
+}
