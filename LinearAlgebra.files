@@ -36,6 +36,7 @@ tests/test_math_utils.cpp
 tests/test_matrix.cpp
 tests/test_matrix_linear_systems.cpp
 tests/test_matrix_transforms.cpp
+tests/test_matrix_vector_conversions.cpp
 tests/test_parity.cpp
 tests/test_plane3d.cpp
 tests/test_row_reduction.cpp

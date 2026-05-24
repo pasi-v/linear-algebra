@@ -241,6 +241,13 @@ class Matrix {
  */
 Matrix from_cols(const std::vector<Vector> &cols);
 
+/**
+ * @brief Flatten Matrix to a vector, row by row after each other
+ * @param M the matrix
+ * @return the column vectors
+ */
+Vector flatten(const Matrix &M);
+
 } // namespace la
 
 #endif

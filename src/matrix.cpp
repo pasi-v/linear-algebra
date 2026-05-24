@@ -236,4 +236,19 @@ Matrix from_cols(const std::vector<Vector> &cols) {
     return mat;
 }
 
+Vector flatten(const Matrix &M) {
+    // This loop is not the fastest way to the flattening, but keeps the
+    // Matrix data layout decoupled from this free function.  Trusting
+    // compiler loop optimisation here.
+    Vector v(M.rows() * M.cols());
+
+    for (std::size_t row = 0; row < M.rows(); row++) {
+        for (std::size_t col = 0; col < M.cols(); col++) {
+            v.at(row * M.cols() + col) = M.at(row, col);
+        }
+    }
+
+    return v;
+}
+
 } // namespace la
