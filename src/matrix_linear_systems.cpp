@@ -39,4 +39,26 @@ bool is_in_span(const Matrix &A, const Vector &b) {
 
     return r1 == r2;
 }
+
+bool is_linear_combination(const Matrix &B,
+                           const std::vector<Matrix> &matrices) {
+    if (matrices.empty()) {
+        throw std::invalid_argument("matrices must not be empty");
+    }
+
+    for (std::size_t i = 0; i < matrices.size(); i++) {
+        if (!B.has_same_dimensions(matrices.at(i))) {
+            throw std::invalid_argument("Sizes of matrices and B must match");
+        }
+    }
+
+    std::vector<Vector> column_vectors;
+    column_vectors.reserve(matrices.size());
+
+    for (std::size_t n = 0; n < matrices.size(); n++) {
+        column_vectors.push_back(flatten(matrices.at(n)));
+    }
+
+    return is_in_span(column_vectors, flatten(B));
+}
 } // namespace la

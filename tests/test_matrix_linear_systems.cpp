@@ -82,3 +82,37 @@ TEST_CASE("is_in_span") {
         }
     }
 }
+
+TEST_CASE("is_linear_combination") {
+    using la::Matrix;
+
+    Matrix A1(2, 2, {0, 1, -1, 0});
+    Matrix A2(2, 2, {1, 0, 0, 1});
+    Matrix A3(2, 2, {1, 1, 1, 1});
+    std::vector<Matrix> matrices{A1, A2, A3};
+
+    SUBCASE("true linear combination") {
+        // Poole example 3.16 a), p. 153
+        Matrix B(2, 2, {1, 4, 2, 1});
+        CHECK(is_linear_combination(B, matrices));
+    }
+
+    SUBCASE("false linear combination") {
+        // Poole example 3.16 b), p. 153
+        Matrix B(2, 2, {1, 2, 3, 4});
+        CHECK(!is_linear_combination(B, matrices));
+    }
+
+    SUBCASE("Matrix sizes don't match") {
+        Matrix three_by_three(3, 3);
+        std::vector<Matrix> matrices{A1, three_by_three, A3};
+        CHECK_THROWS_AS(is_linear_combination(A2, matrices),
+                        std::invalid_argument);
+    }
+
+    SUBCASE("empty matrices") {
+        std::vector<Matrix> empty;
+        CHECK_THROWS_AS(is_linear_combination(A1, empty),
+                        std::invalid_argument);
+    }
+}
