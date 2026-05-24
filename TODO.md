@@ -61,6 +61,16 @@ Cache m, n outside loops.
 If rows are contiguous, consider std::transform or simple pointer arithmetic for tight loops.
 
 
+## Minor cleanups
+
+- `app/evaluator.cpp:198` — `spanning_vectors` is appended in a loop over
+  `spanning_names` (known size) but not reserved. Add
+  `spanning_vectors.reserve(spanning_names.size());` before the loop to avoid
+  geometric reallocations of the underlying buffer. Matches the
+  reserve+push_back pattern used elsewhere (e.g. `pivot_info.cpp`,
+  `linear_system.cpp:44`).
+
+
 ## Separating Matrix core structures and algebra functions
 
 Move matrix algebra out of Matrix class. Only leave core structures like row and column manipulation
