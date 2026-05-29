@@ -2,6 +2,17 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+## Who writes what
+
+The owner writes **all linear-algebra library code by hand** — anything under
+`src/`, `tests/`, and `include/la/` (plus `include/math_utils/` and
+`include/utils/`). Don't write or edit code in those paths unless explicitly
+asked. Suggestions, reviews, refactor ideas, failing-test reproductions, and
+explanations are fine and welcome; edits in those paths are not.
+
+The `la_calc` REPL (everything under `app/`, including `app/app_checks/`) is
+fair game — Claude may write and modify it as usual.
+
 ## Build & test
 
 The project is built with `make` (clang++, C++11, `-Wall -Wextra -Wpedantic`,
