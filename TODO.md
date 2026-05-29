@@ -2,68 +2,48 @@
 
 ## Functionality
 
-### Library
-
-+ find out whether v is a linear combination of u1 and u2 (one solution to `[A|b]` when A is composed of u's)
-
-
 ### Application
 
-+ rref
-+ in_span (linear combination)
-- solve a linear system `[A|b]`
-- take libedit into use
+- [ ] solve a linear system `[A|b]`
+- [ ] take libedit into use
 
 
 ## Refactoring
 
 ### Matrix::ref implementation details
 
-From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa):
+From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
+Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
+`lead_col`; `m`/`n` cached). Remaining:
 
-3. Stop copying rows/columns
-Your current code creates Vector top_row, scaled_row, current, etc. That’s extra heap/loop work. Operate directly on R(i,j) with tight inner loops. If you want ergonomics, implement a lightweight, non-owning RowView/ColView (span-like) that doesn’t copy.
-
-4. Tolerances instead of == 0.0
-Never compare to 0.0 in elimination. Use kEps. That also applies to:
-pivot detection (fabs(...) > kEps)
-deciding whether to eliminate (fabs(factor) > kEps)
-is_ref() and any tests
-
-5. Make integer/exact math configurable
-If you’ll sometimes work over ℚ/ℤ, you can template the epsilon behavior:
-For floating point, use kEps.
-For exact types, use strict == 0.
-
-6. Remove the early is_ref() (optional)
-It’s fine, but usually unnecessary; the main loop exits quickly if the matrix is already in REF. If is_ref() is cheap and well-tested, keeping it is okay.
-
-7. Handle degenerate shapes up front
-Short-circuit empty matrices or zero-column cases; makes invariants explicit.
-if (R.rows_ == 0 || R.cols_ == 0) return R;
-
-8. Avoid int↔size_t churn
-Keep indices as std::size_t end-to-end to avoid casts. If helper APIs (like first_non_zero_column()) return int, change them to std::ptrdiff_t (for -1 sentinel) or return an optional<size_t>.
-Example:
-std::optional<std::size_t>
-first_nonzero_in_col(const Matrix& A, std::size_t col, std::size_t from_row);
-
-9. Optional: return metadata
-For later solves/tests, returning pivot columns is handy:
-struct RefResult { Matrix R; std::vector<std::size_t> pivot_cols; int rank; };
-RefResult Matrix::ref_with_meta() const;
-You can fill pivot_cols inside the loop when you find lead_col.
-
-10. Micro-optimizations (when you care)
-Start the inner elimination loop at lead_col (as above) to skip guaranteed zeros to the left.
-Cache m, n outside loops.
-
-If rows are contiguous, consider std::transform or simple pointer arithmetic for tight loops.
+- [ ] **Finish tolerance sweep.** `find_leftmost_pivot` and `row_replace` use
+  `is_effectively_zero` / `is_zero_pivot`, but `is_rref` still compares
+  `leading_elem != 1` exactly (`src/row_reduction.cpp:156`). Also audit
+  `is_ref` and any tests that still touch `0.0` directly.
+- [ ] **Make integer/exact math configurable.** Template the epsilon behavior
+  so ℚ/ℤ types can use strict `== 0` while floating point uses `kEps`.
+- [ ] **Remove the early `is_ref()` short-circuit in `ref()`**
+  (`src/row_reduction.cpp:174`). Optional — the main loop exits quickly
+  anyway.
+- [ ] **Handle degenerate shapes up front.** Add
+  `if (R.rows() == 0 || R.cols() == 0) return R;` at the top of `ref()` to
+  make invariants explicit.
+- [ ] **Finish the int↔size_t cleanup.** `ref()` is `size_t` end-to-end, but
+  `first_non_zero_column` still returns `int` (`include/la/vector_algorithms.hpp:45`)
+  and `is_ref` still keeps an `int prev_leading_entry_column = -1` sentinel
+  (`src/row_reduction.cpp:122`). Switch the API to `std::optional<std::size_t>`
+  (or `std::ptrdiff_t` if the sentinel is wanted) and propagate.
+- [ ] **Return metadata from `ref`.** Add a `RefResult { Matrix R;
+  std::vector<std::size_t> pivot_cols; std::size_t rank; }` variant so later
+  solves/tests don't have to re-scan for pivot columns.
+- [ ] **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
+  row/column span so users of `Matrix` can iterate without `Vector` copies.
+  Would let `is_ref`/`is_rref` drop their `A.row(i)` copies too.
 
 
 ## Minor cleanups
 
-- `app/evaluator.cpp:198` — `spanning_vectors` is appended in a loop over
+- [ ] `app/evaluator.cpp:198` — `spanning_vectors` is appended in a loop over
   `spanning_names` (known size) but not reserved. Add
   `spanning_vectors.reserve(spanning_names.size());` before the loop to avoid
   geometric reallocations of the underlying buffer. Matches the
@@ -71,14 +51,21 @@ If rows are contiguous, consider std::transform or simple pointer arithmetic for
   `linear_system.cpp:44`).
 
 
-## Separating Matrix core structures and algebra functions
+## Separating core structures and algebra functions
 
-Move matrix algebra out of Matrix class. Only leave core structures like row and column manipulation
-in the Matrix class.  See https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa for suggestions.
+Substantially done: `ref`/`rref`/`rank`, `det`, transforms, linear-system
+solvers, and the vector algorithms (`dot`/`norm`/`angle`/`proj_onto`/...) all
+live as free functions in dedicated headers
+(`row_reduction.hpp`, `determinant.hpp`, `matrix_transforms.hpp`,
+`matrix_linear_systems.hpp`, `vector_algorithms.hpp`).
+See https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa for the
+original suggestions. Read Effective C++ for more.
 
-Read Effective C++ for more.
+Remaining:
 
-
-## Separating Vector core and algebra
-
-Like Matrix above.
+- [ ] Move `Matrix::operator+`, `operator-`, `operator*(double)`,
+  `operator*(const Matrix&)`, `operator*(const Vector&)` out of the class
+  into free functions (`src/matrix.cpp:46-116`).
+- [ ] Move `Vector::operator+`, `operator-`, `operator*(double)` out of the
+  class. Decide whether `subvector` / `head` / `tail` count as "core" or
+  belong with the algorithms (`include/la/vector.hpp:80-115`).
