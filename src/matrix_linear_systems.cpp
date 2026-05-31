@@ -1,5 +1,6 @@
 #include "la/matrix_linear_systems.hpp"
 #include "la/row_reduction.hpp"
+#include "la/vector_algorithms.hpp"
 
 namespace la {
 Matrix augment(const Matrix &A, const Vector &b) {
@@ -60,5 +61,23 @@ bool is_linear_combination(const Matrix &B,
     }
 
     return is_in_span(column_vectors, flatten(B));
+}
+
+bool are_linearly_independent(const std::vector<Matrix> &matrices) {
+    if (matrices.empty())
+        return true;
+
+    for (std::size_t i = 0; i < matrices.size(); i++) {
+        if (!matrices[i].has_same_dimensions(matrices[0])) {
+            throw std::invalid_argument("Sizes of matrices must match");
+        }
+    }
+
+    std::vector<Vector> column_vectors;
+    for (const auto &M : matrices) {
+        column_vectors.push_back(flatten(M));
+    }
+
+    return are_linearly_independent(column_vectors);
 }
 } // namespace la

@@ -48,5 +48,13 @@ bool is_in_span(const Matrix &A, const Vector &b);
 bool is_linear_combination(const Matrix &B,
                            const std::vector<Matrix> &matrices);
 
+/**
+ * @brief Determine whether a set of matrices are linearly independent
+ * @param matrices the matrices to check, sizes must be equal
+ * @return true if the matrices are linearly independent or the number of
+ * matrices is zero
+ * @throws std::invalid_argument if the matrix sizes don't match
+ */
+bool are_linearly_independent(const std::vector<Matrix> &matrices);
 } // namespace la
 #endif // LA_MATRIX_LINEAR_SYSTEMS_HPP

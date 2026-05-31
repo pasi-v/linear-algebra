@@ -116,3 +116,50 @@ TEST_CASE("is_linear_combination") {
                         std::invalid_argument);
     }
 }
+
+TEST_CASE("are_linearly_independent") {
+    using la::are_linearly_independent;
+    using la::Matrix;
+
+    SUBCASE("zero matrices") {
+        CHECK(are_linearly_independent(std::vector<Matrix>{}));
+    }
+
+    SUBCASE("different size matrices") {
+        Matrix A1(2, 2);
+        Matrix A2(2, 3);
+        std::vector<Matrix> matrices{A1, A2};
+        CHECK_THROWS_AS(are_linearly_independent(matrices),
+                        std::invalid_argument);
+    }
+
+    SUBCASE("single non-zero matrix is linearly independent") {
+        Matrix A(2, 2, {1, 2, 3, 4});
+        std::vector<Matrix> matrices{A};
+        CHECK(are_linearly_independent(matrices));
+    }
+
+    SUBCASE("single zero matrix is not linearly independent") {
+        Matrix A(2, 2, {0, 0, 0, 0});
+        std::vector<Matrix> matrices{A};
+        CHECK(!are_linearly_independent(matrices));
+    }
+
+    SUBCASE("true") {
+        // Poole example 3.18 p. 155
+        Matrix A1(2, 2, {0, 1, -1, 0});
+        Matrix A2(2, 2, {1, 0, 0, 1});
+        Matrix A3(2, 2, {1, 1, 1, 1});
+        std::vector<Matrix> matrices{A1, A2, A3};
+        CHECK(are_linearly_independent(matrices));
+    }
+
+    SUBCASE("false") {
+        // Poole exercise 3.2 14 p. 159
+        Matrix A1(2, 2, {1, 1, 1, 1});
+        Matrix A2(2, 2, {2, 1, -1, 0});
+        Matrix A3(2, 2, {1, 2, 4, 3});
+        std::vector<Matrix> matrices{A1, A2, A3};
+        CHECK(!are_linearly_independent(matrices));
+    }
+}
