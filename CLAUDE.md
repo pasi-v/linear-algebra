@@ -127,6 +127,10 @@ refactors (notably the `Matrix::ref` cleanup and the member-vs-free-function
 split). Check it before starting non-trivial work — items there have context
 that isn't in the code.
 
+Before changing a backlog item, verify its `TODO.md` entry against the current
+code — the entry can lag reality. Once an item is done, update `TODO.md` in the
+same change.
+
 ## Conventions
 
 - C++11 only — no C++14/17 features. `requires-python`-style version pinning
@@ -136,6 +140,11 @@ that isn't in the code.
 - Floating-point comparisons in the library use `math_utils::nearly_equal` /
   the helpers in `include/la/approx.hpp`; tests use doctest's `doctest::Approx`
   or the helpers in `tests/test_utils.hpp`. Don't compare doubles with `==`.
+- Before suggesting a call into the library or a test helper (e.g.
+  `nearly_equal`, the `CHECK_*` macros in `tests/test_utils.hpp`), confirm the
+  symbol's actual signature and available overloads first — don't assume one
+  exists. A scalar-vs-`Vector`/`Matrix` overload mismatch here has produced
+  suggestions that didn't compile.
 - Validation helpers (`utils::check_nonnegative` in `include/utils/utils.hpp`)
   throw `std::invalid_argument` / `std::out_of_range` — propagate those
   exception types from new boundary checks rather than inventing new ones.
