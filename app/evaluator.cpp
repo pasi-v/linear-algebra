@@ -55,6 +55,7 @@ void print_help(std::ostream &out) {
         << "  in_span <b> <x1> <x2> ... <xn>\n"
         << "  in_span <b> <A>\n"
         << "  lin_indep <v1> <v2> ... <vn>\n"
+        << "  lin_indep <M1> <M2> ... <Mn>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -214,9 +215,44 @@ void handle_in_span(Parser &p,
 void handle_lin_indep(Parser &p,
                       std::unordered_map<std::string, Value> &symbols,
                       std::ostream &out) {
-    std::vector<la::Vector> vectors;
+    // Collect all argument names, then dispatch on the kind of the first.
+    std::vector<std::string> names;
     while (!p.empty()) {
-        std::string name = p.parse_identifier();
+        names.push_back(p.parse_identifier());
+    }
+
+    if (names.empty()) {
+        throw std::runtime_error(
+            "lin_indep expects at least one vector or matrix");
+    }
+
+    const std::string &first = names.front();
+    if (!symbols.count(first)) {
+        throw std::runtime_error("unknown symbol: " + first);
+    }
+
+    if (symbols.at(first).kind == Value::Kind::Matrix) {
+        // Matrix form: lin_indep <M1> <M2> ... <Mn>
+        std::vector<la::Matrix> matrices;
+        for (const auto &name : names) {
+            if (!symbols.count(name)) {
+                throw std::runtime_error("unknown symbol: " + name);
+            }
+            const Value &v = symbols.at(name);
+            if (v.kind != Value::Kind::Matrix) {
+                throw std::runtime_error(
+                    "lin_indep: cannot mix matrix and vector arguments");
+            }
+            matrices.push_back(v.mat);
+        }
+        bool result = la::are_linearly_independent(matrices);
+        out << (result ? "true" : "false") << "\n";
+        return;
+    }
+
+    // Vector form: lin_indep <v1> <v2> ... <vn>
+    std::vector<la::Vector> vectors;
+    for (const auto &name : names) {
         if (!symbols.count(name)) {
             throw std::runtime_error("unknown symbol: " + name);
         }
@@ -225,10 +261,6 @@ void handle_lin_indep(Parser &p,
             throw std::runtime_error("lin_indep: " + name + " must be a vector");
         }
         vectors.push_back(v.vec);
-    }
-
-    if (vectors.empty()) {
-        throw std::runtime_error("lin_indep expects at least one vector");
     }
 
     bool result = la::are_linearly_independent(vectors);

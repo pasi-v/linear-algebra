@@ -118,3 +118,62 @@ TEST_CASE("evaluator lin_indep reports mismatched vector sizes") {
     CHECK(result.out.empty());
     CHECK(!result.err.empty());
 }
+
+TEST_CASE("evaluator lin_indep returns true for independent matrices") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat A = [[1, 0], [0, 0]]", symbols).err.empty());
+    CHECK(run_line("mat B = [[0, 1], [0, 0]]", symbols).err.empty());
+    CHECK(run_line("mat C = [[0, 0], [1, 0]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep A B C", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "true\n");
+}
+
+TEST_CASE("evaluator lin_indep returns false for dependent matrices") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat A = [[1, 2], [3, 4]]", symbols).err.empty());
+    CHECK(run_line("mat B = [[2, 4], [6, 8]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep A B", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "false\n");
+}
+
+TEST_CASE("evaluator lin_indep returns true for a single nonzero matrix") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat A = [[1, 0], [0, 0]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep A", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "true\n");
+}
+
+TEST_CASE("evaluator lin_indep returns false for the zero matrix") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat Z = [[0, 0], [0, 0]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep Z", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out == "false\n");
+}
+
+TEST_CASE("evaluator lin_indep rejects mixing matrices and vectors") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat M = [[1, 0], [0, 1]]", symbols).err.empty());
+    CHECK(run_line("vec a = [1, 0]", symbols).err.empty());
+
+    auto result = run_line("lin_indep M a", symbols);
+    CHECK(result.out.empty());
+    CHECK(result.err.find("cannot mix") != std::string::npos);
+}
+
+TEST_CASE("evaluator lin_indep reports mismatched matrix sizes") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat A = [[1, 0], [0, 1]]", symbols).err.empty());
+    CHECK(run_line("mat B = [[1, 0, 0], [0, 1, 0]]", symbols).err.empty());
+
+    auto result = run_line("lin_indep A B", symbols);
+    CHECK(result.out.empty());
+    CHECK(!result.err.empty());
+}
