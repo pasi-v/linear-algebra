@@ -16,8 +16,6 @@ From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d2
 Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
 `lead_col`; `m`/`n` cached). Remaining:
 
-- [ ] **Finish tolerance sweep.** Audit
-  `is_ref` and any tests that still touch `0.0` directly.
 - [ ] **Make integer/exact math configurable.** Template the epsilon behavior
   so ℚ/ℤ types can use strict `== 0` while floating point uses `kEps`.
 - [ ] **Remove the early `is_ref()` short-circuit in `ref()`**

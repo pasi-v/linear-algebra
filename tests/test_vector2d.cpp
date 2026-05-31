@@ -67,7 +67,8 @@ TEST_CASE("direction in degrees in quadrant 4") {
 TEST_CASE("fromPolar along x axis") {
     using la::Vector2D;
     Vector2D v = Vector2D::fromPolar(0.0, 1.0);
-    CHECK(v == Vector2D(1, 0));
+    CHECK(v.x() == doctest::Approx(1.0));
+    CHECK(v.y() == doctest::Approx(0.0));
 }
 
 TEST_CASE("fromPolar in quadrant 2") {

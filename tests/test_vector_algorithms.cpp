@@ -1,13 +1,14 @@
 #include "doctest/doctest.h"
 #include "la/vector.hpp"
 #include "la/vector_algorithms.hpp"
+#include "test_utils.hpp"
 
 TEST_CASE("Dot product happy case") {
     using la::Vector;
     Vector u{1, 2, -3};
     Vector v{-3, 5, 2};
     double result = dot(u, v);
-    CHECK(result == 1.0);
+    CHECK(result == doctest::Approx(1.0));
 }
 
 TEST_CASE("Dot product different sizes throws") {
@@ -20,14 +21,14 @@ TEST_CASE("Dot product different sizes throws") {
 TEST_CASE("Vector length") {
     using la::Vector;
     Vector u{2, 3};
-    CHECK(norm(u) == std::sqrt(13.0));
+    CHECK(norm(u) == doctest::Approx(std::sqrt(13.0)));
 }
 
 TEST_CASE("Vector difference happy path") {
     using la::Vector;
     Vector u{std::sqrt(2), 1, -1};
     Vector v{0, 2, -2};
-    CHECK(distance(u, v) == 2.0);
+    CHECK(distance(u, v) == doctest::Approx(2.0));
 }
 
 TEST_CASE("Difference different sizes throws") {
@@ -65,7 +66,7 @@ TEST_CASE("Projection happy path") {
     Vector v{-1, 3};
     Vector result = proj_onto(u, v);
     Vector expected{2.0 / 5.0, 1.0 / 5.0};
-    CHECK(result == expected);
+    CHECK_NEAR(result, expected);
 }
 
 TEST_CASE("Projection different sizes throws") {
