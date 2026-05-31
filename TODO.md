@@ -16,9 +16,7 @@ From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d2
 Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
 `lead_col`; `m`/`n` cached). Remaining:
 
-- [ ] **Finish tolerance sweep.** `find_leftmost_pivot` and `row_replace` use
-  `is_effectively_zero` / `is_zero_pivot`, but `is_rref` still compares
-  `leading_elem != 1` exactly (`src/row_reduction.cpp:156`). Also audit
+- [ ] **Finish tolerance sweep.** Audit
   `is_ref` and any tests that still touch `0.0` directly.
 - [ ] **Make integer/exact math configurable.** Template the epsilon behavior
   so ℚ/ℤ types can use strict `== 0` while floating point uses `kEps`.

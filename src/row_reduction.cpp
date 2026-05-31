@@ -153,7 +153,7 @@ bool is_rref(const Matrix &A) {
             continue; // no leading entry in zero row
         }
         auto leading_elem = leading_element(v);
-        if (leading_elem != 1) {
+        if (!math_utils::nearly_equal(leading_elem, 1.0)) {
             return false;
         }
 
