@@ -212,6 +212,21 @@ TEST_CASE("rank") {
     }
 }
 
+TEST_CASE("small multi-scale rows are kept, not treated as noise") {
+    using la::Matrix;
+
+    // All entries are near zero and span different scales within each row,
+    // but the rows are genuinely independent (det = 1e-10 - 1e-18 != 0).
+    // clang-format off
+    Matrix A(2, 2, {
+                    1e-5, 1e-9,
+                    1e-9, 1e-5
+                   });
+    // clang-format on
+    CHECK(la::rank(A) == 2); // GREEN today: absolute row-zero gate +
+                             // left-column resurrection both protect it
+}
+
 TEST_CASE("Reduced Row Echelon Form") {
     using la::Matrix;
 
