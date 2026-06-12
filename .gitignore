@@ -68,3 +68,7 @@ compile_commands.json
 
 # Qt Creator build + cache
 .qtcreator/
+
+# Test coverage reports
+coverage/
+

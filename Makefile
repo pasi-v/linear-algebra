@@ -55,6 +55,49 @@ app_tests: $(TARGET_APP_TEST)
 test: $(TARGET_TEST)
 	./$(TARGET_TEST)
 
+# --- Coverage (LLVM source-based, via the Xcode toolchain) -----------------
+# Instrumented objects use a distinct .cov.o suffix so a coverage build never
+# clobbers the normal -O0 -g objects (and vice versa). Requires llvm-profdata
+# and llvm-cov, reached through `xcrun` on macOS.
+COV_FLAGS    := -fprofile-instr-generate -fcoverage-mapping
+COV_CXXFLAGS := $(CXXFLAGS) $(COV_FLAGS)
+COVDIR       := coverage
+COV_IGNORE   := third_party|tests
+LLVMCOV      := xcrun llvm-cov
+LLVMPROFDATA := xcrun llvm-profdata
+
+LIB_COV_OBJS  := $(LIB_SRCS:.cpp=.cov.o)
+TEST_COV_OBJS := $(TEST_SRCS:.cpp=.cov.o)
+COV_OBJS      := $(LIB_COV_OBJS) $(TEST_COV_OBJS)
+COV_DEPS      := $(COV_OBJS:.o=.d)
+
+TARGET_COV_TEST := $(BINDIR)/tests_cov
+
+# Instrumented compile rule (parallels make's built-in %.o : %.cpp rule).
+%.cov.o: %.cpp
+	$(CXX) $(COV_CXXFLAGS) $(CPPFLAGS) -c $< -o $@
+
+$(TARGET_COV_TEST): $(COV_OBJS) | $(BINDIR)
+	$(CXX) $(COV_CXXFLAGS) $(LDFLAGS) -o $@ $^
+
+# Build + run the instrumented tests, then print a per-file coverage report
+# for the library (third_party/ and tests/ are excluded from the numbers).
+coverage: $(TARGET_COV_TEST)
+	@mkdir -p $(COVDIR)
+	LLVM_PROFILE_FILE="$(COVDIR)/tests.profraw" ./$(TARGET_COV_TEST)
+	$(LLVMPROFDATA) merge -sparse $(COVDIR)/tests.profraw -o $(COVDIR)/tests.profdata
+	$(LLVMCOV) report ./$(TARGET_COV_TEST) \
+		-instr-profile=$(COVDIR)/tests.profdata \
+		-ignore-filename-regex='$(COV_IGNORE)'
+
+# Same data, rendered as a browsable HTML report under coverage/html/.
+coverage-html: coverage
+	$(LLVMCOV) show ./$(TARGET_COV_TEST) \
+		-instr-profile=$(COVDIR)/tests.profdata \
+		-ignore-filename-regex='$(COV_IGNORE)' \
+		-format=html -output-dir=$(COVDIR)/html
+	@echo "Open $(COVDIR)/html/index.html"
+
 # Reformat source files
 format:
 	clang-format -i $(LIB_SRCS) $(TEST_SRCS) \
@@ -64,9 +107,10 @@ format:
 clean:
 	rm -rf $(BINDIR) $(LIB_OBJS) $(TEST_OBJS) $(APP_OBJS) \
 			$(LIB_DEPS) $(TEST_DEPS) $(APP_DEPS) \
-			$(APP_TEST_OBJS) $(APP_TEST_DEPS)
+			$(APP_TEST_OBJS) $(APP_TEST_DEPS) \
+			$(COV_OBJS) $(COV_DEPS) $(COVDIR)
 
 # Auto-include dependency files (ok if they don't exist yet)
--include $(LIB_DEPS) $(TEST_DEPS) $(APP_DEPS) $(APP_TEST_DEPS)
+-include $(LIB_DEPS) $(TEST_DEPS) $(APP_DEPS) $(APP_TEST_DEPS) $(COV_DEPS)
 
-.PHONY: all clean format test app_tests
+.PHONY: all clean format test app_tests coverage coverage-html
