@@ -39,6 +39,32 @@ Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
 
 ## Minor cleanups
 
+- [ ] **Unify size-mismatch exceptions on `std::invalid_argument`.** The
+  `CLAUDE.md` convention is now: dimensional non-conformance throws
+  `std::invalid_argument`, `std::domain_error` is reserved for "well-formed
+  input, operation mathematically undefined" (e.g. `angle` of a zero vector).
+  These sites still throw/document `domain_error` for a shape mismatch and
+  need re-pointing:
+  - `src/matrix_linear_systems.cpp:11` — `augment(A, b)` throw site
+    (`std::domain_error` → `std::invalid_argument`). This is the single
+    runtime check; `eliminate_system`/`n_solutions`/`solve` all funnel
+    through it.
+  - `augment(A, B)` — verify its throw is `invalid_argument` (already added
+    in the same file) and the doc matches.
+  - Doc comments `@throws std::domain_error` → `@throws std::invalid_argument`:
+    `include/la/matrix_linear_systems.hpp:16` (augment A,b),
+    `:25` (augment A,B); `include/la/linear_system.hpp:36` (n_solutions),
+    `:46` (solve); `include/la/eliminated_system.hpp:31` (eliminate_system).
+  - Test: `tests/test_matrix_linear_systems.cpp:31` —
+    `CHECK_THROWS_AS(augment(A, b), std::domain_error)` → `std::invalid_argument`.
+  - Leave as-is (correctly `domain_error`): `angle` of a zero vector
+    (`tests/test_vector_algorithms.cpp:60`). `determinant` non-square
+    (`tests/test_determinant.cpp:14,20`) is a deferred judgment call — out of
+    scope for this conformance sweep.
+  - Done when `grep -rn domain_error include/la/matrix_linear_systems.hpp
+    include/la/linear_system.hpp include/la/eliminated_system.hpp
+    src/matrix_linear_systems.cpp` is empty and `make test` stays green.
+
 - [ ] `app/evaluator.cpp:198` — `spanning_vectors` is appended in a loop over
   `spanning_names` (known size) but not reserved. Add
   `spanning_vectors.reserve(spanning_names.size());` before the loop to avoid
