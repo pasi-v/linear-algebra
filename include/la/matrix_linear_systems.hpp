@@ -18,6 +18,15 @@ namespace la {
 Matrix augment(const Matrix &A, const Vector &b);
 
 /**
+ * @brief Construct an augmented matrix from two matrices.
+ * @param A left-hand side of the augmented matrix
+ * @param B right-hand side of the augmented matrix
+ * @return augmented matrix A|B
+ * @throws std::invalid_argument if the number of rows do not match
+ */
+Matrix augment(const Matrix &A, const Matrix &B);
+
+/**
  *  @brief Determine whether b lies in the span of the given vectors
  *  @param vectors
  *  @param b

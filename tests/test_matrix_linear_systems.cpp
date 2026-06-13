@@ -3,32 +3,56 @@
 #include "la/matrix_linear_systems.hpp"
 #include "la/vector.hpp"
 
-TEST_CASE("augment") {
+TEST_SUITE("augment") {
     using la::Matrix;
-    using la::Vector;
 
     // clang-format off
     Matrix A(3, 3, {
-                       1, -1,  2,
-                       1,  2, -1,
-                       0,  2, -2
-                   });
+        1, -1,  2,
+        1,  2, -1,
+        0,  2, -2
+    });
+    // clang-format on
 
-    SUBCASE("happy path") {
-        Vector b({3, -3, 1});
-        Matrix R(3, 4, {
-                           1, -1,  2,  3,
-                           1,  2, -1, -3,
-                           0,  2, -2, 1
-                       });
-        // clang-format on
+    TEST_CASE("augment with vector") {
+        using la::Vector;
 
-        CHECK_EQ(augment(A, b), R);
+        SUBCASE("happy path") {
+            Vector b({3, -3, 1});
+            // clang-format off
+            Matrix R(3, 4, {
+                1, -1,  2,  3,
+                1,  2, -1, -3,
+                0,  2, -2,  1
+            });
+            // clang-format on
+
+            CHECK_EQ(augment(A, b), R);
+        }
+
+        SUBCASE("wrong size b throws") {
+            Vector b({1, 2});
+            CHECK_THROWS_AS(augment(A, b), std::invalid_argument);
+        }
     }
 
-    SUBCASE("wrong size b throws") {
-        Vector b({1, 2});
-        CHECK_THROWS_AS(augment(A, b), std::invalid_argument);
+    TEST_CASE("augment with Matrix") {
+        SUBCASE("wrong size B throws") {
+            Matrix B(2, 3);
+            CHECK_THROWS_AS(augment(A, B), std::invalid_argument);
+        }
+
+        SUBCASE("happy path") {
+            Matrix I = la::identity(3);
+            // clang-format off
+            Matrix expected(3, 6, {
+                1, -1,  2, 1, 0, 0,
+                1,  2, -1, 0, 1, 0,
+                0,  2, -2, 0, 0, 1
+            });
+            // clang-format on
+            CHECK_EQ(augment(A, I), expected);
+        }
     }
 }
 

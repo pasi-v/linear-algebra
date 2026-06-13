@@ -24,6 +24,25 @@ Matrix augment(const Matrix &A, const Vector &b) {
     return M;
 }
 
+Matrix augment(const Matrix &A, const Matrix &B) {
+    if (A.rows() != B.rows()) {
+        throw std::invalid_argument("Number of rows in A and B must match");
+    }
+
+    Matrix augmented(A.rows(), A.cols() + B.cols());
+
+    // Copy A into the leftmost columns, B into the rest
+    for (std::size_t j = 0; j < A.cols(); ++j) {
+        augmented.set_col(j, A.column(j));
+    }
+
+    for (std::size_t j = 0; j < B.cols(); ++j) {
+        augmented.set_col(A.cols() + j, B.column(j));
+    }
+
+    return augmented;
+}
+
 bool is_in_span(const std::vector<Vector> &vectors, const Vector &b) {
     Matrix A = la::from_cols(vectors);
     return is_in_span(A, b);
