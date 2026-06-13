@@ -71,6 +71,44 @@ TEST_CASE("evaluator rref rejects non-matrix") {
     CHECK(result.err.find("rref expects a matrix") != std::string::npos);
 }
 
+TEST_CASE("evaluator can compute the inverse of an invertible matrix") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat M = [[2, 1], [1, 1]]", symbols).err.empty());
+
+    auto result = run_line("inv M", symbols);
+    CHECK(result.err.empty());
+    // Inverse of [[2,1],[1,1]] is [[1,-1],[-1,2]]
+    CHECK(result.out.find("[ 1, -1 ]") != std::string::npos);
+    CHECK(result.out.find("[ -1, 2 ]") != std::string::npos);
+}
+
+TEST_CASE("evaluator reports a singular matrix as not invertible") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat S = [[1, 2], [2, 4]]", symbols).err.empty());
+
+    auto result = run_line("inv S", symbols);
+    CHECK(result.err.empty());
+    CHECK(result.out.find("matrix is not invertible") != std::string::npos);
+}
+
+TEST_CASE("evaluator inv rejects a non-square matrix") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("mat R = [[1, 2, 3], [4, 5, 6]]", symbols).err.empty());
+
+    auto result = run_line("inv R", symbols);
+    CHECK(result.out.empty());
+    CHECK(result.err.find("must be square") != std::string::npos);
+}
+
+TEST_CASE("evaluator inv rejects non-matrix") {
+    std::unordered_map<std::string, Value> symbols;
+    CHECK(run_line("vec v = [1, 2, 3]", symbols).err.empty());
+
+    auto result = run_line("inv v", symbols);
+    CHECK(result.out.empty());
+    CHECK(result.err.find("inv expects a matrix") != std::string::npos);
+}
+
 TEST_CASE("evaluator lin_indep returns true for independent vectors") {
     std::unordered_map<std::string, Value> symbols;
     CHECK(run_line("vec a = [1, 0, 0]", symbols).err.empty());

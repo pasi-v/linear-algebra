@@ -52,6 +52,7 @@ void print_help(std::ostream &out) {
         << "  dot <vecA> <vecB>\n"
         << "  det <mat>\n"
         << "  rref <mat>\n"
+        << "  inv <mat>\n"
         << "  in_span <b> <x1> <x2> ... <xn>\n"
         << "  in_span <b> <A>\n"
         << "  lin_indep <v1> <v2> ... <vn>\n"
@@ -136,6 +137,26 @@ void handle_rref(Parser &p,
         throw std::runtime_error("rref expects a matrix");
     }
     out << la::rref(v.mat);
+}
+
+void handle_inv(Parser &p,
+                std::unordered_map<std::string, Value> &symbols,
+                std::ostream &out) {
+    std::string name = p.parse_identifier();
+    p.expect_end();
+    if (!symbols.count(name)) {
+        throw std::runtime_error("unknown symbol");
+    }
+    const Value &v = symbols.at(name);
+    if (v.kind != Value::Kind::Matrix) {
+        throw std::runtime_error("inv expects a matrix");
+    }
+    la::Matrix result;
+    if (la::inverse(v.mat, result)) {
+        out << result;
+    } else {
+        out << "matrix is not invertible\n";
+    }
 }
 
 void handle_print(Parser &p,
@@ -310,6 +331,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "rref") {
             handle_rref(p, symbols, out);
+            return true;
+        }
+        if (cmd == "inv") {
+            handle_inv(p, symbols, out);
             return true;
         }
         if (cmd == "print") {
