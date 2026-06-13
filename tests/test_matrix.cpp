@@ -363,3 +363,28 @@ TEST_SUITE("range methods") {
         }
     }
 }
+
+TEST_CASE("identity") {
+    using la::identity;
+    using la::Matrix;
+
+    SUBCASE("size 0 throws") {
+        CHECK_THROWS_AS(identity(0), std::invalid_argument);
+    }
+
+    SUBCASE("size 1 has single 1") {
+        Matrix expected(1, 1, 1.0);
+        CHECK_EQ(identity(1), expected);
+    }
+
+    SUBCASE("3x3 has ones on diagonal, zeros elsewhere") {
+        // clang-format off
+        Matrix expected(3, 3, {
+            1, 0, 0,
+            0, 1, 0,
+            0, 0, 1
+        });
+        // clang-format on
+        CHECK_EQ(identity(3), expected);
+    }
+}

@@ -251,4 +251,18 @@ Vector flatten(const Matrix &M) {
     return v;
 }
 
+Matrix identity(std::size_t n) {
+    if (n == 0) {
+        throw std::invalid_argument("size must be positive");
+    }
+
+    Matrix I(n, n);
+
+    for (std::size_t i = 0; i < n; i++) {
+        I.at(i, i) = 1.0;
+    }
+
+    return I;
+}
+
 } // namespace la

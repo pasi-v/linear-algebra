@@ -248,6 +248,14 @@ Matrix from_cols(const std::vector<Vector> &cols);
  */
 Vector flatten(const Matrix &M);
 
+/**
+ * @brief Construct an identity matrix.
+ * @param n size of the matrix
+ * @return an identity matrix with n rows and columns
+ * @throws std::invalid_argument if the size is 0
+ */
+Matrix identity(std::size_t n);
+
 } // namespace la
 
 #endif
