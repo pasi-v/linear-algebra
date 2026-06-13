@@ -15,6 +15,9 @@ class Matrix {
     using size_type = std::size_t;
 
   public:
+    /** @return empty 0x0 matrix */
+    Matrix() : rows_(0), cols_(0) {}   // data_ default-constructs to empty
+
     /** @return Matrix with size m x n, or rows x cols, initialised to value */
     Matrix(std::size_t rows, std::size_t cols, double value = 0.0)
         : rows_(rows), cols_(cols), data_(rows * cols, value) {}
