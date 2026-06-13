@@ -13,7 +13,7 @@ namespace la {
  * @param A coefficient matrix of a linear system
  * @param b right-hand side vector of a linear system
  * @return augmented matrix A|b
- * @throws std::domain_error if the size of b does not match rows of A
+ * @throws std::invalid_argument if the size of b does not match rows of A
  */
 Matrix augment(const Matrix &A, const Vector &b);
 

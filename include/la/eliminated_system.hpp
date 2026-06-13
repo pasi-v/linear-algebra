@@ -28,7 +28,7 @@ struct EliminatedSystem {
  * @param A coefficient matrix
  * @param b right-hand side vector if a linear system
  * @return an eliminated system structure
- * @throws std::domain_error if the size of b does not match rows of A
+ * @throws std::invalid_argument if the size of b does not match rows of A
  */
 EliminatedSystem eliminate_system(const Matrix &A, const Vector &b);
 } // namespace la

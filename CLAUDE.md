@@ -148,3 +148,15 @@ same change.
 - Validation helpers (`utils::check_nonnegative` in `include/utils/utils.hpp`)
   throw `std::invalid_argument` / `std::out_of_range` — propagate those
   exception types from new boundary checks rather than inventing new ones.
+- Exception types for precondition checks follow a fixed split:
+  - `std::invalid_argument` — operands don't conform dimensionally or an
+    argument is malformed (vector/matrix size mismatch, non-square where a
+    square is required, augmenting matrices with differing row counts). This
+    is the default for shape/conformance checks; a caller can wrap a whole
+    matrix expression in one `catch (const std::invalid_argument&)`.
+  - `std::domain_error` — the input is well-formed but the operation is
+    mathematically undefined there (e.g. `angle` of a zero-length vector).
+  - `std::out_of_range` — an index or position is outside valid bounds
+    (element access, `row()`/`column()`, `set_row`/`set_col` indices).
+  Don't reach for `domain_error` on a size mismatch just because the operation
+  is "mathematical" — that's the inconsistency this rule exists to prevent.

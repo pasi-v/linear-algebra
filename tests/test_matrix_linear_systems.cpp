@@ -28,7 +28,7 @@ TEST_CASE("augment") {
 
     SUBCASE("wrong size b throws") {
         Vector b({1, 2});
-        CHECK_THROWS_AS(augment(A, b), std::domain_error);
+        CHECK_THROWS_AS(augment(A, b), std::invalid_argument);
     }
 }
 

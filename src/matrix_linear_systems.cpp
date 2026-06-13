@@ -8,7 +8,8 @@ Matrix augment(const Matrix &A, const Vector &b) {
     const std::size_t n = A.cols();
 
     if (m != b.size()) {
-        throw std::domain_error("Size of b must match number of rows in A");
+        throw std::invalid_argument(
+            "Size of b must match number of rows in A");
     }
 
     Matrix M(m, n + 1);
