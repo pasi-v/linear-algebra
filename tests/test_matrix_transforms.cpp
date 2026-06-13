@@ -61,3 +61,43 @@ TEST_CASE("is_symmetric") {
         CHECK(is_symmetric(A));
     }
 }
+
+TEST_CASE("inverse") {
+    using la::inverse;
+    using la::Matrix;
+
+    SUBCASE("Non-square matrix") {
+        Matrix non_square(2, 3);
+        Matrix out;
+        CHECK_THROWS_AS(inverse(non_square, out), std::invalid_argument);
+    }
+
+    SUBCASE("Invertible matrix") {
+        // clang-format off
+        Matrix invertible(2, 2, {
+            -1,  1.5,
+             1, -1
+        });
+        Matrix expected(2, 2, {
+            2, 3,
+            2, 2
+        });
+        // clang-format on
+        Matrix out;
+        bool was_invertible = inverse(invertible, out);
+        CHECK(was_invertible);
+        CHECK_EQ(out, expected);
+    }
+
+    SUBCASE("Non-invertible matrix") {
+        // clang-format off
+        Matrix non_invertible(2, 2, {
+            2, 4,
+            2, 4
+        });
+        // clang-format off
+        Matrix out;
+        bool was_invertible = inverse(non_invertible, out);
+        CHECK(!was_invertible);
+    }
+}
