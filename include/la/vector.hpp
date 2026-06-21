@@ -46,8 +46,6 @@ class Vector {
     double &operator[](std::size_t i) noexcept { return data_[i]; }
 
     // --- raw data pointers (for std::copy_n etc.) ---
-    /** @return the raw data pointet of the vector */
-    double *data() noexcept { return data_.data(); }
     /** @return the raw data pointer of the vector */
     const double *data() const noexcept { return data_.data(); }
 
