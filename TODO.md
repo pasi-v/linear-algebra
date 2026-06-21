@@ -15,9 +15,6 @@
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
 Remaining:
 
-- [ ] **Remove the early `is_ref()` short-circuit in `ref()`**
-  (`src/row_reduction.cpp:174`). Optional — the main loop exits quickly
-  anyway.
 - [ ] **Handle degenerate shapes up front.** Add
   `if (R.rows() == 0 || R.cols() == 0) return R;` at the top of `ref()` to
   make invariants explicit.

@@ -171,10 +171,6 @@ bool is_rref(const Matrix &A) {
 Matrix ref(const Matrix &A) {
     Matrix R = A; // copy of matrix A
 
-    if (is_ref(R)) {
-        return R; // already in REF
-    }
-
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
     // 72-73
     //
