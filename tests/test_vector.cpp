@@ -58,6 +58,11 @@ TEST_CASE("Subscript operator larger than size throws") {
     CHECK_THROWS_AS(v.at(size + 1) = 1, std::out_of_range);
 }
 
+TEST_CASE("Subscript operator const") {
+    const la::Vector v{1.0, 2.0, 3.0};
+    CHECK(v.at(1) == doctest::Approx(2.0));
+}
+
 TEST_CASE("Vector comparison") {
     using la::Vector;
     Vector u{1.0, 2.0};

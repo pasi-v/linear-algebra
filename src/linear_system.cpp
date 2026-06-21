@@ -36,7 +36,8 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
     Vector x(n); // zeroes
     for (std::size_t i = 0; i < r; ++i) {
         std::size_t c = piv.pivot_cols[i]; // variable index for this pivot row
-        x[c] = R(i, rhs_col);
+        // use at() instead of [] because we get c from a different context
+        x.at(c) = R(i, rhs_col);
     }
     sol.particular = x;
 
@@ -47,7 +48,8 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
         std::size_t free_col = piv.free_cols[k];
 
         Vector dir(n);       // start with all zeros
-        dir[free_col] = 1.0; // this parameter is "1", others "0"
+        // use at() instead of [] because we get c from a different context
+        dir.at(free_col) = 1.0; // this parameter is "1", others "0"
 
         // For each pivot row, express pivot variable in terms of this free
         // variable
@@ -59,7 +61,8 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
             // In RREF, row i equation is:
             // x_pivot + sum_j R(i, j) * x_j = RHS
             // For homogeneous system A*n = 0: x_pivot = - sum_j R(i, j) * x_j
-            dir[pivot_col] = -coeff;
+            // use at() instead of [] because we get c from a different context
+            dir.at(pivot_col) = -coeff;
         }
 
         sol.directions.push_back(std::move(dir));
@@ -115,7 +118,8 @@ Vector back_substitute_unique(const Matrix &U, const Vector &b) {
         for (std::size_t j = i + 1; j < n; ++j) {
             sum += U(i, j) * x[j];
         }
-        x[i] = (b[i] - sum) / U(i, i);
+        // reasoning for b[i] being correct is far away, use at()
+        x[i] = (b.at(i) - sum) / U(i, i);
     }
 
     return x;
