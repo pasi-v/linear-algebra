@@ -244,7 +244,8 @@ Vector flatten(const Matrix &M) {
 
     for (std::size_t row = 0; row < M.rows(); row++) {
         for (std::size_t col = 0; col < M.cols(); col++) {
-            v.at(row * M.cols() + col) = M.at(row, col);
+            // v with computed index, M with looped index
+            v.at(row * M.cols() + col) = M(row, col);
         }
     }
 
@@ -259,7 +260,7 @@ Matrix identity(std::size_t n) {
     Matrix I(n, n);
 
     for (std::size_t i = 0; i < n; i++) {
-        I.at(i, i) = 1.0;
+        I(i, i) = 1.0;
     }
 
     return I;
