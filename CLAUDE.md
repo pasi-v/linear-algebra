@@ -160,3 +160,28 @@ same change.
     (element access, `row()`/`column()`, `set_row`/`set_col` indices).
   Don't reach for `domain_error` on a size mismatch just because the operation
   is "mathematical" — that's the inconsistency this rule exists to prevent.
+- Element-access and iterator accessors come in const/non-const pairs
+  (`at()`, `operator[]`, `begin()`/`end()`). Choose between checked and
+  unchecked by the *provenance* of the index, not by habit: `operator[]` when
+  the index is provably in range by local reasoning (a counted loop over the
+  object's own `size()`/`rows()`/`cols()`, or after a conformance/bounds check
+  has already thrown); `at()` at trust boundaries — caller-supplied or parsed
+  indices, and computed/derived indices (e.g. pivot/free columns from
+  `PivotInfo`) where a typo would be silent UB. When unsure, prefer `at()`: a
+  wrong guess toward it costs a branch, a wrong guess toward `[]` is undefined
+  behavior.
+- Keep const/non-const accessor pairs that complete the standard
+  container-like interface as a *pair*, even when one half currently has no
+  caller. The safe, idiomatic surface (`at()`, `operator[]`, `begin()`/`end()`)
+  is expected to be whole — a lopsided container that looks mutable-iterable
+  but silently isn't is worse than an unused overload. The exception is a raw,
+  unchecked escape hatch with no caller and no near-term need — e.g. the
+  non-const `double *data()` — which is fair to drop under YAGNI precisely
+  because it is *not* part of the safe idiomatic surface. Decide by a stated
+  principle (strict-YAGNI vs complete-the-interface), not case by case.
+- Don't add a test whose only purpose is to color in coverage of an
+  otherwise-uncalled overload (e.g. a const-only or non-const-only accessor).
+  Cover the const overload through a realistic `const Vector&`/`const Matrix&`
+  caller, and let coverage of a mutable accessor close *naturally* when the
+  first real mutating caller is written. If that caller never arrives, the
+  persistent gap is the signal the overload was unnecessary.
