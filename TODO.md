@@ -13,11 +13,8 @@
 ### Matrix::ref implementation details
 
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
-Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
-`lead_col`; `m`/`n` cached). Remaining:
+Remaining:
 
-- [ ] **Make integer/exact math configurable.** Template the epsilon behavior
-  so ℚ/ℤ types can use strict `== 0` while floating point uses `kEps`.
 - [ ] **Remove the early `is_ref()` short-circuit in `ref()`**
   (`src/row_reduction.cpp:174`). Optional — the main loop exits quickly
   anyway.
@@ -35,6 +32,39 @@ Items 3 and 10 have landed (no row/col copies in `ref()`; inner loop starts at
 - [ ] **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
   row/column span so users of `Matrix` can iterate without `Vector` copies.
   Would let `is_ref`/`is_rref` drop their `A.row(i)` copies too.
+
+
+### Configurable scalar type (integer/exact math)
+
+Prerequisite for the "Make integer/exact math configurable" item above. Today
+the library is `double` end to end (`Vector::value_type`, both `data_` buffers,
+and every algorithm signature), so there is nothing for an epsilon policy to
+switch on. Open question to settle first: **is exact arithmetic actually a
+goal, or is this just keeping the door open?** It implies a library-wide
+template refactor.
+
+Two non-obvious constraints:
+
+- Template the *element type* (`Vector<T>`/`Matrix<T>` with `using Vector =
+  Vector<double>;`); don't add parallel `IntVector`/`IntMatrix` classes — that
+  duplicates every free-function algorithm.
+- `int` (ℤ) does **not** give exact `rref`/`solve`: Gaussian elimination
+  divides by pivots and ℤ isn't closed under division. The scalar that buys
+  exact row reduction is `Rational` (ℚ). Plain `int` only helps for the
+  division-free subset (add/sub/mul, dot, a fraction-free Bareiss determinant).
+
+Suggested ordering:
+
+- [ ] Template `Vector`/`Matrix` on `T`, alias the current names to `<double>`
+  (large, mechanical; keeps existing tests green).
+- [ ] Add a `ScalarPolicy<T>` trait (`is_zero`, `is_one`); route `is_zero_pivot`
+  (`include/la/pivot_policy.hpp`) and the direct comparison sites through it —
+  `src/eliminated_system.cpp:19`, `src/row_reduction.cpp:156`,
+  `src/matrix_transforms.cpp:39`. **This is the "configurable epsilon" item.**
+- [ ] Add a `Rational` (and/or `int`) scalar type; specialize the policy for
+  exact `==`.
+- [ ] Revisit which algorithms are division-free vs. need a fraction-free
+  variant for ℤ.
 
 
 ## Minor cleanups
