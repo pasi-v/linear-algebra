@@ -47,7 +47,7 @@ LinearSystemSolution extract_parametric(const Matrix &R) {
     for (std::size_t k = 0; k < piv.free_cols.size(); ++k) {
         std::size_t free_col = piv.free_cols[k];
 
-        Vector dir(n);       // start with all zeros
+        Vector dir(n); // start with all zeros
         // use at() instead of [] because we get c from a different context
         dir.at(free_col) = 1.0; // this parameter is "1", others "0"
 

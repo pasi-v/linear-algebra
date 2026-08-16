@@ -236,6 +236,9 @@ class Matrix {
     std::vector<double> data_;
 };
 
+/** @return matrix multiplied by the scalar c */
+inline Matrix operator*(double c, const Matrix &A) { return A * c; }
+
 /**
  * @brief Construct Matrix from column vectors
  * @param cols the column vectors

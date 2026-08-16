@@ -223,10 +223,12 @@ TEST_CASE("Operator -, different dimensions") {
 
 TEST_CASE("Matrix * scalar") {
     using la::Matrix;
-
     Matrix m(2, 2, {1, 2, 3, 4});
     Matrix expected(2, 2, {2, 4, 6, 8});
-    CHECK_EQ(m * 2, expected);
+
+    SUBCASE("Matrix * scalar") { CHECK_EQ(m * 2, expected); }
+
+    SUBCASE("Scalar * Matrix") { CHECK_EQ(2 * m, expected); }
 }
 
 TEST_CASE("Matrix * matrix happy case") {
