@@ -107,14 +107,9 @@ solvers, and the vector algorithms (`dot`/`norm`/`angle`/`proj_onto`/...) all
 live as free functions in dedicated headers
 (`row_reduction.hpp`, `determinant.hpp`, `matrix_transforms.hpp`,
 `matrix_linear_systems.hpp`, `vector_algorithms.hpp`).
-See https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa for the
-original suggestions. Read Effective C++ for more.
+Read Effective C++ for more.
 
 Remaining:
 
-- [ ] Move `Matrix::operator+`, `operator-`, `operator*(double)`,
-  `operator*(const Matrix&)`, `operator*(const Vector&)` out of the class
-  into free functions (`src/matrix.cpp:46-116`).
-- [ ] Move `Vector::operator+`, `operator-`, `operator*(double)` out of the
-  class. Decide whether `subvector` / `head` / `tail` count as "core" or
+- [ ] Decide whether `subvector` / `head` / `tail` count as "core" or
   belong with the algorithms (`include/la/vector.hpp:80-115`).
