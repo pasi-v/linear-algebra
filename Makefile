@@ -4,6 +4,9 @@ CPPFLAGS := -Iinclude -Ithird_party -Iapp -MMD -MP
 CXXFLAGS := -std=c++11 -Wall -Wextra -Wtype-limits -Wpedantic -O0 -g -fno-omit-frame-pointer
 # LDFLAGS  :=    # (add libs here if needed)
 
+# Pinning format version to prevent version differences creating noisy diffs
+CLANG_FORMAT ?= xcrun clang-format
+
 BINDIR   := bin
 SRCDIR   := src
 TESTDIR  := tests
@@ -100,7 +103,7 @@ coverage-html: coverage
 
 # Reformat source files
 format:
-	clang-format -i $(LIB_SRCS) $(TEST_SRCS) \
+	$(CLANG_FORMAT) -i $(LIB_SRCS) $(TEST_SRCS) \
 		$(wildcard include/la/*.hpp)
 
 # Clean build artifacts

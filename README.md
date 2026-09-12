@@ -9,9 +9,9 @@ These are the tools I use to develop this project:
 - Language server: `clangd`
 - Build system: `make` (see `Makefile`)
 - Compilation database: `Bear`
-- Formatter (optional): `clang-format`
+- Formatter (optional): `clang-format`, clang-format-17
 
-For macOS, everything is available in Homebrew.
+For macOS, everything is available in Apple Developer Tools and MacPorts (Bear).
 
 To regenerate `compile_commands.json`:
 ```bash
