@@ -1,3 +1,13 @@
+app/app_checks/evaluator_tests.cpp
+app/app_checks/helpers.hpp
+app/app_checks/main.cpp
+app/app_checks/parser_tests.cpp
+app/evaluator.cpp
+app/evaluator.hpp
+app/la_calc.cpp
+app/parser.cpp
+app/parser.hpp
+app/value.hpp
 include/la/approx.hpp
 include/la/determinant.hpp
 include/la/eliminated_system.hpp
@@ -38,7 +48,6 @@ tests/test_matrix_linear_systems.cpp
 tests/test_matrix_transforms.cpp
 tests/test_matrix_vector_conversions.cpp
 tests/test_parity.cpp
-tests/test_pivot_policy.cpp
 tests/test_plane3d.cpp
 tests/test_row_reduction.cpp
 tests/test_utils.hpp
