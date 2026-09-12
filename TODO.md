@@ -15,9 +15,6 @@
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
 Remaining:
 
-- [ ] **Handle degenerate shapes up front.** Add
-  `if (R.rows() == 0 || R.cols() == 0) return R;` at the top of `ref()` to
-  make invariants explicit.
 - [ ] **Finish the int↔size_t cleanup.** `ref()` is `size_t` end-to-end, but
   `first_non_zero_column` still returns `int` (`include/la/vector_algorithms.hpp:45`)
   and `is_ref` still keeps an `int prev_leading_entry_column = -1` sentinel

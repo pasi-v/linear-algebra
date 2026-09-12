@@ -113,6 +113,22 @@ TEST_CASE("is_rref returns true for empty matrix") {
     CHECK(is_rref(m));
 }
 
+TEST_CASE("ref handles degenerate shapes") {
+    using la::Matrix;
+
+    SUBCASE("zero rows") {
+        Matrix m(0, 3);
+        Matrix r = ref(m);
+        CHECK_EQ(r, m);
+    }
+
+    SUBCASE("zero columns") {
+        Matrix m(3, 0);
+        Matrix r = ref(m);
+        CHECK_EQ(r, m);
+    }
+}
+
 TEST_CASE("ref returns a matrix that is in REF") {
     using la::Matrix;
     // clang-format off
