@@ -215,3 +215,71 @@ TEST_CASE("evaluator lin_indep reports mismatched matrix sizes") {
     CHECK(result.out.empty());
     CHECK(!result.err.empty());
 }
+
+TEST_CASE("evaluator solve A|b") {
+    SUBCASE("unique solution") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[0, 2, 3], [2, 3, 1], [1, -1, -2]]", symbols).err.empty());
+        CHECK(run_line("vec b = [8, 5, -5]", symbols).err.empty());
+
+        auto result = run_line("solve A b", symbols);
+        CHECK(result.out == "[ 0, 1, 2 ]\n");
+        CHECK(result.err.empty());
+    }
+
+    SUBCASE("no solution") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[1, -1, 2], [1, 2, -1], [0, 2, -2]]", symbols).err.empty());
+        CHECK(run_line("vec b = [3, -3, 1]", symbols).err.empty());
+
+        auto result = run_line("solve A b", symbols);
+        CHECK(result.out == "no solution\n");
+        CHECK(result.err.empty());
+    }
+
+    SUBCASE("infinite solutions") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[1, -1, -1, 2], [2, -2, -1, 3], [-1, 1, -1, 0]]", symbols).err.empty());
+        CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
+
+        auto result = run_line("solve A b", symbols);
+        CHECK(result.out.find("particular: [ 2, 0, 1, 0 ]") != std::string::npos);
+        CHECK(result.out.find("directions: [ [ 1, 1, 0, 0 ], [ -1, 0, 1, 1 ] ]") != std::string::npos);
+        CHECK(result.err.empty());
+    }
+
+    SUBCASE("evaluator rejects unknown A") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[1, -1, -1, 2], [2, -2, -1, 3], [-1, 1, -1, 0]]", symbols).err.empty());
+
+        auto result = run_line("solve M b", symbols);  // M instead of A
+        CHECK(result.err.find("unknown symbol") != std::string::npos);
+    }
+
+    SUBCASE("evaluator rejects unknown b") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[1, -1, -1, 2], [2, -2, -1, 3], [-1, 1, -1, 0]]", symbols).err.empty());
+        CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
+
+        auto result = run_line("solve A v", symbols);  // v instead of b
+        CHECK(result.err.find("unknown symbol") != std::string::npos);
+    }
+
+    SUBCASE("evaluator rejects non-matrix A") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("vec a = [1, 3, -3]", symbols).err.empty());
+        CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
+
+        auto result = run_line("solve a b", symbols);  // a is vec, not mat
+        CHECK(result.err.find("must be a matrix") != std::string::npos);
+    }
+
+    SUBCASE("evaluator rejects non-vector b") {
+        std::unordered_map<std::string, Value> symbols;
+        CHECK(run_line("mat A = [[1, -1, 2], [1, 2, -1], [0, 2, -2]]", symbols).err.empty());
+        CHECK(run_line("mat B = [[1, -1, 2], [1, 2, -1], [0, 2, -2]]", symbols).err.empty());
+
+        auto result = run_line("solve A B", symbols);  // B is mat, not vec
+        CHECK(result.err.find("must be a vector") != std::string::npos);
+    }
+}

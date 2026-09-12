@@ -1,5 +1,6 @@
 #include "evaluator.hpp"
 
+#include "la/linear_system.hpp"
 #include "la/matrix_algorithms.hpp"
 #include "la/matrix_linear_systems.hpp"
 #include "parser.hpp"
@@ -57,6 +58,7 @@ void print_help(std::ostream &out) {
         << "  in_span <b> <A>\n"
         << "  lin_indep <v1> <v2> ... <vn>\n"
         << "  lin_indep <M1> <M2> ... <Mn>\n"
+        << "  solve <A> <b>\n"
         << "  print <name>\n"
         << "  help\n"
         << "  quit | exit\n";
@@ -287,6 +289,55 @@ void handle_lin_indep(Parser &p,
     bool result = la::are_linearly_independent(vectors);
     out << (result ? "true" : "false") << "\n";
 }
+
+void handle_solve(Parser &p,
+                  std::unordered_map<std::string, Value> &symbols,
+                  std::ostream &out) {
+    // Parse the matrix A
+    std::string A_name = p.parse_identifier();
+
+    // Parse the vector b
+    std::string b_name = p.parse_identifier();
+
+    // Verify A exists and is a matrix
+    if (!symbols.count(A_name)) {
+        throw std::runtime_error("unknown symbol: " + A_name);
+    }
+    const Value &A_val = symbols.at(A_name);
+    if (A_val.kind != Value::Kind::Matrix) {
+        throw std::runtime_error("solve: " + A_name + " must be a matrix");
+    }
+
+    // Verify b exists and is a vector
+    if (!symbols.count(b_name)) {
+        throw std::runtime_error("unknown symbol: " + b_name);
+    }
+    const Value &b_val = symbols.at(b_name);
+    if (b_val.kind != Value::Kind::Vector) {
+        throw std::runtime_error("solve: " + b_name + " must be a vector");
+    }
+
+    la::LinearSystemSolution solution = la::solve(A_val.mat, b_val.vec);
+    if (solution.has_solution()) {
+        if (solution.is_infinite()) {
+            out << "particular: " << solution.particular << "\n";
+            out << "directions: [ ";
+            for (std::size_t i = 0; i < solution.directions.size(); i++) {
+                out << solution.directions[i];
+                if (i != solution.directions.size() - 1) {
+                    out << ", ";
+                }
+            }
+            out << " ] \n";
+        }
+        else if (solution.is_unique()) {
+            out << solution.particular << "\n";
+        }
+    }
+    else {
+        out << "no solution" << "\n";
+    }
+}
 } // namespace
 
 bool execute_line(const std::string &line,
@@ -347,6 +398,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "lin_indep") {
             handle_lin_indep(p, symbols, out);
+            return true;
+        }
+        if (cmd == "solve") {
+            handle_solve(p, symbols, out);
             return true;
         }
 

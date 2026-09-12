@@ -4,7 +4,6 @@
 
 ### Application
 
-- [ ] solve a linear system `[A|b]`
 - [ ] take libedit into use
 
 
