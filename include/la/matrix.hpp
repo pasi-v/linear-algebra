@@ -55,15 +55,15 @@ class Matrix {
      * Prints the matrix in row-major order, one row per line.
      */
     friend std::ostream &operator<<(std::ostream &os, const Matrix &m) {
+        os << "[ ";
         for (size_t i = 0; i < m.rows(); ++i) {
-            os << "[ ";
-            for (size_t j = 0; j < m.cols(); ++j) {
-                os << m(i, j);
-                if (j + 1 < m.cols())
-                    os << ", ";
+            Vector row = m.row(i);
+            os << row;
+            if (i != (m.rows_ - 1)) {
+                os << "\n";
             }
-            os << " ]\n";
         }
+        os << " ]";
         return os;
     }
 

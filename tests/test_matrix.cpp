@@ -2,6 +2,8 @@
 #include "la/matrix.hpp"
 #include "la/vector.hpp"
 
+#include <sstream>
+
 TEST_CASE("m x n Zero Matrix()") {
     using la::Matrix;
 
@@ -389,4 +391,14 @@ TEST_CASE("identity") {
         // clang-format on
         CHECK_EQ(identity(3), expected);
     }
+}
+
+TEST_CASE("ostream") {
+    using la::Matrix;
+    Matrix A(2, 2, {1, 2, 3, 4});
+    std::ostringstream out;
+
+    out << A;
+
+    CHECK(out.str() == "[ [ 1, 2 ]\n[ 3, 4 ] ]");
 }
