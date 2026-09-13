@@ -52,6 +52,7 @@ void print_help(std::ostream &out) {
         << "  mat <name> = [[1,2],[3,4]]\n"
         << "  dot <vecA> <vecB>\n"
         << "  det <mat>\n"
+        << "  mul <M1> <M2>\n"
         << "  rref <mat>\n"
         << "  inv <mat>\n"
         << "  in_span <b> <x1> <x2> ... <xn>\n"
@@ -124,6 +125,26 @@ void handle_det(Parser &p,
         throw std::runtime_error("det expects a matrix");
     }
     out << la::determinant(v.mat) << "\n";
+}
+
+void handle_mul(Parser &p,
+                std::unordered_map<std::string, Value> &symbols,
+                std::ostream &out) {
+    std::string A = p.parse_identifier();
+    std::string B = p.parse_identifier();
+    p.expect_end();
+    if (!symbols.count(A) || !symbols.count(B)) {
+        throw std::runtime_error("unknown symbol");
+    }
+    const Value &vA = symbols.at(A);
+    if (vA.kind != Value::Kind::Matrix) {
+        throw std::runtime_error("mul: " + A + " must be a matrix");
+    }
+    const Value &vB = symbols.at(B);
+    if (vB.kind != Value::Kind::Matrix) {
+        throw std::runtime_error("mul: " + B + " must be a matrix");
+    }
+    out << vA.mat * vB.mat << "\n";
 }
 
 void handle_rref(Parser &p,
@@ -378,6 +399,10 @@ bool execute_line(const std::string &line,
         }
         if (cmd == "det") {
             handle_det(p, symbols, out);
+            return true;
+        }
+        if (cmd == "mul") {
+            handle_mul(p, symbols, out);
             return true;
         }
         if (cmd == "rref") {

@@ -283,3 +283,34 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(result.err.find("must be a vector") != std::string::npos);
     }
 }
+
+TEST_CASE("evaluator matrix multiplication") {
+    std::unordered_map<std::string, Value> symbols;
+
+    SUBCASE("happy path") {
+        CHECK(run_line("mat A = [[1, 3, -1], [-2, -1, 1]]", symbols).err.empty());
+        CHECK(run_line("mat B = [[-4, 0, 3, -1], [5, -2, -1, 1], [-1, 2, 0, 6]]", symbols).err.empty());
+
+        auto result = run_line("mul A B", symbols);
+        CHECK(result.err.empty());
+        CHECK(result.out == "[ [ 12, -8, 0, -4 ]\n[ 2, 4, -5, 7 ] ]\n");
+    }
+
+    SUBCASE("rejects unknown symbol") {
+        CHECK(run_line("mat A = [[1, 3, -1], [-2, -1, 1]]", symbols).err.empty());
+
+        auto result = run_line("mul A B", symbols);
+        CHECK(result.err.find("unknown symbol") != std::string::npos);
+    }
+
+    SUBCASE("rejects non-matrices") {
+        CHECK(run_line("vec a = [1, 3, -3]", symbols).err.empty());
+        CHECK(run_line("mat B = [[-4, 0, 3, -1], [5, -2, -1, 1], [-1, 2, 0, 6]]", symbols).err.empty());
+
+        auto result = run_line("mul a B", symbols);
+        CHECK(result.err.find("must be a matrix") != std::string::npos);
+
+        result = run_line("mul B a", symbols);
+        CHECK(result.err.find("must be a matrix") != std::string::npos);
+    }
+}
