@@ -3,6 +3,8 @@
 #include "la/vector.hpp"
 #include "math_utils/math_utils.hpp"
 
+#include <sstream>
+
 TEST_CASE("Vector()") {
     using la::Vector;
     int size = 3;
@@ -221,4 +223,14 @@ TEST_CASE("approx_equal") {
         CHECK(!approx_equal(u, v, math_utils::kDefaultAbsTol,
                             math_utils::kDefaultRelTol));
     }
+}
+
+TEST_CASE("ostream") {
+    using la::Vector;
+    Vector v({1, 2, 3});
+    std::ostringstream out;
+
+    out << v;
+
+    CHECK(out.str() == "[ 1, 2, 3 ]");
 }
