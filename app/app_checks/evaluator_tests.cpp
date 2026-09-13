@@ -25,7 +25,7 @@ TEST_CASE("evaluator reports unknown symbols") {
     std::unordered_map<std::string, Value> symbols;
     auto result = run_line("dot a b", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("unknown symbol") != std::string::npos);
+    CHECK(contains(result.err, "unknown symbol"));
 }
 
 TEST_CASE("evaluator can compute rref of a matrix") {
@@ -35,9 +35,9 @@ TEST_CASE("evaluator can compute rref of a matrix") {
     auto result = run_line("rref M", symbols);
     CHECK(result.err.empty());
     // Should produce identity matrix
-    CHECK(result.out.find("[ 1, 0, 0 ]") != std::string::npos);
-    CHECK(result.out.find("[ 0, 1, 0 ]") != std::string::npos);
-    CHECK(result.out.find("[ 0, 0, 1 ]") != std::string::npos);
+    CHECK(contains(result.out, "[ 1, 0, 0 ]"));
+    CHECK(contains(result.out, "[ 0, 1, 0 ]"));
+    CHECK(contains(result.out, "[ 0, 0, 1 ]"));
 }
 
 TEST_CASE("evaluator rref preserves identity matrix") {
@@ -46,9 +46,9 @@ TEST_CASE("evaluator rref preserves identity matrix") {
 
     auto result = run_line("rref I", symbols);
     CHECK(result.err.empty());
-    CHECK(result.out.find("[ 1, 0, 0 ]") != std::string::npos);
-    CHECK(result.out.find("[ 0, 1, 0 ]") != std::string::npos);
-    CHECK(result.out.find("[ 0, 0, 1 ]") != std::string::npos);
+    CHECK(contains(result.out, "[ 1, 0, 0 ]"));
+    CHECK(contains(result.out, "[ 0, 1, 0 ]"));
+    CHECK(contains(result.out, "[ 0, 0, 1 ]"));
 }
 
 TEST_CASE("evaluator rref handles singular matrix") {
@@ -58,8 +58,8 @@ TEST_CASE("evaluator rref handles singular matrix") {
     auto result = run_line("rref S", symbols);
     CHECK(result.err.empty());
     // Should have one pivot row
-    CHECK(result.out.find("[ 1, 2 ]") != std::string::npos);
-    CHECK(result.out.find("[ 0, 0 ]") != std::string::npos);
+    CHECK(contains(result.out, "[ 1, 2 ]"));
+    CHECK(contains(result.out, "[ 0, 0 ]"));
 }
 
 TEST_CASE("evaluator rref rejects non-matrix") {
@@ -68,7 +68,7 @@ TEST_CASE("evaluator rref rejects non-matrix") {
 
     auto result = run_line("rref v", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("rref expects a matrix") != std::string::npos);
+    CHECK(contains(result.err, "rref expects a matrix"));
 }
 
 TEST_CASE("evaluator can compute the inverse of an invertible matrix") {
@@ -78,8 +78,8 @@ TEST_CASE("evaluator can compute the inverse of an invertible matrix") {
     auto result = run_line("inv M", symbols);
     CHECK(result.err.empty());
     // Inverse of [[2,1],[1,1]] is [[1,-1],[-1,2]]
-    CHECK(result.out.find("[ 1, -1 ]") != std::string::npos);
-    CHECK(result.out.find("[ -1, 2 ]") != std::string::npos);
+    CHECK(contains(result.out, "[ 1, -1 ]"));
+    CHECK(contains(result.out, "[ -1, 2 ]"));
 }
 
 TEST_CASE("evaluator reports a singular matrix as not invertible") {
@@ -88,7 +88,7 @@ TEST_CASE("evaluator reports a singular matrix as not invertible") {
 
     auto result = run_line("inv S", symbols);
     CHECK(result.err.empty());
-    CHECK(result.out.find("matrix is not invertible") != std::string::npos);
+    CHECK(contains(result.out, "matrix is not invertible"));
 }
 
 TEST_CASE("evaluator inv rejects a non-square matrix") {
@@ -97,7 +97,7 @@ TEST_CASE("evaluator inv rejects a non-square matrix") {
 
     auto result = run_line("inv R", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("must be square") != std::string::npos);
+    CHECK(contains(result.err, "must be square"));
 }
 
 TEST_CASE("evaluator inv rejects non-matrix") {
@@ -106,7 +106,7 @@ TEST_CASE("evaluator inv rejects non-matrix") {
 
     auto result = run_line("inv v", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("inv expects a matrix") != std::string::npos);
+    CHECK(contains(result.err, "inv expects a matrix"));
 }
 
 TEST_CASE("evaluator lin_indep returns true for independent vectors") {
@@ -134,7 +134,7 @@ TEST_CASE("evaluator lin_indep requires at least one vector") {
     std::unordered_map<std::string, Value> symbols;
     auto result = run_line("lin_indep", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("at least one vector") != std::string::npos);
+    CHECK(contains(result.err, "at least one vector"));
 }
 
 TEST_CASE("evaluator lin_indep rejects non-vector arguments") {
@@ -144,7 +144,7 @@ TEST_CASE("evaluator lin_indep rejects non-vector arguments") {
 
     auto result = run_line("lin_indep a M", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("must be a vector") != std::string::npos);
+    CHECK(contains(result.err, "must be a vector"));
 }
 
 TEST_CASE("evaluator lin_indep reports mismatched vector sizes") {
@@ -203,7 +203,7 @@ TEST_CASE("evaluator lin_indep rejects mixing matrices and vectors") {
 
     auto result = run_line("lin_indep M a", symbols);
     CHECK(result.out.empty());
-    CHECK(result.err.find("cannot mix") != std::string::npos);
+    CHECK(contains(result.err, "cannot mix"));
 }
 
 TEST_CASE("evaluator lin_indep reports mismatched matrix sizes") {
@@ -243,8 +243,8 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
 
         auto result = run_line("solve A b", symbols);
-        CHECK(result.out.find("particular: [ 2, 0, 1, 0 ]") != std::string::npos);
-        CHECK(result.out.find("directions: [ [ 1, 1, 0, 0 ], [ -1, 0, 1, 1 ] ]") != std::string::npos);
+        CHECK(contains(result.out, "particular: [ 2, 0, 1, 0 ]"));
+        CHECK(contains(result.out, "directions: [ [ 1, 1, 0, 0 ], [ -1, 0, 1, 1 ] ]"));
         CHECK(result.err.empty());
     }
 
@@ -253,7 +253,7 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(run_line("mat A = [[1, -1, -1, 2], [2, -2, -1, 3], [-1, 1, -1, 0]]", symbols).err.empty());
 
         auto result = run_line("solve M b", symbols);  // M instead of A
-        CHECK(result.err.find("unknown symbol") != std::string::npos);
+        CHECK(contains(result.err, "unknown symbol"));
     }
 
     SUBCASE("evaluator rejects unknown b") {
@@ -262,7 +262,7 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
 
         auto result = run_line("solve A v", symbols);  // v instead of b
-        CHECK(result.err.find("unknown symbol") != std::string::npos);
+        CHECK(contains(result.err, "unknown symbol"));
     }
 
     SUBCASE("evaluator rejects non-matrix A") {
@@ -271,7 +271,7 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(run_line("vec b = [1, 3, -3]", symbols).err.empty());
 
         auto result = run_line("solve a b", symbols);  // a is vec, not mat
-        CHECK(result.err.find("must be a matrix") != std::string::npos);
+        CHECK(contains(result.err, "must be a matrix"));
     }
 
     SUBCASE("evaluator rejects non-vector b") {
@@ -280,7 +280,7 @@ TEST_CASE("evaluator solve A|b") {
         CHECK(run_line("mat B = [[1, -1, 2], [1, 2, -1], [0, 2, -2]]", symbols).err.empty());
 
         auto result = run_line("solve A B", symbols);  // B is mat, not vec
-        CHECK(result.err.find("must be a vector") != std::string::npos);
+        CHECK(contains(result.err, "must be a vector"));
     }
 }
 
@@ -300,7 +300,7 @@ TEST_CASE("evaluator matrix multiplication") {
         CHECK(run_line("mat A = [[1, 3, -1], [-2, -1, 1]]", symbols).err.empty());
 
         auto result = run_line("mul A B", symbols);
-        CHECK(result.err.find("unknown symbol") != std::string::npos);
+        CHECK(contains(result.err, "unknown symbol"));
     }
 
     SUBCASE("rejects non-matrices") {
@@ -308,9 +308,9 @@ TEST_CASE("evaluator matrix multiplication") {
         CHECK(run_line("mat B = [[-4, 0, 3, -1], [5, -2, -1, 1], [-1, 2, 0, 6]]", symbols).err.empty());
 
         auto result = run_line("mul a B", symbols);
-        CHECK(result.err.find("must be a matrix") != std::string::npos);
+        CHECK(contains(result.err, "must be a matrix"));
 
         result = run_line("mul B a", symbols);
-        CHECK(result.err.find("must be a matrix") != std::string::npos);
+        CHECK(contains(result.err, "must be a matrix"));
     }
 }

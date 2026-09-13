@@ -21,4 +21,8 @@ inline EvalResult run_line(const std::string &line,
     return {keep_running, out.str(), err.str()};
 }
 
+inline bool contains(const std::string &a, const std::string &b) {
+    return a.find(b) != std::string::npos;
+}
+
 #endif
