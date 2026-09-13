@@ -44,6 +44,7 @@ tests/test_linear_system.cpp
 tests/test_main.cpp
 tests/test_math_utils.cpp
 tests/test_matrix.cpp
+tests/test_matrix_constructors.cpp
 tests/test_matrix_linear_systems.cpp
 tests/test_matrix_transforms.cpp
 tests/test_matrix_vector_conversions.cpp
