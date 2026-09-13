@@ -194,9 +194,14 @@ TEST_CASE("tail") {
         CHECK_EQ(Vector(0), v.tail());
     }
 
-    SUBCASE("start > size returns empty vector") {
+    SUBCASE("start = size returns empty vector") {
         Vector v({1, 2, 3});
         CHECK_EQ(Vector(0), v.tail(3));
+    }
+
+    SUBCASE("start > size returns empty vector") {
+        Vector v({1, 2, 3});
+        CHECK_EQ(Vector(0), v.tail(4));
     }
 }
 
