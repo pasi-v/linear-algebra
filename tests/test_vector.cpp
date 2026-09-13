@@ -133,6 +133,15 @@ TEST_CASE("Vector::subvector basics") {
         CHECK(s[2] == doctest::Approx(50));
     }
 
+    SUBCASE("to end with n = size") {
+        auto s = v.subvector(v.size());
+        CHECK(s.size() == 0);
+    }
+
+    SUBCASE("to end with n > size throws") {
+        CHECK_THROWS_AS(v.subvector(v.size() + 1), std::out_of_range);
+    }
+
     SUBCASE("empty at end") {
         auto s = v.subvector(5, 0);
         CHECK(s.size() == 0);
