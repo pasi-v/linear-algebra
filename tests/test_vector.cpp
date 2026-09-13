@@ -71,8 +71,15 @@ TEST_CASE("Vector comparison") {
     Vector v{1.0, 2.0};
     Vector w{1.0, 3.0};
 
-    CHECK(u == v);
-    CHECK_FALSE(u == w);
+    SUBCASE("operator ==") {
+        CHECK(u == v);
+        CHECK_FALSE(u == w);
+    }
+
+    SUBCASE("operator !=") {
+        CHECK(u != w);
+        CHECK_FALSE(u != v);
+    }
 }
 
 TEST_CASE("Vector addition happy path") {
