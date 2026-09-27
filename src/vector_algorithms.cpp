@@ -3,6 +3,7 @@
 #include "la/matrix_algorithms.hpp"
 #include "la/pivot_info.hpp"
 #include "la/vector.hpp"
+#include <algorithm>
 #include <cmath>
 
 namespace la {
@@ -36,12 +37,7 @@ double angle(const Vector &u, const Vector &v, double eps) {
 
     const double denom = std::sqrt(asq * bsq);
     double cos_theta = dot(u, v) / denom;
-
-    // Clamp into [-1, 1] (C++11, no std::clamp)
-    if (cos_theta > 1.0)
-        cos_theta = 1.0;
-    else if (cos_theta < -1.0)
-        cos_theta = -1.0;
+    cos_theta = std::clamp(cos_theta, -1.0, 1.0);
 
     return std::acos(cos_theta);
 }
