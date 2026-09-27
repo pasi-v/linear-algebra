@@ -1,7 +1,7 @@
 # Compiler and flags
 CXX      := clang++
 CPPFLAGS := -Iinclude -Ithird_party -Iapp -MMD -MP
-CXXFLAGS := -std=c++11 -Wall -Wextra -Wtype-limits -Wpedantic -O0 -g -fno-omit-frame-pointer
+CXXFLAGS := -std=c++17 -Wall -Wextra -Wtype-limits -Wpedantic -O0 -g -fno-omit-frame-pointer
 # LDFLAGS  :=    # (add libs here if needed)
 
 # Pinning format version to prevent version differences creating noisy diffs

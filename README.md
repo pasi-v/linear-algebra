@@ -5,7 +5,7 @@ Library for linear algebra calculations
 
 These are the tools I use to develop this project:
 
-- Compiler: `clang++` (C++11)
+- Compiler: `clang++` (C++17)
 - Language server: `clangd`
 - Build system: `make` (see `Makefile`)
 - Compilation database: `Bear`

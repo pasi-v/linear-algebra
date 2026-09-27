@@ -15,7 +15,7 @@ fair game — Claude may write and modify it as usual.
 
 ## Build & test
 
-The project is built with `make` (clang++, C++11, `-Wall -Wextra -Wpedantic`,
+The project is built with `make` (clang++, C++17, `-Wall -Wextra -Wpedantic`,
 `-O0 -g`). `make all` (the default) builds three binaries into `bin/`:
 
 - `bin/tests` — doctest runner for the library (`src/` + `tests/`)
@@ -133,8 +133,8 @@ same change.
 
 ## Conventions
 
-- C++11 only — no C++14/17 features. `requires-python`-style version pinning
-  lives in `Makefile` (`-std=c++11`).
+- C++17 — no C++20 features. The standard is pinned in `Makefile`
+  (`-std=c++17`).
 - Formatting: clang-format, LLVM base, 4-space indent, 79-col limit
   (`.clang-format`). Run `make format` before committing library/test code.
 - Floating-point comparisons in the library use `math_utils::nearly_equal` /
