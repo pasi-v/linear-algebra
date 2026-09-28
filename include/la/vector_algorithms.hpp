@@ -3,6 +3,7 @@
 
 #include "math_utils/math_utils.hpp"
 #include "vector.hpp"
+#include <optional>
 
 namespace la {
 /**
@@ -41,8 +42,8 @@ bool is_zero(const Vector &);
  * element and the rest are zeros. */
 bool is_standard_basis(const Vector &);
 
-/** @return index of first non-zero element, -1 if all zeroes */
-int first_non_zero_column(const Vector &);
+/** @return optional index of first non-zero element, empty if all zeroes */
+std::optional<std::size_t> first_non_zero_column(const Vector &);
 
 /** @return first non-zero element, 0 if all zeros */
 double leading_element(const Vector &);

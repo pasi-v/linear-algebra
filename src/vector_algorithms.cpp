@@ -76,22 +76,21 @@ bool is_standard_basis(const Vector &v) {
     return one_found;
 }
 
-int first_non_zero_column(const Vector &v) {
+std::optional<std::size_t> first_non_zero_column(const Vector &v) {
     for (std::size_t i = 0; i < v.size(); i++) {
         if (!is_zero_pivot(v[i])) {
-            return static_cast<int>(i);
+            return i;
         }
     }
 
-    return -1;
+    return {};
 }
 
 double leading_element(const Vector &v) {
-    int column = first_non_zero_column(v);
-    if (column == -1) {
-        return 0;
+    if (auto column = first_non_zero_column(v)) {
+        return v[*column];
     } else {
-        return v[column];
+        return 0;
     }
 }
 

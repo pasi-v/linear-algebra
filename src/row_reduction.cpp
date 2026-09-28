@@ -119,7 +119,8 @@ bool is_ref(const Matrix &A) {
 
     // Assert leading entry index grows when going down non-zero vectors
     // and leading entries are all 1.
-    int prev_leading_entry_column = -1; // valid columns indexed from 0 to m-1
+    std::optional<std::size_t>
+        prev_leading_entry_column; // empty until the first leading entry
     for (size_t i = 0; i < A.rows(); i++) {
         Vector v = A.row(i);
         // When we find first zero vector, there will be no more leading
@@ -129,8 +130,11 @@ bool is_ref(const Matrix &A) {
         }
 
         // Assert this leading entry column index is greater than previous.
-        int cur_leading_entry_column = first_non_zero_column(v);
-        if (cur_leading_entry_column <= prev_leading_entry_column) {
+        // Zero rows are skipped by continue a few lines up, so access value is
+        // safe.
+        auto cur_leading_entry_column = first_non_zero_column(v).value();
+        if (prev_leading_entry_column &&
+            cur_leading_entry_column <= *prev_leading_entry_column) {
             return false;
         }
         prev_leading_entry_column = cur_leading_entry_column;
@@ -158,7 +162,9 @@ bool is_rref(const Matrix &A) {
         }
 
         // 3. Each column containing a leading 1 is standard basis vector
-        int leading_entry_column = first_non_zero_column(v);
+        // Zero rows are skipped by continue a few lines up, so access value is
+        // safe.
+        auto leading_entry_column = first_non_zero_column(v).value();
         Vector col = A.column(leading_entry_column);
         if (!is_standard_basis(col)) {
             return false;

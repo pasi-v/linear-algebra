@@ -14,11 +14,6 @@
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
 Remaining:
 
-- [ ] **Finish the int↔size_t cleanup.** `ref()` is `size_t` end-to-end, but
-  `first_non_zero_column` still returns `int` (`include/la/vector_algorithms.hpp:45`)
-  and `is_ref` still keeps an `int prev_leading_entry_column = -1` sentinel
-  (`src/row_reduction.cpp:122`). Switch the API to `std::optional<std::size_t>`
-  (or `std::ptrdiff_t` if the sentinel is wanted) and propagate.
 - [ ] **Return metadata from `ref`.** Add a `RefResult { Matrix R;
   std::vector<std::size_t> pivot_cols; std::size_t rank; }` variant so later
   solves/tests don't have to re-scan for pivot columns.

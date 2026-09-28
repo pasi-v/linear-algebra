@@ -133,20 +133,20 @@ TEST_CASE("is_standard_basis returns false for zero vector") {
 TEST_CASE("first_non_zero_column returns 0 if first element is non-zero") {
     using la::Vector;
     Vector v{1, 2, 3};
-    CHECK_EQ(0, first_non_zero_column(v));
+    CHECK_EQ(std::optional<std::size_t>{0}, first_non_zero_column(v));
 }
 
 TEST_CASE(
     "first_non_zero_column returns m-1 if only last element is non-zero") {
     using la::Vector;
     Vector v{0, 0, 1};
-    CHECK_EQ(2, first_non_zero_column(v));
+    CHECK_EQ(std::optional<std::size_t>{2}, first_non_zero_column(v));
 }
 
-TEST_CASE("first_non_zero_column returns -1 for zero vector") {
+TEST_CASE("first_non_zero_column returns empty for zero vector") {
     using la::Vector;
     Vector v{0, 0, 0};
-    CHECK_EQ(-1, first_non_zero_column(v));
+    CHECK_FALSE(first_non_zero_column(v).has_value());
 }
 
 TEST_CASE("leading_element returns first element if it is not zero") {
