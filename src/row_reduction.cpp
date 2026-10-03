@@ -177,10 +177,6 @@ bool is_rref(const Matrix &A) {
 RefResult ref(const Matrix &A) {
     Matrix R = A; // copy of matrix A
 
-    // Explicitly handle degenerate shapes
-    if (R.rows() == 0 || R.cols() == 0)
-        return RefResult{R, PivotInfo{}};
-
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
     // 72-73
     //

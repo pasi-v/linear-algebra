@@ -4,6 +4,8 @@
 #include "la/row_reduction.hpp"
 #include "test_utils.hpp"
 
+#include <la/row_reduction.hpp>
+
 TEST_CASE("is_ref returns true for REF that is normalised") {
     using la::Matrix;
     // clang-format off
@@ -118,8 +120,9 @@ TEST_CASE("ref handles degenerate shapes") {
 
     SUBCASE("zero rows") {
         Matrix m(0, 3);
-        Matrix r = ref(m).R;
-        CHECK_EQ(r, m);
+        la::RefResult result = ref(m);
+        CHECK_EQ(result.R, m);
+        CHECK_EQ(result.pivots.free_cols, std::vector<std::size_t>{0, 1, 2});
     }
 
     SUBCASE("zero columns") {
