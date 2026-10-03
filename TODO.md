@@ -14,9 +14,6 @@
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
 Remaining:
 
-- [ ] **Return metadata from `ref`.** Add a `RefResult { Matrix R;
-  std::vector<std::size_t> pivot_cols; std::size_t rank; }` variant so later
-  solves/tests don't have to re-scan for pivot columns.
 - [ ] **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
   row/column span so users of `Matrix` can iterate without `Vector` copies.
   Would let `is_ref`/`is_rref` drop their `A.row(i)` copies too.
