@@ -209,6 +209,36 @@ TEST_CASE("ref handles correctly a matrix without zero rows") {
     CHECK(r.has_same_dimensions(m));
 }
 
+TEST_CASE("ref handles correctly a matrix with zero column in the middle") {
+    using la::Matrix;
+    using la::RefResult;
+
+    SUBCASE("initial matrix has a zero column in the middle") {
+        // clang-format off
+        Matrix m(2, 3, {
+            1, 0, 2,
+            3, 0, 4
+        });
+        // clang-format on
+        RefResult result = ref(m);
+        CHECK(result.pivots.pivot_cols == std::vector<std::size_t>{0, 2});
+        CHECK(result.pivots.free_cols == std::vector<std::size_t>{1});
+    }
+
+    SUBCASE("ref matrix has a zero column in the middle") {
+        // second column will become zeroes
+        // clang-format off
+        Matrix m(2, 3, {
+               1, 2, 3,
+               2, 4, 7
+           });
+        // clang-format on
+        RefResult result = ref(m);
+        CHECK(result.pivots.pivot_cols == std::vector<std::size_t>{0, 2});
+        CHECK(result.pivots.free_cols == std::vector<std::size_t>{1});
+    }
+}
+
 TEST_CASE("rank") {
     using la::Matrix;
     SUBCASE("zero matrix") {
