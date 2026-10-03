@@ -3,7 +3,14 @@
 
 #include "la/matrix.hpp"
 
+#include "pivot_info.hpp"
+
 namespace la {
+struct RefResult {
+    Matrix R;
+    PivotInfo pivots;
+};
+
 /**
  * @brief determine whether matrix is in row-echelon form with normalised
  * leading entries (all pivots = 1)
@@ -20,12 +27,11 @@ bool is_ref(const Matrix &A);
 bool is_rref(const Matrix &A);
 
 /**
- * @brief return a row echelon form of this matrix with normalised leading
- * entries (all pivots = 1)
- *
+ * @brief return a row echelon form of matrix
+ * @param A the matrix
  * @return a REF version of this matrix
  */
-Matrix ref(const Matrix &A);
+RefResult ref(const Matrix &A);
 
 /**
  * @brief return a reduced row echelon form of matrix
