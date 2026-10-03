@@ -218,25 +218,18 @@ RefResult ref(const Matrix &A) {
 
 Matrix rref(const Matrix &A) {
     RefResult result = ref(A);
-    Matrix R = result.R; // REF: zeros below pivots, zero rows at bottom
+    Matrix R = std::move(result.R);
+    const std::vector<std::size_t> &pivot_cols = result.pivots.pivot_cols;
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
-    // 76 Starting from row 2, for each row until first zero row:
+    // 76:
     //   - find leftmost pivot column
     //   - create leading one
-    //   - create zeros above it by eliminate_above()
-    const std::size_t m = R.rows(), n = R.cols();
-    for (std::size_t lead_row = 0; lead_row < m; ++lead_row) {
-        Pivot p = find_leftmost_pivot(R, lead_row);
-        if (p.col == n)
-            break; // first zero row => done
-
-        // Normalise the row by pivot value to have leading one
-        double pivot_value = R(lead_row, p.col);
-        normalize_row(R, lead_row, pivot_value);
-
-        // Use the leading 1 to create zeros above it on the lead column
-        eliminate_above(R, lead_row, p.col);
+    //   - create zeros above it
+    for (std::size_t i = 0; i < pivot_cols.size(); ++i) {
+        const std::size_t c = pivot_cols[i];
+        normalize_row(R, i, R.at(i, c));
+        eliminate_above(R, i, c);
     }
 
     return R;
