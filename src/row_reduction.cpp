@@ -214,7 +214,6 @@ RefResult ref(const Matrix &A) {
 
 RefResult rref(const Matrix &A) {
     RefResult result = ref(A);
-    Matrix R = std::move(result.R);
     const std::vector<std::size_t> &pivot_cols = result.pivots.pivot_cols;
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
@@ -224,11 +223,11 @@ RefResult rref(const Matrix &A) {
     //   - create zeros above it
     for (std::size_t i = 0; i < pivot_cols.size(); ++i) {
         const std::size_t c = pivot_cols[i];
-        normalize_row(R, i, R.at(i, c));
-        eliminate_above(R, i, c);
+        normalize_row(result.R, i, result.R.at(i, c));
+        eliminate_above(result.R, i, c);
     }
 
-    return {R, result.pivots};
+    return result;
 }
 
 std::size_t rank(const Matrix &A) {
