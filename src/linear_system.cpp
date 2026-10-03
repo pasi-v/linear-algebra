@@ -88,24 +88,8 @@ SolutionKind n_solutions(const Matrix &A, const Vector &b) {
         return SolutionKind::None;
     }
 
-    std::size_t n = A.cols();
-
-    Matrix ref_A = es.R.col_range(0, A.cols());
-
-    std::size_t rankA = rank_from_ref(ref_A);
-    const std::size_t n_free_variables = (n > rankA) ? (n - rankA) : 0;
-
-    if (n_free_variables == 0) {
-        // We have already established that system is consistent to zero
-        // free variables means unique solution
-        return SolutionKind::Unique;
-    } else if (n_free_variables > 0) {
-        // consistent and infinite solutions
-        return SolutionKind::Infinite;
-    }
-
-    // Should never reach this point, just keeping compiler happy
-    return SolutionKind::None;
+    return es.pivots.free_cols.empty() ? SolutionKind::Unique
+                                       : SolutionKind::Infinite;
 }
 
 // This is for Gaussian elimination with unique solution from REF.
