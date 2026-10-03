@@ -26,7 +26,8 @@ bool is_inconsistent(const Matrix &R, const PivotInfo pivots) {
 
 EliminatedSystem eliminate_system(const Matrix &A, const Vector &b) {
     Matrix Ab = augment(A, b);
-    Matrix R = ref(Ab);
+    RefResult result = ref(Ab);
+    Matrix R = result.R;
     PivotInfo pivots = find_pivots_and_free_cols(R);
     bool inconsistent = is_inconsistent(R, pivots);
     EliminatedSystem system = {R, pivots, inconsistent};

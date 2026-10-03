@@ -174,24 +174,26 @@ bool is_rref(const Matrix &A) {
     return true;
 }
 
-Matrix ref(const Matrix &A) {
+RefResult ref(const Matrix &A) {
     Matrix R = A; // copy of matrix A
 
     // Explicitly handle degenerate shapes
     if (R.rows() == 0 || R.cols() == 0)
-        return R;
+        return RefResult{R, PivotInfo{}};
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
     // 72-73
     //
     // For each row as top row, starting with the top row of the whole matrix:
     const std::size_t m = R.rows(), n = R.cols();
+    PivotInfo pivots;
     for (std::size_t lead_row = 0; lead_row < m; ++lead_row) {
         // 1. Locate the leftmost non-zero column of the rows below (and
         // including) the top row
         Pivot p = find_leftmost_pivot(R, lead_row);
         if (p.col == n)
             break; // non nonzero columns below => done
+        pivots.pivot_cols.push_back(p.col);
 
         // 2. Create a leading entry in the top row by interchanging it with
         // the top row
@@ -203,11 +205,20 @@ Matrix ref(const Matrix &A) {
         eliminate_below(R, lead_row, p.col);
     }
 
-    return R;
+    // Non-pivot cols are free cols:
+    for (std::size_t j = 0, k = 0; j < n; ++j) {
+        if (k < pivots.pivot_cols.size() && pivots.pivot_cols[k] == j)
+            ++k;
+        else
+            pivots.free_cols.push_back(j);
+    }
+
+    return RefResult{R, pivots};
 }
 
 Matrix rref(const Matrix &A) {
-    Matrix R = ref(A); // REF: zeros below pivots, zero rows at bottom
+    RefResult result = ref(A);
+    Matrix R = result.R; // REF: zeros below pivots, zero rows at bottom
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
     // 76 Starting from row 2, for each row until first zero row:
@@ -232,8 +243,8 @@ Matrix rref(const Matrix &A) {
 }
 
 std::size_t rank(const Matrix &A) {
-    Matrix refm = ref(A);
-    return rank_from_ref(refm);
+    RefResult result = ref(A);
+    return result.pivots.pivot_cols.size();
 }
 
 std::size_t rank_from_ref(const Matrix &R) {

@@ -118,13 +118,13 @@ TEST_CASE("ref handles degenerate shapes") {
 
     SUBCASE("zero rows") {
         Matrix m(0, 3);
-        Matrix r = ref(m);
+        Matrix r = ref(m).R;
         CHECK_EQ(r, m);
     }
 
     SUBCASE("zero columns") {
         Matrix m(3, 0);
-        Matrix r = ref(m);
+        Matrix r = ref(m).R;
         CHECK_EQ(r, m);
     }
 }
@@ -143,7 +143,7 @@ TEST_CASE("ref returns a matrix that is in REF") {
     // 1. It is in REF and normalised
     // 2. It has same dimensions as original matrix
 
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
@@ -162,7 +162,7 @@ TEST_CASE("ref handles correctly a zero row at the beginning") {
     // 1. It is in REF
     // 2. It has same dimensions as original matrix
 
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
@@ -175,7 +175,7 @@ TEST_CASE("ref handles correctly a zero row at the end") {
     // 1. It is in REF
     // 2. It has same dimensions as original matrix
 
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
@@ -188,7 +188,7 @@ TEST_CASE("ref handles correctly a zero row in the middle") {
     // 1. It is in REF
     // 2. It has same dimensions as original matrix
 
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
@@ -196,7 +196,7 @@ TEST_CASE("ref handles correctly a zero row in the middle") {
 TEST_CASE("ref handles correctly a zero matrix") {
     using la::Matrix;
     Matrix m(3, 3, {0, 0, 0, 0, 0, 0, 0, 0, 0});
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
@@ -204,7 +204,7 @@ TEST_CASE("ref handles correctly a zero matrix") {
 TEST_CASE("ref handles correctly a matrix without zero rows") {
     using la::Matrix;
     Matrix m(3, 5, {1, -1, -1, 2, 1, 2, -2, -1, 3, 3, -1, 1, -1, 0, -3});
-    Matrix r = ref(m);
+    Matrix r = ref(m).R;
     CHECK(is_ref(r));
     CHECK(r.has_same_dimensions(m));
 }
