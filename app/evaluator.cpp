@@ -159,7 +159,7 @@ void handle_rref(Parser &p,
     if (v.kind != Value::Kind::Matrix) {
         throw std::runtime_error("rref expects a matrix");
     }
-    out << la::rref(v.mat);
+    out << la::rref(v.mat).R;
 }
 
 void handle_inv(Parser &p,
