@@ -7,79 +7,6 @@
 
 namespace la {
 Vector back_substitute_unique(const Matrix &A, const Vector &b);
-LinearSystemSolution extract_parametric(const Matrix &R);
-Vector extract_unique(const Matrix &R);
-
-LinearSystemSolution extract_parametric(const Matrix &R) {
-    // 1. Detect free columns = non-pivot columns.
-    // 2. For each free column j_f:
-    //     create a direction vector dir (set dir[j_f]=1).
-    // for each pivot row r with pivot column c:
-    //     dir[c] = -RREF(r, j_f);
-    // 3. For the particular solution:
-    //     set all free variables to zero;
-    //     set pivot variables to RREF(r, last_column).
-    const std::size_t n = R.cols() - 1; // number of variables
-    const std::size_t r = rank(R);      // rank(A)
-
-    LinearSystemSolution sol;
-    sol.kind = SolutionKind::Infinite;
-    sol.particular = Vector(n); // zero vector
-    sol.directions.clear();
-
-    PivotInfo piv = find_pivots_and_free_cols(R);
-
-    // --- 1. Particular solution: free vars = 0, pivot vars from RHS ---
-    // last column index:
-    const std::size_t rhs_col = n;
-
-    Vector x(n); // zeroes
-    for (std::size_t i = 0; i < r; ++i) {
-        std::size_t c = piv.pivot_cols[i]; // variable index for this pivot row
-        // use at() instead of [] because we get c from a different context
-        x.at(c) = R(i, rhs_col);
-    }
-    sol.particular = x;
-
-    // --- 2. Directions: null space basis, one per free variable ---
-    sol.directions.reserve(piv.free_cols.size());
-
-    for (std::size_t k = 0; k < piv.free_cols.size(); ++k) {
-        std::size_t free_col = piv.free_cols[k];
-
-        Vector dir(n); // start with all zeros
-        // use at() instead of [] because we get c from a different context
-        dir.at(free_col) = 1.0; // this parameter is "1", others "0"
-
-        // For each pivot row, express pivot variable in terms of this free
-        // variable
-        for (std::size_t i = 0; i < r; ++i) {
-            std::size_t pivot_col = piv.pivot_cols[i];
-            double coeff =
-                R(i, free_col); // coefficient of this free var in row i
-
-            // In RREF, row i equation is:
-            // x_pivot + sum_j R(i, j) * x_j = RHS
-            // For homogeneous system A*n = 0: x_pivot = - sum_j R(i, j) * x_j
-            // use at() instead of [] because we get c from a different context
-            dir.at(pivot_col) = -coeff;
-        }
-
-        sol.directions.push_back(std::move(dir));
-    }
-
-    return sol;
-}
-
-Vector extract_unique(const Matrix &R) {
-    // My implementation of RREF guarantees that the pivot columns are in
-    // increasing order.
-    // R is of form A|b.  Thus R.cols() == n + 1 and R.rows() >= n where
-    // n is the rank.
-    // Therefore for unique solution, this approach is safe:
-    std::size_t n = R.cols() - 1; // number of variables
-    return R.column(n).head(n);
-}
 
 SolutionKind n_solutions(const Matrix &A, const Vector &b) {
     EliminatedSystem es = eliminate_system(A, b);
@@ -183,32 +110,6 @@ LinearSystemSolution solve(const Matrix &A, const Vector &b) {
     else {
         sol.kind = SolutionKind::Infinite;
         auto result = back_substitute_parametric(es.R, es.pivots);
-        sol.particular = result.particular;
-        sol.directions = result.directions;
-    }
-    return sol;
-}
-
-// This is my old Gauss-Jordan implementation, which I have replaced
-// by the more efficient Gaussian elimination in solve().
-// Keeping this as a reminder for how Gauss-Jordan can be implemented.
-LinearSystemSolution solve_gauss_jordan(const Matrix &A, const Vector &b) {
-    LinearSystemSolution sol;
-    EliminatedSystem es = eliminate_system(A, b);
-
-    if (es.inconsistent) {
-        sol.kind = SolutionKind::None;
-    }
-
-    else if (es.pivots.free_cols.empty()) {
-        sol.kind = SolutionKind::Unique;
-        Vector x = extract_unique(es.R);
-        sol.particular = x;
-    }
-
-    else {
-        sol.kind = SolutionKind::Infinite;
-        auto result = extract_parametric(es.R);
         sol.particular = result.particular;
         sol.directions = result.directions;
     }
