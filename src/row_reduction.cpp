@@ -246,15 +246,4 @@ std::size_t rank(const Matrix &A) {
     RefResult result = ref(A);
     return result.pivots.pivot_cols.size();
 }
-
-std::size_t rank_from_ref(const Matrix &R) {
-    std::size_t r = 0;
-    for (std::size_t i = 0; i < R.rows(); ++i) {
-        if (!is_zero(R.row(i))) {
-            ++r;
-        }
-    }
-    return r;
-}
-
 } // namespace la

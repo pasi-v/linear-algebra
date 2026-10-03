@@ -1,7 +1,18 @@
 #include "la/pivot_info.hpp"
 #include "la/matrix_algorithms.hpp"
+#include "la/vector_algorithms.hpp"
 
 namespace la {
+std::size_t rank_from_ref(const Matrix &R) {
+    std::size_t r = 0;
+    for (std::size_t i = 0; i < R.rows(); ++i) {
+        if (!is_zero(R.row(i))) {
+            ++r;
+        }
+    }
+    return r;
+}
+
 // R is in REF and pivots are ordered from top left to bottom right.
 PivotInfo find_pivots_and_free_cols(const Matrix &R) {
     const std::size_t n = R.cols() - 1;     // number of variables
