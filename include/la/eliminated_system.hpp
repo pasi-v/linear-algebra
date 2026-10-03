@@ -6,20 +6,23 @@
 
 namespace la {
 /**
- * Result of Gaussian / Gauss–Jordan elimination of a linear system Ax = b.
+ * Result of Gaussian elimination of a linear system Ax = b.
  *
- * Represents the system in reduced row echelon form (RREF) together with
+ * Represents the system in row echelon form (REF) together with
  * metadata needed to interpret the solution set.
  *
  * Invariants:
- *  - R is in RREF form.
+ *  - R is in REF form (not RREF).
  *  - R has n+1 columns, where the last column corresponds to b.
- *  - pivots describes exactly the pivot and free columns of R.
- *  - inconsistent == true iff the system has no solution.
+ *  - pivots covers only the variable columns 0..n-1; the RHS column n is
+ *    in neither pivot_cols nor free_cols. Hence pivot_cols.size() is
+ *    rank(A), and free_cols lists exactly the free variables.
+ *  - inconsistent == true iff the system has no solution, i.e. iff
+ *    the REF of (A | b) has a pivot in the RHS column.
  */
 struct EliminatedSystem {
-    Matrix R;          ///< RREF of the augmented matrix (A | b)
-    PivotInfo pivots;  ///< Pivot and free column information for R
+    Matrix R;          ///< REF of the augmented matrix (A | b)
+    PivotInfo pivots;  ///< Pivot and free variable columns of A (not b)
     bool inconsistent; ///< True if the system is inconsistent
 };
 
