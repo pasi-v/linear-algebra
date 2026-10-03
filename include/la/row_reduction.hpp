@@ -44,13 +44,6 @@ RefResult rref(const Matrix &A);
  * @return the number on nonzero rows in row echelon form
  */
 std::size_t rank(const Matrix &A);
-
-/**
- * @brief Determine rank of matrix in REF
- * @param R Matrix in row-echlon form
- * @return rank of R
- */
-std::size_t rank_from_ref(const Matrix &R);
 } // namespace la
 
 #endif // LA_ROW_REDUCTION_HPP
