@@ -12,8 +12,7 @@ struct RefResult {
 };
 
 /**
- * @brief determine whether matrix is in row-echelon form with normalised
- * leading entries (all pivots = 1)
+ * @brief determine whether matrix is in row-echelon form.
  *
  * @return true if it is, false if not.
  */
@@ -29,14 +28,14 @@ bool is_rref(const Matrix &A);
 /**
  * @brief return a row echelon form of matrix
  * @param A the matrix
- * @return a REF version of this matrix
+ * @return a REF version of this matrix and its pivots
  */
 RefResult ref(const Matrix &A);
 
 /**
  * @brief return a reduced row echelon form of matrix
  * @param A the matrix
- * @return a RREF version of A
+ * @return a RREF version of A and its pivots
  */
 RefResult rref(const Matrix &A);
 
