@@ -284,7 +284,7 @@ TEST_CASE("Reduced Row Echelon Form") {
                            0,  0, 0,  0, 0
                        });
         // clang-format on
-        CHECK_EQ(m, rref(m));
+        CHECK_EQ(m, rref(m).R);
     }
 
     SUBCASE("rref() happy case") {
@@ -300,7 +300,7 @@ TEST_CASE("Reduced Row Echelon Form") {
                                   0,  0, 0,  0, 0
                               });
         // clang-format on
-        CHECK_EQ(expected, rref(m));
+        CHECK_EQ(expected, rref(m).R);
     }
 
     SUBCASE("rref() first row first col is near zero") {
@@ -316,7 +316,7 @@ TEST_CASE("Reduced Row Echelon Form") {
                                   0, 0, 0
                               });
         // clang-format on
-        Matrix actual = rref(m);
+        Matrix actual = rref(m).R;
         CHECK_NEAR(expected, actual);
     }
 }
@@ -335,7 +335,7 @@ TEST_CASE("rref eliminates using the last pivot row") {
                    });
     // clang-format on
 
-    Matrix R = la::rref(A);
+    Matrix R = la::rref(A).R;
 
     SUBCASE("all entries above last pivot are zero") {
         // The pivot in column 2 should have zeros above it.

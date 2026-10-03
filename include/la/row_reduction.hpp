@@ -38,7 +38,7 @@ RefResult ref(const Matrix &A);
  * @param A the matrix
  * @return a RREF version of A
  */
-Matrix rref(const Matrix &A);
+RefResult rref(const Matrix &A);
 
 /**
  * @return the number on nonzero rows in row echelon form

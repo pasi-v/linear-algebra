@@ -216,7 +216,7 @@ RefResult ref(const Matrix &A) {
     return RefResult{R, pivots};
 }
 
-Matrix rref(const Matrix &A) {
+RefResult rref(const Matrix &A) {
     RefResult result = ref(A);
     Matrix R = std::move(result.R);
     const std::vector<std::size_t> &pivot_cols = result.pivots.pivot_cols;
@@ -232,7 +232,7 @@ Matrix rref(const Matrix &A) {
         eliminate_above(R, i, c);
     }
 
-    return R;
+    return {R, result.pivots};
 }
 
 std::size_t rank(const Matrix &A) {

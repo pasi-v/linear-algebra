@@ -55,7 +55,7 @@ bool inverse(const Matrix &in, Matrix &out) {
     // This is not the most performant way to calculate inverse,
     // but this matches Poole section 3.3. Gauss-Jordan method.
     Matrix augmented = augment(in, identity(n));
-    Matrix reduced = rref(augmented);
+    Matrix reduced = rref(augmented).R;
     Matrix left = reduced.col_range(0, n);
 
     // Check that left is identity
