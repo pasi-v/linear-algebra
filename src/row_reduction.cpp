@@ -218,7 +218,7 @@ RefResult rref(const Matrix &A) {
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
     // 76:
-    //   - find leftmost pivot column
+    //   - get the next leftmost pivot column
     //   - create leading one
     //   - create zeros above it
     for (std::size_t i = 0; i < pivot_cols.size(); ++i) {
