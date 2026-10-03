@@ -6,7 +6,7 @@
 #include "pivot_info.hpp"
 
 namespace la {
-struct RefResult {
+struct EchelonResult {
     Matrix R;
     PivotInfo pivots;
 };
@@ -30,14 +30,14 @@ bool is_rref(const Matrix &A);
  * @param A the matrix
  * @return a REF version of this matrix and its pivots
  */
-RefResult ref(const Matrix &A);
+EchelonResult ref(const Matrix &A);
 
 /**
  * @brief return a reduced row echelon form of matrix
  * @param A the matrix
  * @return a RREF version of A and its pivots
  */
-RefResult rref(const Matrix &A);
+EchelonResult rref(const Matrix &A);
 
 /**
  * @return the number on nonzero rows in row echelon form

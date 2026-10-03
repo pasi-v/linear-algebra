@@ -120,7 +120,7 @@ TEST_CASE("ref handles degenerate shapes") {
 
     SUBCASE("zero rows") {
         Matrix m(0, 3);
-        la::RefResult result = ref(m);
+        la::EchelonResult result = ref(m);
         CHECK_EQ(result.R, m);
         CHECK_EQ(result.pivots.free_cols, std::vector<std::size_t>{0, 1, 2});
     }
@@ -213,8 +213,8 @@ TEST_CASE("ref handles correctly a matrix without zero rows") {
 }
 
 TEST_CASE("ref handles correctly a matrix with zero column in the middle") {
+    using la::EchelonResult;
     using la::Matrix;
-    using la::RefResult;
 
     SUBCASE("initial matrix has a zero column in the middle") {
         // clang-format off
@@ -223,7 +223,7 @@ TEST_CASE("ref handles correctly a matrix with zero column in the middle") {
             3, 0, 4
         });
         // clang-format on
-        RefResult result = ref(m);
+        EchelonResult result = ref(m);
         CHECK(result.pivots.pivot_cols == std::vector<std::size_t>{0, 2});
         CHECK(result.pivots.free_cols == std::vector<std::size_t>{1});
     }
@@ -236,7 +236,7 @@ TEST_CASE("ref handles correctly a matrix with zero column in the middle") {
                2, 4, 7
            });
         // clang-format on
-        RefResult result = ref(m);
+        EchelonResult result = ref(m);
         CHECK(result.pivots.pivot_cols == std::vector<std::size_t>{0, 2});
         CHECK(result.pivots.free_cols == std::vector<std::size_t>{1});
     }

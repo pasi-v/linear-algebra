@@ -174,7 +174,7 @@ bool is_rref(const Matrix &A) {
     return true;
 }
 
-RefResult ref(const Matrix &A) {
+EchelonResult ref(const Matrix &A) {
     Matrix R = A; // copy of matrix A
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, pp
@@ -209,11 +209,11 @@ RefResult ref(const Matrix &A) {
             pivots.free_cols.push_back(j);
     }
 
-    return RefResult{R, pivots};
+    return EchelonResult{R, pivots};
 }
 
-RefResult rref(const Matrix &A) {
-    RefResult result = ref(A);
+EchelonResult rref(const Matrix &A) {
+    EchelonResult result = ref(A);
     const std::vector<std::size_t> &pivot_cols = result.pivots.pivot_cols;
 
     // Guidelines from Poole, Linear Algebra: A Modern Introduction, 2nd ed, p.
@@ -231,7 +231,7 @@ RefResult rref(const Matrix &A) {
 }
 
 std::size_t rank(const Matrix &A) {
-    RefResult result = ref(A);
+    EchelonResult result = ref(A);
     return result.pivots.pivot_cols.size();
 }
 } // namespace la

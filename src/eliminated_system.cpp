@@ -8,7 +8,7 @@ namespace la {
 EliminatedSystem eliminate_system(const Matrix &A, const Vector &b) {
     Matrix Ab = augment(A, b);
     std::size_t nAb = Ab.cols() - 1;
-    RefResult result = ref(Ab);
+    EchelonResult result = ref(Ab);
     // Remove the last column from whichever list in pivotinfo it ended up,
     // because in linear system only columns 0...n-1 are variables.
     bool inconsistent = false;
