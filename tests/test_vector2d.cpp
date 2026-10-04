@@ -98,3 +98,45 @@ TEST_CASE("DirectedVector direction and length") {
     CHECK_EQ(direction, expected);
     CHECK_EQ(dv.length(), doctest::Approx(5));
 }
+
+TEST_CASE("rotate") {
+    using la::rotate;
+    using la::Vector2D;
+
+    SUBCASE("90 degrees counter-clockwise") {
+        Vector2D v = {2, 1};
+        auto r = rotate(v, 90);
+        // (2,1) rotated 90 left becomes (-1,2)
+        CHECK(r.x() == doctest::Approx(-1.0));
+        CHECK(r.y() == doctest::Approx(2.0));
+    }
+
+    SUBCASE("zero vector rotated remains zero vector") {
+        Vector2D z = {0, 0};
+        auto r = rotate(z, 90);
+        CHECK(r.x() == doctest::Approx(0.0));
+        CHECK(r.y() == doctest::Approx(0.0));
+    }
+
+    SUBCASE("vector rotated 0 degrees remains same") {
+        Vector2D v = {-2, -1};
+        auto r = rotate(v, 0.0);
+        CHECK(r.x() == doctest::Approx(-2.0));
+        CHECK(r.y() == doctest::Approx(-1.0));
+    }
+
+    SUBCASE("vector rotated 360 degrees remains same") {
+        Vector2D v = {-2, -1};
+        auto r = rotate(v, 360.0);
+        CHECK(r.x() == doctest::Approx(-2.0));
+        CHECK(r.y() == doctest::Approx(-1.0));
+    }
+
+    SUBCASE("negative rotation in clockwise direction") {
+        Vector2D v = {-1, 2};
+        auto r = rotate(v, -90);
+        // (-1,2) rotated 90 left becomes (2,1)
+        CHECK(r.x() == doctest::Approx(2.0));
+        CHECK(r.y() == doctest::Approx(1.0));
+    }
+}

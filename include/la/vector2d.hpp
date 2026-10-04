@@ -74,6 +74,14 @@ class Vector2D {
 };
 
 /**
+ * @brief rotate the vector counter-clockwise around the origin.
+ * @param v the vector to rotate
+ * @param theta degrees to rotate, counter-clockwise is positive
+ * @return rotated vector
+ */
+Vector2D rotate(const Vector2D &v, double theta);
+
+/**
  * Struct for representing a point in 2D geometric plane
  */
 struct Point2D {
