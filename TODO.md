@@ -2,9 +2,19 @@
 
 ## Functionality
 
-### Application
+### Library
 
-- [ ] take libedit into use
+### la_calc application
+
+- take libedit into use
+
+
+## Exploration
+
+- evaluate [raylib](https://www.raylib.com)
+- use it to write a graphical application to visualise 2D vector operations
+    * This is also for evaluating raylib for Dead Reckoning game, and a good
+      and simple target before starting the real game development.
 
 
 ## Refactoring
@@ -14,7 +24,7 @@
 From ChatGPT review of ref (https://chatgpt.com/c/68c54ad2-57d4-8333-b14e-4a18d20b48fa).
 Remaining:
 
-- [ ] **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
+- **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
   row/column span so users of `Matrix` can iterate without `Vector` copies.
   Would let `is_ref`/`is_rref` drop their `A.row(i)` copies too.
 
@@ -54,7 +64,7 @@ Suggested ordering:
 
 ## Minor cleanups
 
-- [ ] **Unify size-mismatch exceptions on `std::invalid_argument`.** The
+- **Unify size-mismatch exceptions on `std::invalid_argument`.** The
   `CLAUDE.md` convention is now: dimensional non-conformance throws
   `std::invalid_argument`, `std::domain_error` is reserved for "well-formed
   input, operation mathematically undefined" (e.g. `angle` of a zero vector).
@@ -99,5 +109,5 @@ Read Effective C++ for more.
 
 Remaining:
 
-- [ ] Decide whether `subvector` / `head` / `tail` count as "core" or
+- Decide whether `subvector` / `head` / `tail` count as "core" or
   belong with the algorithms (`include/la/vector.hpp:80-115`).
