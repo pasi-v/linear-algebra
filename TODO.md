@@ -27,6 +27,7 @@ Remaining:
 - **RowView/ColView (optional ergonomics).** Add a lightweight non-owning
   row/column span so users of `Matrix` can iterate without `Vector` copies.
   Would let `is_ref`/`is_rref` drop their `A.row(i)` copies too.
+  - Matrix::row_view added, take it into use next.
 
 
 ### Configurable scalar type (integer/exact math)
