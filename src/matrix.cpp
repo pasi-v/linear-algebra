@@ -127,6 +127,12 @@ Vector Matrix::row(int i) const {
     return v;
 }
 
+RowView Matrix::row_view(std::size_t i) const {
+    if (i >= rows_)
+        throw std::out_of_range("row index out of range");
+    return {pointer_to_row_unchecked(i), cols_};
+}
+
 Vector Matrix::column(int i) const {
     if (i < 0 || static_cast<size_t>(i) >= cols_) {
         throw std::out_of_range{

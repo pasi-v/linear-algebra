@@ -138,6 +138,19 @@ TEST_CASE("Get Matrix row, index larger than last row index") {
     CHECK_THROWS_AS(m.row(3), std::out_of_range);
 }
 
+TEST_CASE("Row view") {
+    using la::Matrix;
+    using la::RowView;
+
+    SUBCASE("happy case") {
+        Matrix m(3, 3, {1, 2, 3, 4, 5, 6, 7, 8, 9});
+        RowView v = m.row_view(1);
+        CHECK_EQ(v.cols, 3);
+        CHECK_EQ(std::vector<double>(v.begin(), v.end()),
+                 std::vector<double>({4, 5, 6}));
+    }
+}
+
 TEST_CASE("Get Matrix column, happy case") {
     using la::Matrix;
     using la::Vector;

@@ -8,6 +8,13 @@
 #include <vector>
 
 namespace la {
+struct RowView {
+    const double *data; // Pointer into Matrix's storage
+    size_t cols;        // no new allocation
+    const double *begin() const { return data; }
+    const double *end() const { return data + cols; }
+};
+
 /**
  * A class for representing an m x n matrix.
  */
@@ -147,6 +154,14 @@ class Matrix {
      * @throws std::out_of_range if i < 0 or i >= number of rows in matrix
      */
     Vector row(int i) const;
+
+    /**
+     * @brief Get a view of the ith row.
+     * @param i the zero-based row index.
+     * @return view of the row.
+     * @throws std::out_of_range if i >= number of rows in matrix.
+     */
+    RowView row_view(std::size_t i) const;
 
     /**
      * Get column i from the matrix as Vector.
