@@ -50,7 +50,14 @@ template <typename Range> bool is_zero(const Range &r) {
 bool is_standard_basis(const Vector &);
 
 /** @return optional index of first non-zero element, empty if all zeroes */
-std::optional<std::size_t> first_non_zero_column(const Vector &);
+template <typename Range>
+std::optional<std::size_t> first_nonzero_index(const Range &r) {
+    auto it = std::find_if(r.begin(), r.end(),
+                           [](double x) { return !is_zero_pivot(x); });
+    if (it == r.end())
+        return std::nullopt; // or however you signal "not found"
+    return std::distance(r.begin(), it);
+}
 
 /** @return first non-zero element, 0 if all zeros */
 double leading_element(const Vector &);

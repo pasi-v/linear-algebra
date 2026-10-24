@@ -69,18 +69,8 @@ bool is_standard_basis(const Vector &v) {
     return one_found;
 }
 
-std::optional<std::size_t> first_non_zero_column(const Vector &v) {
-    for (std::size_t i = 0; i < v.size(); i++) {
-        if (!is_zero_pivot(v[i])) {
-            return i;
-        }
-    }
-
-    return {};
-}
-
 double leading_element(const Vector &v) {
-    if (auto column = first_non_zero_column(v)) {
+    if (auto column = first_nonzero_index(v)) {
         return v[*column];
     } else {
         return 0;
