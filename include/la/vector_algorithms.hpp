@@ -1,7 +1,9 @@
 #ifndef LA_VECTOR_ALGORITHMS_HPP
 #define LA_VECTOR_ALGORITHMS_HPP
 
+#include "la/matrix.hpp"
 #include "math_utils/math_utils.hpp"
+#include "pivot_policy.hpp"
 #include "vector.hpp"
 #include <optional>
 
@@ -35,7 +37,12 @@ Vector proj_onto(const Vector &onto, const Vector &v);
 double distance(const Vector &u, const Vector &v);
 
 /** @return true if all elements are zero, false otherwise */
-bool is_zero(const Vector &);
+template <typename Range> bool is_zero(const Range &r) {
+    for (double x : r)
+        if (!is_zero_pivot(x))
+            return false;
+    return true;
+}
 
 /**
  * @return true if this is a standard basis vector, i.e. has 1 in one

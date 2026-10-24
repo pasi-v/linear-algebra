@@ -48,13 +48,6 @@ Vector proj_onto(const Vector &onto, const Vector &v) {
 
 double distance(const Vector &u, const Vector &v) { return norm(u - v); }
 
-bool is_zero(const Vector &v) {
-    for (double x : v)
-        if (!is_zero_pivot(x))
-            return false;
-    return true;
-}
-
 bool is_standard_basis(const Vector &v) {
     bool one_found = false;
     for (std::size_t i = 0; i < v.size(); i++) {
