@@ -5,6 +5,7 @@
 #include "math_utils/math_utils.hpp"
 #include "pivot_policy.hpp"
 #include "vector.hpp"
+#include <iterator>
 #include <optional>
 
 namespace la {
@@ -60,7 +61,13 @@ std::optional<std::size_t> first_nonzero_index(const Range &r) {
 }
 
 /** @return first non-zero element, 0 if all zeros */
-double leading_element(const Vector &);
+template <typename Range> double leading_element(const Range &r) {
+    if (auto column = first_nonzero_index(r)) {
+        return *std::next(r.begin(), *column);
+    } else {
+        return 0;
+    }
+}
 
 /** @return true if leading element is 1, false otherwise */
 inline bool has_leading_one(const Vector &v) {

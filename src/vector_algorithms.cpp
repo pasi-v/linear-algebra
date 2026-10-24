@@ -69,14 +69,6 @@ bool is_standard_basis(const Vector &v) {
     return one_found;
 }
 
-double leading_element(const Vector &v) {
-    if (auto column = first_nonzero_index(v)) {
-        return v[*column];
-    } else {
-        return 0;
-    }
-}
-
 bool are_linearly_independent(const std::vector<Vector> vectors) {
     const Matrix A = from_cols(vectors);
     return rank(A) == vectors.size();
