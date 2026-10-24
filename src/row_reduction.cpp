@@ -105,7 +105,7 @@ bool is_ref(const Matrix &A) {
     // 2. if any non-zero rows are found below it, return false
     bool found_zero = false;
     for (size_t i = 0; i < A.rows(); i++) {
-        Vector v = A.row(i);
+        RowView v = A.row_view(i);
         if (!found_zero) {
             found_zero = is_zero(v);
         } else { // a zero row has been found before this row
@@ -122,7 +122,7 @@ bool is_ref(const Matrix &A) {
     std::optional<std::size_t>
         prev_leading_entry_column; // empty until the first leading entry
     for (size_t i = 0; i < A.rows(); i++) {
-        Vector v = A.row(i);
+        RowView v = A.row_view(i);
         // When we find first zero vector, there will be no more leading
         // enries to check and matrix is in row-echelon form.
         if (is_zero(v)) {
@@ -152,7 +152,7 @@ bool is_rref(const Matrix &A) {
 
     for (size_t i = 0; i < A.rows(); i++) {
         // 2. The leading entry in each nonzero row is a leading 1
-        Vector v = A.row(i);
+        RowView v = A.row_view(i);
         if (is_zero(v)) {
             continue; // no leading entry in zero row
         }
