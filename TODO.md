@@ -39,17 +39,7 @@
 
 ## Refactoring
 
-## Minor cleanups
-
-- [ ] `app/evaluator.cpp:198` — `spanning_vectors` is appended in a loop over
-  `spanning_names` (known size) but not reserved. Add
-  `spanning_vectors.reserve(spanning_names.size());` before the loop to avoid
-  geometric reallocations of the underlying buffer. Matches the
-  reserve+push_back pattern used elsewhere (e.g. `pivot_info.cpp`,
-  `linear_system.cpp:44`).
-
-
-## Separating core structures and algebra functions
+### Separating core structures and algebra functions
 
 Substantially done: `ref`/`rref`/`rank`, `det`, transforms, linear-system
 solvers, and the vector algorithms (`dot`/`norm`/`angle`/`proj_onto`/...) all

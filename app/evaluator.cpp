@@ -241,6 +241,7 @@ void handle_in_span(Parser &p,
 
     // Vector form: in_span <b> <v1> <v2> ... <vn>
     std::vector<la::Vector> spanning_vectors;
+    spanning_vectors.reserve(spanning_names.size());
     for (const auto &name : spanning_names) {
         if (!symbols.count(name)) {
             throw std::runtime_error("unknown symbol: " + name);
